@@ -229,7 +229,7 @@ def _num(value, default, low=None, high=None):
 @app.route("/api/jobs")
 def api_jobs():
     args = request.args
-    jobs = store.query(
+    filters = dict(
         status=args.get("status", "all"),
         source=args.get("source", "all"),
         company=args.get("company", "").strip() or None,
@@ -246,17 +246,23 @@ def api_jobs():
         families=[v for v in args.getlist("family") if v],
         include_unclassified=args.get("unclassified", "1") == "1",
         own_rules=active_rules([v for v in args.getlist("rule") if v]),
-        order=args.get("order", "score"),
-        limit=int(_num(args.get("limit"), 200, 1, 2000)),
-        offset=int(_num(args.get("offset"), 0, 0, 500000)),
     )
+    jobs = store.query(**filters, order=args.get("order", "score"),
+                       limit=int(_num(args.get("limit"), 200, 1, 2000)),
+                       offset=int(_num(args.get("offset"), 0, 0, 500000)))
     for job in jobs:
         job["description"] = (job.get("description") or "")[:400]
         # Only what a detail panel already worked out - never a network call per row.
         cached = stability.LEVEL_CACHE.get(job["company"])
         job["stability"] = cached["level"] if cached else ""
         job["stability_label"] = cached["label"] if cached else ""
-    return jsonify({"jobs": jobs, "count": len(jobs)})
+    # "total" is every match, not just this page; "facets" are the sidebar numbers
+    # for the same filters, so ticking one box updates the counts beside the others.
+    return jsonify({
+        "jobs": jobs, "count": len(jobs), "total": store.count(**filters),
+        "facets": store.facet_counts(
+            **filters, all_rules=[r for r in cfg().rules() if r.facet]),
+    })
 
 
 @app.route("/api/job/<job_id>")

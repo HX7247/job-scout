@@ -461,10 +461,13 @@ function renderOwnFacets() {
   const host = $("#f-own");
   if (!facets.length) { field.style.display = "none"; return; }
   field.style.display = "";
+  // The listing's own numbers (narrowed by every other filter) once it has loaded;
+  // the whole-database count only until then.
+  const counts = (state.facets && state.facets.own_rules) || prof.counts;
   host.innerHTML = facets.map((r) => `<label>
       <input type="checkbox" value="${esc(r.key)}"
              ${(state.view.rules || []).includes(r.key) ? "checked" : ""}>
-      <span>${esc(r.label)}</span><span class="n">${prof.counts[r.key] ?? 0}</span>
+      <span>${esc(r.label)}</span><span class="n">${counts[r.key] ?? 0}</span>
     </label>`).join("");
   host.querySelectorAll("input").forEach((box) => {
     box.addEventListener("change", () => {

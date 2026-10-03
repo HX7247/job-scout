@@ -316,7 +316,87 @@ class Store:
               salary_disclosed_only: bool = False,
               unviewed_only: bool = False,
               startups: str = "any") -> list[dict]:
-        sql = "SELECT * FROM jobs WHERE score >= ?"
+        where, params = self._where(
+            status=status, source=source, company=company, min_score=min_score,
+            search=search, starred_only=starred_only, remote_only=remote_only,
+            include_filtered=include_filtered, sponsored_only=sponsored_only,
+            employment=employment, families=families,
+            include_unclassified=include_unclassified, own_rules=own_rules,
+            salary_disclosed_only=salary_disclosed_only, unviewed_only=unviewed_only,
+            startups=startups)
+        orders = {
+            "score": "score DESC, first_seen DESC",
+            "date": "COALESCE(posted_at, first_seen) DESC",
+            "company": "company COLLATE NOCASE ASC, score DESC",
+            "salary": "COALESCE(salary_max, salary_min, 0) DESC, score DESC",
+            "new": "first_seen DESC",
+            "employment": "employment_kind = '' ASC, employment_kind ASC, score DESC",
+            "family": "job_family = '' ASC, job_family ASC, score DESC",
+            "closing": "closes_at IS NULL ASC, closes_at ASC",
+        }
+        # id breaks ties, so "Show more" pages never repeat or skip a posting.
+        sql = (f"SELECT * FROM jobs WHERE {where} "
+               f"ORDER BY {orders.get(order, orders['score'])}, id LIMIT ? OFFSET ?")
+        rows = self.conn.execute(sql, params + [limit, offset]).fetchall()
+        return [self._row_to_dict(r) for r in rows]
+
+    def count(self, **filters) -> int:
+        """How many postings the same filters match in total, ignoring the page size."""
+        where, params = self._where(**filters)
+        return self.conn.execute(f"SELECT COUNT(*) c FROM jobs WHERE {where}",
+                                 params).fetchone()["c"]
+
+    def facet_counts(self, **filters) -> dict:
+        """The number beside every sidebar option, given everything else you've set.
+
+        Each group is counted with all the OTHER filters applied but not its own
+        selection - the standard faceted-search rule. Counting a group against its own
+        ticks would zero out every option you haven't ticked, so you could never widen
+        a choice; ignoring the other filters (what this used to do) printed the
+        whole database's numbers no matter what you had narrowed to.
+        """
+        out: dict = {}
+        for group, column, key in (("employment", "employment_kind", "employment"),
+                                   ("families", "job_family", "families")):
+            where, params = self._where(**{**filters, key: None})
+            out[group] = {(r["k"] or "unstated"): r["c"] for r in self.conn.execute(
+                f"SELECT {column} k, COUNT(*) c FROM jobs WHERE {where} GROUP BY {column}",
+                params)}
+        where, params = self._where(**{**filters, "source": None})
+        out["sources"] = {r["source"]: r["c"] for r in self.conn.execute(
+            f"SELECT source, COUNT(*) c FROM jobs WHERE {where} GROUP BY source "
+            "ORDER BY c DESC", params)}
+        # A custom rule's number is "how many you'd see with it ticked": every other
+        # filter, including your other ticked rules, plus this rule.
+        from . import rules as rules_mod
+        ticked = list(filters.get("own_rules") or [])
+        out["own_rules"] = {}
+        for rule in filters.get("all_rules") or []:
+            others = [r for r in ticked if r.key != rule.key] + [rule]
+            where, params = self._where(**{**filters, "own_rules": others})
+            out["own_rules"][rule.key] = self.conn.execute(
+                f"SELECT COUNT(*) c FROM jobs WHERE {where}", params).fetchone()["c"]
+        return out
+
+    @staticmethod
+    def _like(value: str) -> str:
+        """A literal substring for LIKE - "100%" or "data_" are text, not wildcards."""
+        return "%" + value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%"
+
+    def _where(self, *, status: str | None = None, source: str | None = None,
+               company: str | None = None, min_score: float = 0.0, search: str = "",
+               starred_only: bool = False, remote_only: bool = False,
+               include_filtered: bool = False, sponsored_only: bool = False,
+               employment: list[str] | None = None,
+               families: list[str] | None = None,
+               include_unclassified: bool = True,
+               own_rules: list | None = None,
+               salary_disclosed_only: bool = False,
+               unviewed_only: bool = False,
+               startups: str = "any", all_rules: list | None = None) -> tuple[str, list]:
+        """The WHERE clause every listing, total and sidebar count shares, so the
+        numbers beside the filters can never disagree with the list they produce."""
+        sql = "score >= ?"
         params: list = [min_score]
         if not include_filtered:
             sql += " AND COALESCE(filtered, 0) = 0"
@@ -331,8 +411,8 @@ class Store:
             sql += " AND source = ?"
             params.append(source)
         if company:
-            sql += " AND company LIKE ?"
-            params.append(f"%{company}%")
+            sql += " AND company LIKE ? ESCAPE '\\'"
+            params.append(self._like(company))
         if starred_only:
             sql += " AND starred = 1"
         if sponsored_only:
@@ -367,22 +447,10 @@ class Store:
         elif startups == "hide":
             sql += " AND COALESCE(startup, 0) = 0"   # unknown employers stay visible
         if search:
-            sql += " AND (title LIKE ? OR company LIKE ? OR description LIKE ? OR location LIKE ?)"
-            params += [f"%{search}%"] * 4
-        orders = {
-            "score": "score DESC, first_seen DESC",
-            "date": "COALESCE(posted_at, first_seen) DESC",
-            "company": "company COLLATE NOCASE ASC, score DESC",
-            "salary": "COALESCE(salary_max, salary_min, 0) DESC, score DESC",
-            "new": "first_seen DESC",
-            "employment": "employment_kind = '' ASC, employment_kind ASC, score DESC",
-            "family": "job_family = '' ASC, job_family ASC, score DESC",
-            "closing": "closes_at IS NULL ASC, closes_at ASC",
-        }
-        sql += f" ORDER BY {orders.get(order, orders['score'])} LIMIT ? OFFSET ?"
-        params += [limit, offset]
-        rows = self.conn.execute(sql, params).fetchall()
-        return [self._row_to_dict(r) for r in rows]
+            sql += (" AND (title LIKE ? ESCAPE '\\' OR company LIKE ? ESCAPE '\\' "
+                    "OR description LIKE ? ESCAPE '\\' OR location LIKE ? ESCAPE '\\')")
+            params += [self._like(search)] * 4
+        return sql, params
 
     def get(self, job_id: str) -> dict | None:
         row = self.conn.execute("SELECT * FROM jobs WHERE id = ?", (job_id,)).fetchone()

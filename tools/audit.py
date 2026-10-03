@@ -921,7 +921,8 @@ def main() -> None:
     _fstring_sql = _sec_re.findall(r'f"[^"]*(?:SELECT|INSERT|UPDATE|DELETE)[^"]*"', _store_source, _sec_re.I)
     check("security: no client value is ever concatenated into SQL text",
           lambda: all(("{" not in s) or all(
-              tok in ("column", "slots", "blank", "kind_slots", "clause", "visible")
+              # "where" is Store._where()'s output: fixed text and "?" placeholders only.
+              tok in ("column", "slots", "blank", "kind_slots", "clause", "visible", "where")
               for tok in _sec_re.findall(r"\{(\w+)\}", s)) for s in _fstring_sql)
           or f"an f-string SQL fragment interpolates something unexpected: {_fstring_sql}")
 
@@ -1264,6 +1265,43 @@ def main() -> None:
           lambda: _only == {"Seedco"} or f"got {_only}")
     check("startups: 'hide' drops startups but keeps employers the registry knows nothing about",
           lambda: _hide == {"BigCorp", "Nobody Knows"} or f"got {_hide}")
+
+    # ---- combined filters: sidebar counts, totals, paging, literal search
+    _fc_db = ROOT / "out" / "_audit_facets.db"
+    if _fc_db.exists():
+        _fc_db.unlink()
+    _fs = Store(_fc_db)
+    _fs.upsert([Job(source="a" if i % 2 else "b", source_kind="ats_direct", company=f"Co{i}",
+                    title="Data_Intern" if i == 0 else f"Role {i}",
+                    # "1000 staff" and "a team" only match if % or _ act as wildcards
+                    description={1: "100% remote", 2: "1000 staff"}.get(i, "a team"),
+                    url=f"https://x.com/f{i}") for i in range(12)])
+    for _i, (_kind, _fam) in enumerate([("internship", "software")] * 4
+                                       + [("placement", "software")] * 3
+                                       + [("placement", "finance")] * 5):
+        _fs.conn.execute("UPDATE jobs SET employment_kind = ?, job_family = ? WHERE url = ?",
+                         (_kind, _fam, f"https://x.com/f{_i}"))
+    _fs.conn.commit()
+    _narrow = dict(employment=["placement"], families=["finance"], include_unclassified=False)
+    _facets = _fs.facet_counts(**_narrow)
+    _total = _fs.count(**_narrow)
+    _pages = [j["id"] for off in range(0, 12, 5)
+              for j in _fs.query(limit=5, offset=off, order="closing")]
+    _pct = [j["title"] for j in _fs.query(limit=50, search="100%")]
+    _under = [j["title"] for j in _fs.query(limit=50, search="a_")]
+    _fs.close()
+    _fc_db.unlink()
+    check("filters: a group's counts follow the OTHER groups' ticks (finance -> 5 placements)",
+          lambda: _facets["employment"] == {"placement": 5}
+          or f"employment counts ignore the field filter: {_facets['employment']}")
+    check("filters: a group's counts ignore its own ticks, so it can still be widened",
+          lambda: _facets["families"] == {"software": 3, "finance": 5}
+          or f"got {_facets['families']}")
+    check("filters: the total is every match, not just the page", lambda: _total == 5 or _total)
+    check("filters: paging with tied sort keys never repeats or skips a posting",
+          lambda: len(_pages) == 12 == len(set(_pages)) or f"{len(set(_pages))} of 12 distinct")
+    check("filters: '%' and '_' in a search are literal text, not wildcards",
+          lambda: (_pct == ["Role 1"] and _under == ["Data_Intern"]) or f"{_pct} {_under}")
 
     from jobscout.pipeline import load_companies as _load_companies
     _registry = _load_companies(Config())

@@ -324,7 +324,11 @@ function renderRows() {
   });
 }
 
-async function loadJobs() {
+const PAGE_SIZE = 300;
+let jobsRequest = 0;
+
+// append=true is "Show more": the next page of the same filters, added to the list.
+async function loadJobs(append = false) {
   const v = state.view;
   const qs = new URLSearchParams({
     q: v.q, min_score: v.min_score, status: v.status, source: v.source,
@@ -333,17 +337,48 @@ async function loadJobs() {
     salary_disclosed: v.salaryDisclosed ? "1" : "0",
     unviewed: v.unviewed ? "1" : "0",
     startups: v.startups,
-    limit: 300,
+    limit: PAGE_SIZE,
+    offset: append && state.jobs ? state.jobs.length : 0,
   });
   v.employment.forEach((k) => qs.append("employment", k));
   v.families.forEach((k) => qs.append("family", k));
   (v.rules || []).forEach((k) => qs.append("rule", k));
-  if (state.viewReady) persistView();
+  if (state.viewReady && !append) persistView();
+  // Ticking several boxes quickly fires several requests; one for an older set of
+  // filters can come back last. Only the newest request may draw the list.
+  const mine = ++jobsRequest;
   const data = await api(`/api/jobs?${qs}`);
-  state.jobs = data.jobs;
-  $("#result-count").textContent =
-    `${data.count} position${data.count === 1 ? "" : "s"}`;
+  if (mine !== jobsRequest) return;
+  state.jobs = append && state.jobs ? state.jobs.concat(data.jobs) : data.jobs;
+  state.total = data.total ?? state.jobs.length;
+  const shown = state.jobs.length;
+  $("#result-count").textContent = shown < state.total
+    ? `Showing ${shown.toLocaleString()} of ${state.total.toLocaleString()} positions`
+    : `${state.total.toLocaleString()} position${state.total === 1 ? "" : "s"}`;
+  const more = $("#btn-more");
+  if (more) {
+    more.style.display = shown < state.total ? "" : "none";
+    more.textContent = `Show ${Math.min(PAGE_SIZE, state.total - shown).toLocaleString()} more`;
+  }
+  if (data.facets) {
+    state.facets = data.facets;
+    renderFacetCounts();
+  }
   renderRows();
+}
+
+// Sidebar numbers for the filters currently set - from the last listing, not the
+// whole database, so they always add up to what ticking that box would show.
+function renderFacetCounts() {
+  const f = state.facets;
+  if (!f) return;
+  renderFacet("#f-employment", "employment", f.employment || {}, state.view.employment);
+  renderFacet("#f-family", "families", f.families || {}, state.view.families);
+  $("#source-tally").innerHTML = Object.entries(f.sources || {})
+    .map(([k, n]) => `${esc(k)} <b style="float:right">${n}</b>`).join("<br>");
+  if (typeof renderOwnFacets === "function" && typeof prof !== "undefined" && prof.rules) {
+    renderOwnFacets();
+  }
 }
 
 async function loadStats() {
@@ -366,12 +401,17 @@ async function loadStats() {
     // results filtered to something that no longer exists.
     if (state.viewReady && before !== state.view.source) loadJobs();
   }
-  $("#source-tally").innerHTML = Object.entries(s.by_source)
-    .map(([k, n]) => `${esc(k)} <b style="float:right">${n}</b>`).join("<br>");
-
   if (s.vocabulary) state.vocabulary = s.vocabulary;
-  renderFacet("#f-employment", "employment", s.by_employment || {}, state.view.employment);
-  renderFacet("#f-family", "families", s.by_family || {}, state.view.families);
+  // The sidebar numbers follow the current filters (see renderFacetCounts); the
+  // whole-database stats only fill them in before the first listing arrives.
+  if (!state.facets) {
+    $("#source-tally").innerHTML = Object.entries(s.by_source)
+      .map(([k, n]) => `${esc(k)} <b style="float:right">${n}</b>`).join("<br>");
+    renderFacet("#f-employment", "employment", s.by_employment || {}, state.view.employment);
+    renderFacet("#f-family", "families", s.by_family || {}, state.view.families);
+  } else {
+    renderFacetCounts();
+  }
   // profile.js owns the custom facets; it may not have loaded on the first poll.
   if (s.own_rules && typeof prof !== "undefined") {
     prof.rules = s.own_rules;
@@ -891,7 +931,8 @@ function init() {
     state.selected = null; renderRows();
   });
 
-  const refresh = debounce(loadJobs, 260);
+  const refresh = debounce(() => loadJobs(), 260);
+  $("#btn-more").addEventListener("click", () => loadJobs(true));
   $("#f-q").addEventListener("input", (e) => { state.view.q = e.target.value; refresh(); });
   $("#f-score").addEventListener("input", (e) => {
     state.view.min_score = +e.target.value;
