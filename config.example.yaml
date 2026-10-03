@@ -1,0 +1,85 @@
+# Job Scout starter config. The launcher copies this to config.yaml on first run;
+# after that, edit your criteria in the app's Criteria tab (or in config.yaml).
+# Nothing here identifies you - add your own details under "profile" if you want them.
+
+profile:
+  cv_path: ""                 # optional, e.g. C:/Users/you/Documents/CV.pdf
+  school: ""                  # optional, e.g. University of Manchester
+  school_linkedin_slug: ""    # optional, e.g. university-of-manchester
+  graduation_year: ""
+  tracker_path: ""            # optional: your own internship-tracker .xlsx
+  extra_skills: []
+
+search:
+  country: GB                 # GB, US, AU, CA, IE, ... - drives currency and sources
+  titles:
+  - summer internship
+  - industrial placement
+  - year in industry
+  - placement student
+  - graduate scheme
+  - graduate analyst
+  - graduate engineer
+  keywords_any:
+  - placement
+  - internship
+  - graduate
+  - undergraduate
+  keywords_required: []
+  keywords_excluded:
+  - 10+ years
+  - 8+ years
+  locations:
+  - London
+  remote_ok: true
+  salary_min: null
+  max_age_days: 60
+  employment_types: []
+  job_families: []
+  include_unclassified: true
+  unknown_location: keep
+  exclude_companies: []
+  career_stage: student       # student | graduate | professional | senior | any
+  visa_sponsorship: any       # any | prefer | require
+  work_modes: []
+  exclude_senior: true
+  exclude_junior: false
+  custom_rules: []
+
+sources:
+  use_ats: true
+  aggregators:
+  # keyless - work out of the box
+  - arbeitnow
+  - remotive
+  - remoteok
+  - themuse
+  - jobicy
+  - himalayas
+  - gradcracker
+  - ratemyplacement
+  - github_internships
+  - gradconnection
+  - hn_hiring
+  # need a free key (see README) - skipped until the key is set
+  - adzuna
+  - reed
+  - reddit
+  - usajobs
+  - careerjet
+  - google_jobs
+  companies_file: data/companies_verified.yaml
+  company_limit: null
+  aggregator_queries:
+  - summer internship
+  - industrial placement
+  - graduate scheme
+  max_per_source: 200
+  max_per_company: 400
+  reddit_subreddits:
+  - internships
+  - csMajors
+  - cscareerquestions
+  custom_feed_urls: []
+
+min_score: 20.0

@@ -1,0 +1,379 @@
+meta:
+  generated: '2026-09-28T04:47:34'
+  rule: 'startup: true only if founded <= 12y ago and < 500 staff, both known; unknown
+    -> omitted'
+tags:
+  Accenture:
+    startup: false
+    startup_evidence: global consultancy, ~750k staff
+    source: curated
+  Airtable:
+    startup: false
+    startup_evidence: founded 2012, ~1,000 staff
+    source: curated
+    founded: 2012
+  Anthropic:
+    startup: false
+    startup_evidence: founded 2021, 1,000+ staff
+    source: curated
+    founded: 2021
+  Asana:
+    startup: false
+    startup_evidence: listed company, founded 2008
+    source: curated
+    founded: 2008
+  Asda:
+    startup: false
+    startup_evidence: UK supermarket chain
+    source: curated
+  AstraZeneca:
+    startup: false
+    startup_evidence: FTSE 100 pharma
+    source: curated
+  Aviva:
+    startup: false
+    startup_evidence: FTSE 100 insurer
+    source: curated
+  BCG:
+    startup: false
+    startup_evidence: global consultancy (1963)
+    source: curated
+    founded: 1963
+  BP:
+    startup: false
+    startup_evidence: FTSE 100 energy major
+    source: curated
+  Brex:
+    source: yc-oss
+    yc_batch: W17
+    team_size: 1000
+    startup: false
+    startup_evidence: YC W17, 1000 staff
+  Bupa:
+    startup: false
+    startup_evidence: established health insurer (1947)
+    source: curated
+    founded: 1947
+  Caffe Nero:
+    startup: false
+    startup_evidence: UK coffee chain (1997)
+    source: curated
+    founded: 1997
+  Canva:
+    startup: false
+    startup_evidence: founded 2012, ~5,000 staff
+    source: curated
+    founded: 2012
+  Checkout.com:
+    startup: false
+    startup_evidence: founded 2012, ~1,700 staff
+    source: curated
+    founded: 2012
+  Cisco:
+    startup: false
+    startup_evidence: listed company (1984)
+    source: curated
+    founded: 1984
+  Cloudflare:
+    startup: false
+    startup_evidence: listed company (2009)
+    source: curated
+    founded: 2009
+  Coinbase:
+    source: yc-oss
+    yc_batch: S12
+    team_size: 6112
+    startup: false
+    startup_evidence: YC S12, 6112 staff, public company
+  Databricks:
+    startup: false
+    startup_evidence: founded 2013, 7,000+ staff
+    source: curated
+    founded: 2013
+  Datadog:
+    startup: false
+    startup_evidence: listed company (2010)
+    source: curated
+    founded: 2010
+  Deliveroo:
+    startup: false
+    startup_evidence: founded 2013, 2,000+ staff
+    source: curated
+    founded: 2013
+  Diageo:
+    startup: false
+    startup_evidence: FTSE 100 drinks group
+    source: curated
+  Discord:
+    startup: false
+    startup_evidence: founded 2015, ~800 staff
+    source: curated
+    founded: 2015
+  Dominos:
+    startup: false
+    startup_evidence: established pizza chain
+    source: curated
+  DPD:
+    startup: false
+    startup_evidence: established parcel carrier
+    source: curated
+  Dyson:
+    startup: false
+    startup_evidence: established engineer (1991)
+    source: curated
+    founded: 1991
+  Elastic:
+    startup: false
+    startup_evidence: listed company (2012)
+    source: curated
+    founded: 2012
+  EY:
+    startup: false
+    startup_evidence: Big Four professional services
+    source: curated
+  Figma:
+    startup: false
+    startup_evidence: listed company, founded 2012
+    source: curated
+    founded: 2012
+  Flow Traders:
+    startup: false
+    startup_evidence: listed trading firm (2004)
+    source: curated
+    founded: 2004
+  GitLab:
+    source: yc-oss
+    yc_batch: W15
+    team_size: 2000
+    startup: false
+    startup_evidence: YC W15, 2000 staff, public company
+  GoCardless:
+    startup: false
+    startup_evidence: founded 2011, ~800 staff; also YC S11, 900 staff
+    source: curated+yc-oss
+    yc_batch: S11
+    founded: 2011
+    team_size: 900
+  Greene King:
+    startup: false
+    startup_evidence: established pub group (1799)
+    source: curated
+    founded: 1799
+  Griffin:
+    startup: true
+    startup_evidence: founded 2017, ~150 staff (curated estimate)
+    source: curated
+    founded: 2017
+  GSK:
+    startup: false
+    startup_evidence: FTSE 100 pharma
+    source: curated
+  Gusto:
+    source: yc-oss
+    yc_batch: W12
+    team_size: 2400
+    startup: false
+    startup_evidence: YC W12, 2400 staff
+  Improbable:
+    startup: false
+    startup_evidence: founded 2012
+    source: curated
+    founded: 2012
+  Jane Street:
+    startup: false
+    startup_evidence: established trading firm (2000)
+    source: curated
+    founded: 2000
+  JD Sports:
+    startup: false
+    startup_evidence: FTSE 100 retailer
+    source: curated
+  Jump Trading:
+    startup: false
+    startup_evidence: established trading firm (1999)
+    source: curated
+    founded: 1999
+  Linear:
+    startup: true
+    startup_evidence: founded 2019, ~150 staff (curated estimate)
+    source: curated
+    founded: 2019
+  Lush:
+    startup: false
+    startup_evidence: established retailer (1995)
+    source: curated
+    founded: 1995
+  Man Group:
+    startup: false
+    startup_evidence: listed asset manager
+    source: curated
+  Matillion:
+    startup: false
+    startup_evidence: founded 2011
+    source: curated
+    founded: 2011
+  Miro:
+    startup: false
+    startup_evidence: founded 2011, 1,500+ staff
+    source: curated
+    founded: 2011
+  MongoDB:
+    startup: false
+    startup_evidence: listed company (2007)
+    source: curated
+    founded: 2007
+  Monzo:
+    startup: false
+    startup_evidence: founded 2015, 3,000+ staff
+    source: curated
+    founded: 2015
+  Mott MacDonald:
+    startup: false
+    startup_evidence: established engineering consultancy
+    source: curated
+  Multiverse:
+    source: yc-oss
+    yc_batch: W20
+    team_size: 9
+    startup: true
+    startup_evidence: YC W20, 9 staff
+  Notion:
+    startup: false
+    startup_evidence: founded 2013, ~1,000 staff
+    source: curated
+    founded: 2013
+  OpenAI:
+    startup: false
+    startup_evidence: founded 2015, 3,000+ staff
+    source: curated
+    founded: 2015
+  Paddle:
+    startup: false
+    startup_evidence: founded 2012
+    source: curated
+    founded: 2012
+  PagerDuty:
+    source: yc-oss
+    yc_batch: S10
+    team_size: 950
+    startup: false
+    startup_evidence: YC S10, 950 staff, public company
+  Palantir:
+    startup: false
+    startup_evidence: listed company (2003)
+    source: curated
+    founded: 2003
+  Plaid:
+    startup: false
+    startup_evidence: founded 2013, ~1,000 staff
+    source: curated
+    founded: 2013
+  Point72:
+    startup: false
+    startup_evidence: established hedge fund
+    source: curated
+  PolyAI:
+    startup: true
+    startup_evidence: founded 2017, ~250 staff (curated estimate)
+    source: curated
+    founded: 2017
+  Pret A Manger:
+    startup: false
+    startup_evidence: established food chain (1986)
+    source: curated
+    founded: 1986
+  Primark:
+    startup: false
+    startup_evidence: established retailer (1969)
+    source: curated
+    founded: 1969
+  PureGym:
+    startup: false
+    startup_evidence: established gym chain (2009)
+    source: curated
+    founded: 2009
+  Quantexa:
+    startup: false
+    startup_evidence: founded 2016, 700+ staff
+    source: curated
+    founded: 2016
+  Ramp:
+    startup: false
+    startup_evidence: founded 2019, 1,000+ staff
+    source: curated
+    founded: 2019
+  Reddit:
+    source: yc-oss
+    yc_batch: S05
+    team_size: 2000
+    startup: false
+    startup_evidence: YC S05, 2000 staff
+  Robinhood:
+    startup: false
+    startup_evidence: listed company (2013)
+    source: curated
+    founded: 2013
+  Scale AI:
+    source: yc-oss
+    yc_batch: S16
+    team_size: 500
+    startup: false
+    startup_evidence: YC S16, 500 staff
+  Sentry:
+    startup: false
+    startup_evidence: founded 2012
+    source: curated
+    founded: 2012
+  Shell:
+    startup: false
+    startup_evidence: FTSE 100 energy major
+    source: curated
+  Sodexo:
+    startup: false
+    startup_evidence: global food services group
+    source: curated
+  Starling Bank:
+    startup: false
+    startup_evidence: founded 2014, 3,000+ staff
+    source: curated
+    founded: 2014
+  Stripe:
+    source: yc-oss
+    yc_batch: S09
+    team_size: 7000
+    startup: false
+    startup_evidence: YC S09, 7000 staff
+  SumUp:
+    startup: false
+    startup_evidence: founded 2012, 3,000+ staff
+    source: curated
+    founded: 2012
+  Thales:
+    startup: false
+    startup_evidence: global defence group
+    source: curated
+  Tide:
+    startup: false
+    startup_evidence: founded 2015, ~1,800 staff
+    source: curated
+    founded: 2015
+  Twilio:
+    startup: false
+    startup_evidence: listed company (2008)
+    source: curated
+    founded: 2008
+  Uber:
+    startup: false
+    startup_evidence: listed company (2009)
+    source: curated
+    founded: 2009
+  Wise:
+    startup: false
+    startup_evidence: listed company (2011)
+    source: curated
+    founded: 2011
+  Zopa:
+    startup: false
+    startup_evidence: founded 2005
+    source: curated
+    founded: 2005

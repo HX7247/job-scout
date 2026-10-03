@@ -1,0 +1,656 @@
+source: https://www.assessmentday.co.uk/sitemap.xml
+note: Employer-specific practice packs published by AssessmentDay. Linked, never copied
+  - the questions stay on their site.
+employers:
+  ab-inbev:
+    company: AB Inbev
+    tests:
+    - test: online assessment
+      url: https://www.assessmentday.co.uk/profiles/ab-inbev-online-assessment.html
+  accenture:
+    company: Accenture
+    tests:
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/accenture-sjt.html
+  admiral:
+    company: Admiral
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/admiral-numerical.html
+  airbus:
+    company: Airbus
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/airbus-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/airbus-numerical.html
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/airbus-sjt.html
+  aldi:
+    company: Aldi
+    tests:
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/aldi-verbal.html
+  amazon:
+    company: Amazon
+    tests:
+    - test: diagrammatic reasoning test
+      url: https://www.assessmentday.co.uk/profiles/amazon-diagrammatic.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/amazon-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/amazon-verbal.html
+  amex:
+    company: Amex
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/amex-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/amex-numerical.html
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/amex-sjt.html
+  atkins:
+    company: Atkins
+    tests:
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/atkins-sjt.html
+  aviva:
+    company: Aviva
+    tests:
+    - test: situational strengths test
+      url: https://www.assessmentday.co.uk/profiles/aviva-situational-strengths-test.html
+  bank-of-england:
+    company: Bank of England
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/bank-of-england.html
+  barclays:
+    company: Barclays
+    tests:
+    - test: online assessment
+      url: https://www.assessmentday.co.uk/profiles/barclays-online-assessment.html
+  bat-british-american-tobacco:
+    company: BAT British American Tobacco
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/bat-british-american-tobacco-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/bat-british-american-tobacco-verbal.html
+  bbc:
+    company: BBC
+    tests:
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/bbc-verbal.html
+  bdo:
+    company: BDO
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/bdo.html
+  bhf-critical-thinking-exercise:
+    company: BHF Critical Thinking Exercise
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/bhf-critical-thinking-exercise.html
+  blackrock:
+    company: Blackrock
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/blackrock-numerical.html
+  bnp-paribas:
+    company: BNP Paribas
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/bnp-paribas-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/bnp-paribas-numerical.html
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/bnp-paribas-sjt.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/bnp-paribas-verbal.html
+  boots:
+    company: Boots
+    tests:
+    - test: online assessment
+      url: https://www.assessmentday.co.uk/profiles/boots-online-assessment.html
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/boots-sjt.html
+  bp-online-tests:
+    company: BP Online Tests
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/bp-online-tests.html
+  british-airways:
+    company: British Airways
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/british-airways-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/british-airways-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/british-airways-verbal.html
+  britishcouncil:
+    company: Britishcouncil
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/britishcouncil-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/britishcouncil-numerical.html
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/britishcouncil-sjt.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/britishcouncil-verbal.html
+  bt:
+    company: BT
+    tests:
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/bt-sjt.html
+  capital-one:
+    company: Capital ONE
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/capital-one-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/capital-one-verbal.html
+  citi:
+    company: Citi
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/citi-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/citi-numerical.html
+  civil-service:
+    company: Civil Service
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/civil-service-numerical.html
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/civil-service-sjt.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/civil-service-verbal.html
+  civil-service-success-profiles:
+    company: Civil Service Success Profiles
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/civil-service-success-profiles.html
+  clifford-chance:
+    company: Clifford Chance
+    tests:
+    - test: critical thinking test
+      url: https://www.assessmentday.co.uk/profiles/clifford-chance-critical-thinking.html
+  college-of-policing:
+    company: College of Policing
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/college-of-policing.html
+  deloitte:
+    company: Deloitte
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/deloitte-numerical.html
+    - test: online assessment
+      url: https://www.assessmentday.co.uk/profiles/deloitte-online-assessment.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/deloitte-verbal.html
+  dentons:
+    company: Dentons
+    tests:
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/dentons-verbal.html
+  dentons-critical-thinking-exercise:
+    company: Dentons Critical Thinking Exercise
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/dentons-critical-thinking-exercise.html
+  deutsche:
+    company: Deutsche
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/deutsche-numerical.html
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/deutsche-sjt.html
+  diageo:
+    company: Diageo
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/diageo-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/diageo-verbal.html
+  edf:
+    company: EDF
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/edf-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/edf-numerical.html
+  epso:
+    company: Epso
+    tests:
+    - test: situational strengths test
+      url: https://www.assessmentday.co.uk/profiles/epso-situational-strengths-test.html
+  epso-general-ability:
+    company: Epso General Ability
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/epso-general-ability.html
+  experian:
+    company: Experian
+    tests:
+    - test: diagrammatic reasoning test
+      url: https://www.assessmentday.co.uk/profiles/experian-diagrammatic.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/experian-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/experian-verbal.html
+  ey:
+    company: EY
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/ey-numerical.html
+    - test: situational strengths test
+      url: https://www.assessmentday.co.uk/profiles/ey-situational-strengths-test.html
+  ey-business-behaviours:
+    company: EY Business Behaviours
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/ey-business-behaviours-test.html
+  fca:
+    company: FCA
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/fca-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/fca-numerical.html
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/fca-sjt.html
+  fdm-group:
+    company: FDM Group
+    tests:
+    - test: strengths assessment
+      url: https://www.assessmentday.co.uk/profiles/fdm-group-strengths.html
+  ford-graduate:
+    company: Ford Graduate
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/ford-graduate-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/ford-graduate-verbal.html
+  frs:
+    company: Civil Service Fast Stream
+    tests:
+    - test: mechanical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/frs-mechanical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/frs-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/frs-verbal.html
+  fujitsu:
+    company: Fujitsu
+    tests:
+    - test: diagrammatic reasoning test
+      url: https://www.assessmentday.co.uk/profiles/fujitsu-diagrammatic.html
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/fujitsu-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/fujitsu-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/fujitsu-verbal.html
+  gchq:
+    company: GCHQ
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/gchq-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/gchq-verbal.html
+  general-motors-assessment:
+    company: General Motors Assessment
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/general-motors-assessment-test.html
+  goldman-sachs:
+    company: Goldman Sachs
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/goldman-sachs-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/goldman-sachs-verbal.html
+  gsk:
+    company: GSK
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/gsk-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/gsk-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/gsk-verbal.html
+  hogan-lovells-critical-thinking-exercise:
+    company: Hogan Lovells Critical Thinking Exercise
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/hogan-lovells-critical-thinking-exercise.html
+  hsbc:
+    company: HSBC
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/hsbc-numerical.html
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/hsbc-sjt.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/hsbc-verbal.html
+  hsbc-online-immersive-assessment:
+    company: Hsbc Online Immersive Assessment
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/hsbc-online-immersive-assessment.html
+  ibm:
+    company: IBM
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/ibm-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/ibm-verbal.html
+  ibm-ipat:
+    company: IBM Ipat
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/ibm-ipat.html
+  intel:
+    company: Intel
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/intel.html
+  jaguar-land-rover:
+    company: Jaguar Land Rover
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/jaguar-land-rover-numerical.html
+  jpmorgan:
+    company: JPMorgan
+    tests:
+    - test: inductive reasoning test
+      url: https://www.assessmentday.co.uk/profiles/jpmorgan-inductive.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/jpmorgan-numerical.html
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/jpmorgan-sjt.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/jpmorgan-verbal.html
+  kpmg:
+    company: KPMG
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/kpmg-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/kpmg-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/kpmg-verbal.html
+  kpmg-application-process:
+    company: Kpmg Application Process
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/kpmg-application-process.html
+  lenovo:
+    company: Lenovo
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/lenovo.html
+  lidl:
+    company: Lidl
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/lidl-numerical.html
+  loreal:
+    company: Loreal
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/loreal-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/loreal-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/loreal-verbal.html
+  m-and-s-selection-tests:
+    company: M and S Selection Tests
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/m-and-s-selection-tests.html
+  macquarie:
+    company: Macquarie
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/macquarie-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/macquarie-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/macquarie-verbal.html
+  main:
+    company: Main
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/main.html
+  mercedes:
+    company: Mercedes
+    tests:
+    - test: mechanical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/mercedes-mechanical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/mercedes-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/mercedes-verbal.html
+  mi5:
+    company: MI5
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/mi5.html
+  mi6:
+    company: MI6
+    tests:
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/mi6-verbal.html
+  microsoft:
+    company: Microsoft
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/microsoft-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/microsoft-numerical.html
+    - test: situational strengths test
+      url: https://www.assessmentday.co.uk/profiles/microsoft-situational-strengths-test.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/microsoft-verbal.html
+  mondelez:
+    company: Mondelez
+    tests:
+    - test: online assessment
+      url: https://www.assessmentday.co.uk/profiles/mondelez-online-assessment.html
+  morgan-stanley:
+    company: Morgan Stanley
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/morgan-stanley-numerical.html
+  nationwide:
+    company: Nationwide
+    tests:
+    - test: inductive reasoning test
+      url: https://www.assessmentday.co.uk/profiles/nationwide-inductive.html
+    - test: personality questionnaire
+      url: https://www.assessmentday.co.uk/profiles/nationwide-personality.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/nationwide-verbal.html
+  nationwide-deductive:
+    company: Nationwide Deductive
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/nationwide-deductive.html
+  nestle:
+    company: Nestle
+    tests:
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/nestle-sjt.html
+  ngdp:
+    company: Ngdp
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/ngdp-numerical.html
+    - test: situational strengths test
+      url: https://www.assessmentday.co.uk/profiles/ngdp-situational-strengths-test.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/ngdp-verbal.html
+  nhs:
+    company: NHS
+    tests:
+    - test: e-tray exercise
+      url: https://www.assessmentday.co.uk/profiles/nhs-e-tray.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/nhs-numerical.html
+    - test: situational strengths test
+      url: https://www.assessmentday.co.uk/profiles/nhs-situational-strengths-test.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/nhs-verbal.html
+  o2:
+    company: O2
+    tests:
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/o2-verbal.html
+  o2-rules-and-interrelations:
+    company: O2 Rules and Interrelations
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/o2-rules-and-interrelations.html
+  pg:
+    company: PG
+    tests:
+    - test: online assessment
+      url: https://www.assessmentday.co.uk/profiles/pg-online-assessment.html
+  pwc:
+    company: PwC
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/pwc-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/pwc-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/pwc-verbal.html
+  pwc-application-advice:
+    company: PWC Application Advice
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/pwc-application-advice.html
+  pwc-interview:
+    company: PWC Interview
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/pwc-interview.html
+  rbs:
+    company: RBS
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/rbs-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/rbs-numerical.html
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/rbs-sjt.html
+  rolls:
+    company: Rolls
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/rolls-numerical.html
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/rolls-sjt.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/rolls-verbal.html
+  royal-mail:
+    company: Royal Mail
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/royal-mail.html
+  samsung:
+    company: Samsung
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/samsung.html
+  santander:
+    company: Santander
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/santander-numerical.html
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/santander-sjt.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/santander-verbal.html
+  shell:
+    company: Shell
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/shell-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/shell-numerical.html
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/shell-sjt.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/shell-verbal.html
+  simmons-simmons:
+    company: Simmons Simmons
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/simmons-simmons-logical.html
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/simmons-simmons-sjt.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/simmons-simmons-verbal.html
+  sky:
+    company: SKY
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/sky-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/sky-numerical.html
+    - test: situational strengths test
+      url: https://www.assessmentday.co.uk/profiles/sky-situational-strengths-test.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/sky-verbal.html
+  suisse:
+    company: Suisse
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/suisse-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/suisse-verbal.html
+  teach-first:
+    company: Teach First
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/teach-first.html
+  toyota:
+    company: Toyota
+    tests:
+    - test: mechanical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/toyota-mechanical.html
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/toyota-sjt.html
+  ubs:
+    company: UBS
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/ubs-numerical.html
+    - test: situational judgement test
+      url: https://www.assessmentday.co.uk/profiles/ubs-sjt.html
+  ubs-online:
+    company: UBS Online
+    tests:
+    - test: practice test
+      url: https://www.assessmentday.co.uk/profiles/ubs-online-test.html
+  unilever:
+    company: Unilever
+    tests:
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/unilever-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/unilever-verbal.html
+  virgin:
+    company: Virgin
+    tests:
+    - test: logical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/virgin-logical.html
+    - test: numerical reasoning test
+      url: https://www.assessmentday.co.uk/profiles/virgin-numerical.html
+    - test: verbal reasoning test
+      url: https://www.assessmentday.co.uk/profiles/virgin-verbal.html

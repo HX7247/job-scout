@@ -1,0 +1,4150 @@
+meta:
+  generated: '2026-09-28T04:47:34'
+  generator: tools/discover_startups.py
+  yc_source: https://yc-oss.github.io/api/companies/hiring.json
+  stats:
+    curated:
+      tried: 150
+      verified: 129
+    yc:
+      hiring: 1483
+      active_hiring: 1471
+      probed: 450
+      verified: 218
+      unverified_name: 4
+      rejected_mismatch: 1
+    requests_used: 2479
+    entries: 353
+    by_ats:
+      ashby: 155
+      workday: 92
+      greenhouse: 77
+      recruitee: 7
+      lever: 20
+      workable: 1
+      smartrecruiters: 1
+    startup_true: 195
+companies:
+- company: Abacum
+  ats: ashby
+  slug: abacum
+  jobs_seen: 15
+  source: yc-oss
+  yc_batch: W21
+  team_size: 125
+  startup: true
+  startup_evidence: YC W21, 125 staff
+  website: https://www.abacum.ai/
+  location: New York City, NY, USA
+  sample_title: Senior Back End Engineer (Integrations)
+  name_check: match
+- company: Abbott
+  ats: workday
+  slug: abbott:wd5:abbottcareers
+  jobs_seen: 2000
+  startup: false
+  startup_evidence: global healthcare
+  source: curated
+  market: UK
+  sample_title: Sampling Specialist
+- company: Adaptyv
+  ats: ashby
+  slug: adaptyv
+  jobs_seen: 31
+  source: yc-oss
+  yc_batch: S21
+  team_size: 25
+  startup: true
+  startup_evidence: YC S21, 25 staff
+  website: https://www.adaptyvbio.com/
+  location: Lausanne, VD, Switzerland
+  sample_title: Data Scientist, Lab & Protein Data
+  name_check: match
+- company: Adobe
+  ats: workday
+  slug: adobe:wd5:external_experienced
+  jobs_seen: 566
+  startup: false
+  startup_evidence: software company
+  source: curated
+  market: US
+  sample_title: Forward Deployed Engineer
+- company: Affirm
+  ats: greenhouse
+  slug: affirm
+  jobs_seen: 179
+  startup: false
+  startup_evidence: listed company (2012)
+  founded: 2012
+  source: curated
+  market: US
+  sample_title: Administrative Assistant IV
+  name_check: match
+- company: Agave
+  ats: ashby
+  slug: agave
+  jobs_seen: 10
+  source: yc-oss
+  yc_batch: W22
+  team_size: 50
+  startup: true
+  startup_evidence: YC W22, 50 staff
+  website: https://www.useagave.com
+  location: San Francisco, CA, USA
+  sample_title: Product Manager
+  name_check: match
+- company: AIG
+  ats: workday
+  slug: aig:wd1:early_careers
+  jobs_seen: 47
+  startup: false
+  startup_evidence: global insurer - early careers site
+  source: curated
+  market: UK
+  sample_title: '2027 Early Careers: Summer Intern, Multinational – Bermuda'
+- company: AIOS
+  ats: ashby
+  slug: aios
+  jobs_seen: 14
+  source: yc-oss
+  yc_batch: W20
+  team_size: 100
+  startup: true
+  startup_evidence: YC W20, 100 staff
+  website: https://www.aiosmedical.com/
+  location: San Francisco, CA, USA; Remote
+  sample_title: Product Growth Lead (Referrals & Viral Loops) at AIOS — Remote, $200k-$400k/yr
+    + 0.15%-0.50%
+  name_check: match
+- company: AiPrise
+  ats: ashby
+  slug: aiprise
+  jobs_seen: 15
+  source: yc-oss
+  yc_batch: S22
+  team_size: 65
+  startup: true
+  startup_evidence: YC S22, 65 staff
+  website: https://aiprise.com/
+  location: San Francisco, CA, USA
+  sample_title: Head of Customer Engineering
+  name_check: match
+- company: Airbnb
+  ats: greenhouse
+  slug: airbnb
+  jobs_seen: 159
+  startup: false
+  startup_evidence: listed company (YC W09)
+  founded: 2008
+  source: curated
+  market: US
+  sample_title: Accountant
+  name_check: match
+- company: Airbus
+  ats: workday
+  slug: ag:wd3:Airbus
+  jobs_seen: 2000
+  startup: false
+  startup_evidence: aerospace manufacturer
+  source: curated
+  market: UK
+  sample_title: Finance Platform Intern
+- company: Akuna Capital
+  ats: greenhouse
+  slug: akunacapital
+  jobs_seen: 42
+  startup: false
+  startup_evidence: established trading firm (2011)
+  founded: 2011
+  source: curated
+  market: US
+  sample_title: 'Accounting Intern (Term-Time, Part-Time) '
+  name_check: match
+- company: Albedo
+  ats: greenhouse
+  slug: albedo
+  jobs_seen: 7
+  source: yc-oss
+  yc_batch: W21
+  team_size: 55
+  startup: true
+  startup_evidence: YC W21, 55 staff
+  website: https://albedo.com
+  location: Denver, CO, USA
+  sample_title: Business Development and Capture Manager
+  name_check: match
+- company: Aleph
+  ats: ashby
+  slug: aleph
+  jobs_seen: 13
+  source: yc-oss
+  yc_batch: S21
+  team_size: 30
+  startup: true
+  startup_evidence: YC S21, 30 staff
+  website: https://getaleph.com/
+  location: New York City, NY, USA; Remote
+  sample_title: Strategic Business Development Lead
+  name_check: match
+- company: Algolia
+  ats: greenhouse
+  slug: algolia
+  jobs_seen: 35
+  source: yc-oss
+  yc_batch: W14
+  team_size: 810
+  startup: false
+  startup_evidence: YC W14, 810 staff
+  website: http://www.algolia.com
+  location: San Francisco, CA, USA; Paris, Île-de-France, France
+  sample_title: 'Account Manager - Dutch speaking '
+  name_check: match
+- company: Alpaca
+  ats: greenhouse
+  slug: alpaca
+  jobs_seen: 71
+  source: yc-oss
+  yc_batch: W19
+  team_size: 150
+  startup: true
+  startup_evidence: YC W19, 150 staff
+  website: https://alpaca.markets/
+  location: San Francisco, CA, USA; San Mateo, CA, USA; Remote
+  sample_title: Account Executive - US
+  name_check: match
+- company: Amgen
+  ats: workday
+  slug: amgen:wd1:Careers
+  jobs_seen: 1725
+  startup: false
+  startup_evidence: biotech
+  source: curated
+  market: US
+  sample_title: District Promotion Manager
+- company: Anduril
+  ats: greenhouse
+  slug: andurilindustries
+  jobs_seen: 2371
+  startup: false
+  startup_evidence: defence tech (2017, 4,000+ staff)
+  founded: 2017
+  source: curated
+  market: US
+  sample_title: 2026 Early Career Electrical Engineer
+  name_check: match
+- company: Anima
+  ats: ashby
+  slug: anima
+  jobs_seen: 9
+  source: yc-oss
+  yc_batch: W21
+  team_size: 20
+  startup: true
+  startup_evidence: YC W21, 20 staff
+  website: http://www.animahealth.com
+  location: London, England, United Kingdom; Remote
+  sample_title: Clinical Engineer
+  name_check: match
+- company: Ankura
+  ats: workday
+  slug: ankura:wd5:Ankura
+  jobs_seen: 103
+  startup: false
+  startup_evidence: consulting firm
+  source: curated
+  market: UK
+  sample_title: University Associate, Disputes & Economics - Financial Services Advisory
+    (NYC)
+- company: AON3D
+  ats: greenhouse
+  slug: aon3d
+  jobs_seen: 2
+  source: yc-oss
+  yc_batch: W17
+  team_size: 40
+  startup: true
+  startup_evidence: YC W17, 40 staff
+  website: https://www.aon3d.com
+  location: Montreal, QC, Canada
+  sample_title: Director, Customer Success
+  name_check: match
+- company: Apollo.io
+  ats: greenhouse
+  slug: apolloio
+  jobs_seen: 50
+  source: yc-oss
+  yc_batch: W16
+  team_size: 800
+  startup: false
+  startup_evidence: YC W16, 800 staff
+  website: https://www.apollo.io/
+  location: San Francisco, CA, USA; Remote
+  sample_title: Account Executive / Account Manager, MM (India)
+  name_check: match
+- company: Arketa
+  ats: ashby
+  slug: arketa
+  jobs_seen: 15
+  source: yc-oss
+  yc_batch: S20
+  team_size: 55
+  startup: true
+  startup_evidence: YC S20, 55 staff
+  website: https://arketa.com
+  location: New York City, NY, USA; Remote
+  sample_title: Sales Account Executive - SMB
+  name_check: match
+- company: ARQ
+  ats: ashby
+  slug: arq
+  jobs_seen: 34
+  source: yc-oss
+  yc_batch: S21
+  team_size: 100
+  startup: true
+  startup_evidence: YC S21, 100 staff
+  website: https://www.arqfinance.com/
+  location: London, England, United Kingdom
+  sample_title: Customer Support Agent
+  name_check: unverified
+- company: Arriva
+  ats: workday
+  slug: arriva:wd3:Careers
+  jobs_seen: 187
+  startup: false
+  startup_evidence: transport operator
+  source: curated
+  market: UK
+  sample_title: Senior Project Planner
+- company: Artisan
+  ats: ashby
+  slug: artisan
+  jobs_seen: 4
+  source: yc-oss
+  yc_batch: W24
+  team_size: 50
+  startup: true
+  startup_evidence: YC W24, 50 staff
+  website: https://artisan.co/?utm_source=ycombinator
+  location: San Francisco, CA, USA
+  sample_title: Forward Deployed GTM Architect
+  name_check: match
+- company: Ashby
+  ats: ashby
+  slug: ashby
+  jobs_seen: 66
+  source: yc-oss
+  yc_batch: W19
+  team_size: 110
+  startup: true
+  startup_evidence: YC W19, 110 staff
+  website: https://www.ashbyhq.com
+  location: San Francisco, CA, USA; Remote
+  sample_title: Engineering Manager - EU
+  name_check: match
+- company: AssemblyAI
+  ats: greenhouse
+  slug: assemblyai
+  jobs_seen: 10
+  source: yc-oss
+  yc_batch: S17
+  team_size: 65
+  startup: true
+  startup_evidence: YC S17, 65 staff
+  website: https://www.assemblyai.com
+  location: New York City, NY, USA; Remote
+  sample_title: Commercial Counsel
+  name_check: match
+- company: AstraZeneca
+  ats: workday
+  slug: astrazeneca:wd3:Emerging-Talent
+  jobs_seen: 21
+  startup: false
+  startup_evidence: FTSE 100 pharma - emerging talent site
+  source: curated
+  market: UK
+  sample_title: '6–9-Month University Industrial Placement Student (UIPS): Country
+    Regulatory & Quality Affairs (CRQA)'
+- company: AtkinsRealis
+  ats: workday
+  slug: slihrms:wd3:Careers
+  jobs_seen: 2000
+  startup: false
+  startup_evidence: engineering consultancy
+  source: curated
+  market: UK
+  sample_title: Regional Delivery Manager - Talent Acquisition
+- company: AtoB
+  ats: ashby
+  slug: atob
+  jobs_seen: 9
+  source: yc-oss
+  yc_batch: S20
+  team_size: 75
+  startup: true
+  startup_evidence: YC S20, 75 staff
+  website: https://atob.com/
+  location: San Francisco, CA, USA
+  sample_title: Head of Sales, SMB
+  name_check: match
+- company: Atomic
+  ats: ashby
+  slug: atomic
+  jobs_seen: 7
+  source: yc-oss
+  yc_batch: S20
+  team_size: 25
+  startup: true
+  startup_evidence: YC S20, 25 staff
+  website: https://www.atomicvest.com/
+  location: San Francisco, CA, USA; Remote
+  sample_title: Co-found with Atomic
+  name_check: match
+- company: Atomic Industries
+  ats: ashby
+  slug: atomic
+  jobs_seen: 7
+  source: yc-oss
+  yc_batch: W21
+  team_size: 60
+  startup: true
+  startup_evidence: YC W21, 60 staff
+  website: http://atomic.industries
+  location: Cleveland, OH, USA
+  sample_title: Co-found with Atomic
+  name_check: match
+- company: authzed
+  ats: ashby
+  slug: authzed
+  jobs_seen: 5
+  source: yc-oss
+  yc_batch: W21
+  team_size: 31
+  startup: true
+  startup_evidence: YC W21, 31 staff
+  website: https://authzed.com
+  location: New York City, NY, USA; Remote
+  sample_title: Senior Site Reliability Engineer, Security
+  name_check: match
+- company: Autodesk
+  ats: workday
+  slug: autodesk:wd1:uni
+  jobs_seen: 27
+  startup: false
+  startup_evidence: software company - university site
+  source: curated
+  market: UK
+  sample_title: Intern, Software Development Engineer [PSET-Localization]
+- company: AWE
+  ats: workday
+  slug: awepeople:wd3:Grad_Careers
+  jobs_seen: 11
+  startup: false
+  startup_evidence: UK defence establishment - graduate site
+  source: curated
+  market: UK
+  sample_title: Year in Industry- Analytical Radiochemistry
+- company: Bank of America
+  ats: workday
+  slug: ghr:wd1:Lateral-US
+  jobs_seen: 1950
+  startup: false
+  startup_evidence: US bank
+  source: curated
+  market: US
+  sample_title: Credit Officer II - Registered - Global Wealth & Investment Management
+    - Securities Based Lending Specialist - Los Angeles
+- company: Barclays
+  ats: workday
+  slug: barclays:wd3:External_Career_Site_Barclays
+  jobs_seen: 784
+  startup: false
+  startup_evidence: FTSE 100 bank
+  source: curated
+  market: UK
+  sample_title: Release Train Engineer
+- company: BBVA
+  ats: workday
+  slug: bbva:wd3:BBVA
+  jobs_seen: 621
+  startup: false
+  startup_evidence: global bank
+  source: curated
+  market: UK
+  sample_title: Asesor de recuperación (División SUR, Puebla, Coatzacoalcos, Tlaxcala,
+    Córdoba)
+- company: BeGo
+  ats: recruitee
+  slug: bego
+  jobs_seen: 10
+  source: yc-oss
+  yc_batch: W20
+  team_size: 65
+  startup: true
+  startup_evidence: YC W20, 65 staff
+  website: http://www.bego.ai
+  location: San Francisco, CA, USA
+  sample_title: Werkstudent (m/w/d) Kundenbetreuung & Digitalisierung
+  name_check: match
+- company: Belvo
+  ats: ashby
+  slug: belvo
+  jobs_seen: 4
+  source: yc-oss
+  yc_batch: W20
+  team_size: 100
+  startup: true
+  startup_evidence: YC W20, 100 staff
+  website: https://belvo.com
+  location: São Paulo, SP, Brazil
+  sample_title: 'CV for Future Opportunities '
+  name_check: match
+- company: Benepass
+  ats: ashby
+  slug: benepass
+  jobs_seen: 5
+  source: yc-oss
+  yc_batch: W20
+  team_size: 45
+  startup: true
+  startup_evidence: YC W20, 45 staff
+  website: http://www.getbenepass.com
+  location: New York City, NY, USA; New York, NY, USA
+  sample_title: Lead Product Manager
+  name_check: match
+- company: BioRender
+  ats: lever
+  slug: biorender
+  jobs_seen: 1
+  source: yc-oss
+  yc_batch: W18
+  team_size: 250
+  startup: true
+  startup_evidence: YC W18, 250 staff
+  website: https://www.biorender.com
+  location: Toronto, ON, Canada; Remote
+  sample_title: '[simran] Test Job'
+  name_check: unverified
+- company: Bitmovin
+  ats: greenhouse
+  slug: bitmovin
+  jobs_seen: 12
+  source: yc-oss
+  yc_batch: S15
+  team_size: 145
+  startup: true
+  startup_evidence: YC S15, 145 staff
+  website: http://bitmovin.com
+  location: San Francisco, CA, USA
+  sample_title: AI & Beyond Incubator (Ongoing Intake)
+  name_check: match
+- company: BlackRock
+  ats: workday
+  slug: blackrock:wd1:BlackRock_Professional
+  jobs_seen: 315
+  startup: false
+  startup_evidence: global asset manager
+  source: curated
+  market: UK
+  sample_title: Post Trade Product Manager, Aladdin Product, Associate
+- company: Blackstone
+  ats: workday
+  slug: blackstone:wd1:Blackstone_Campus_Careers
+  jobs_seen: 36
+  startup: false
+  startup_evidence: global asset manager - campus site
+  source: curated
+  market: UK
+  sample_title: 2027 Real Estate Finance, Off Cycle Intern (January to June), Singapore
+- company: Blissway
+  ats: ashby
+  slug: blissway
+  jobs_seen: 8
+  source: yc-oss
+  yc_batch: S20
+  team_size: 22
+  startup: true
+  startup_evidence: YC S20, 22 staff
+  website: https://www.blissway.com/
+  location: Denver, CO, USA
+  sample_title: 'Electrical Engineer, Recent Graduate '
+  name_check: match
+- company: Boeing
+  ats: workday
+  slug: boeing:wd1:INTERN
+  jobs_seen: 28
+  startup: false
+  startup_evidence: aerospace - intern site
+  source: curated
+  market: US
+  sample_title: Boeing Summer 2027 Internship Program (PAID) – Finance (Evergreen)
+- company: Boeing
+  ats: workday
+  slug: boeing:wd1:EXTERNAL_CAREERS
+  jobs_seen: 734
+  startup: false
+  startup_evidence: aerospace manufacturer
+  source: curated
+  market: US
+  sample_title: Associate Systems Engineer – Fighter Vehicle Health
+- company: bp
+  ats: workday
+  slug: bpinternational:wd3:bpCareers
+  jobs_seen: 330
+  startup: false
+  startup_evidence: FTSE 100 energy major
+  source: curated
+  market: UK
+  sample_title: Project Planner
+- company: Bristol Myers Squibb
+  ats: workday
+  slug: bristolmyerssquibb:wd5:BMS
+  jobs_seen: 703
+  startup: false
+  startup_evidence: global pharma
+  source: curated
+  market: US
+  sample_title: Account Executive
+- company: Broccoli AI
+  ats: ashby
+  slug: broccoli
+  jobs_seen: 37
+  source: yc-oss
+  yc_batch: W22
+  team_size: 85
+  startup: true
+  startup_evidence: YC W22, 85 staff
+  website: https://www.broccoli.com/
+  location: San Francisco, CA, USA
+  sample_title: Implementation Manager
+  name_check: match
+- company: Bunkerhill Health
+  ats: ashby
+  slug: bunkerhillhealth
+  jobs_seen: 5
+  source: yc-oss
+  yc_batch: W19
+  team_size: 30
+  startup: true
+  startup_evidence: YC W19, 30 staff
+  website: http://bunkerhillhealth.com
+  location: San Francisco, CA, USA
+  sample_title: Couldn't find the right opportunity?
+  name_check: match
+- company: Cambio
+  ats: ashby
+  slug: cambio
+  jobs_seen: 7
+  source: yc-oss
+  yc_batch: S22
+  team_size: 60
+  startup: true
+  startup_evidence: YC S22, 60 staff
+  website: https://www.cambio.ai/
+  location: San Francisco, CA, USA
+  sample_title: Enterprise Account Executive
+  name_check: match
+- company: Canary Technologies
+  ats: lever
+  slug: canarytechnologies
+  jobs_seen: 35
+  source: yc-oss
+  yc_batch: S18
+  team_size: 150
+  startup: true
+  startup_evidence: YC S18, 150 staff
+  website: https://www.canarytechnologies.com
+  location: New York City, NY, USA; San Francisco, CA, USA
+  sample_title: Associate Account Executive - DACH (German Speaking)
+  name_check: match
+- company: Canonical
+  ats: greenhouse
+  slug: canonical
+  jobs_seen: 306
+  startup: false
+  startup_evidence: established company (2004)
+  founded: 2004
+  source: curated
+  market: UK
+  sample_title: Accountant
+  name_check: match
+- company: Capi Money
+  ats: ashby
+  slug: capimoney
+  jobs_seen: 7
+  source: yc-oss
+  yc_batch: S23
+  team_size: 40
+  startup: true
+  startup_evidence: YC S23, 40 staff
+  website: https://www.capimoney.com
+  location: London, England, United Kingdom
+  sample_title: Senior Sales Manager - Bamako
+  name_check: match
+- company: Capital One
+  ats: workday
+  slug: capitalone:wd12:Capital_One
+  jobs_seen: 1862
+  startup: false
+  startup_evidence: US bank with UK graduate scheme
+  source: curated
+  market: UK
+  sample_title: Sr. Operations Representative
+- company: CaptivateIQ
+  ats: lever
+  slug: captivateiq
+  jobs_seen: 28
+  source: yc-oss
+  yc_batch: W18
+  team_size: 280
+  startup: true
+  startup_evidence: YC W18, 280 staff
+  website: https://www.captivateiq.com
+  location: San Francisco, CA, USA; Remote
+  sample_title: Account Director
+  name_check: match
+- company: CarbonChain
+  ats: greenhouse
+  slug: carbonchain
+  jobs_seen: 2
+  source: yc-oss
+  yc_batch: S20
+  team_size: 16
+  startup: true
+  startup_evidence: YC S20, 16 staff
+  website: https://carbonchain.com
+  location: London, England, United Kingdom
+  sample_title: Executive Assistant & Office Manager (Climate Tech)
+  name_check: match
+- company: Caribou
+  ats: ashby
+  slug: caribou
+  jobs_seen: 3
+  source: yc-oss
+  yc_batch: W19
+  team_size: 10
+  startup: true
+  startup_evidence: YC W19, 10 staff
+  website: https://usecaribou.com
+  location: Lisbon, Lisbon, Portugal
+  sample_title: Senior Transfer Pricing Manager
+  name_check: match
+- company: Caterpillar
+  ats: workday
+  slug: cat:wd5:CaterpillarCareers
+  jobs_seen: 986
+  startup: false
+  startup_evidence: heavy equipment manufacturer
+  source: curated
+  market: US
+  sample_title: Project Coordinator Intern
+- company: Centrica
+  ats: workday
+  slug: centrica:wd3:Centrica
+  jobs_seen: 54
+  startup: false
+  startup_evidence: FTSE 100 energy group
+  source: curated
+  market: UK
+  sample_title: Senior LNG Trading Analyst
+- company: Checkr
+  ats: greenhouse
+  slug: checkr
+  jobs_seen: 49
+  source: yc-oss
+  yc_batch: S14
+  team_size: 800
+  startup: false
+  startup_evidence: YC S14, 800 staff
+  website: http://www.checkr.com
+  location: San Francisco, CA, USA
+  sample_title: Accounts Receivable Lead
+  name_check: match
+- company: Chime
+  ats: greenhouse
+  slug: chime
+  jobs_seen: 66
+  startup: false
+  startup_evidence: listed company (2012)
+  founded: 2012
+  source: curated
+  market: US
+  sample_title: Associate Creative Director, Growth Marketing
+  name_check: match
+- company: Cinder
+  ats: ashby
+  slug: cinder
+  jobs_seen: 9
+  source: yc-oss
+  yc_batch: W22
+  team_size: 30
+  startup: true
+  startup_evidence: YC W22, 30 staff
+  website: https://cinder.ai
+  location: New York City, NY, USA
+  sample_title: Senior Software Engineer - Full Stack
+  name_check: match
+- company: CircuitHub
+  ats: ashby
+  slug: circuithub
+  jobs_seen: 8
+  source: yc-oss
+  yc_batch: W12
+  team_size: 58
+  startup: false
+  startup_evidence: YC W12, 58 staff
+  website: https://circuithub.com
+  location: London, England, United Kingdom
+  sample_title: Full-Stack Robotics Engineer
+  name_check: match
+- company: Citi
+  ats: workday
+  slug: citi:wd5:2
+  jobs_seen: 2000
+  startup: false
+  startup_evidence: global bank
+  source: curated
+  market: UK
+  sample_title: Java Spark developer
+- company: ClaimSorted
+  ats: ashby
+  slug: claimsorted
+  jobs_seen: 13
+  source: yc-oss
+  yc_batch: S24
+  team_size: 20
+  startup: true
+  startup_evidence: YC S24, 20 staff
+  website: https://claimsorted.com
+  location: London, England, United Kingdom
+  sample_title: 'Claims Handler-General  '
+  name_check: match
+- company: ClassDojo
+  ats: ashby
+  slug: classdojo
+  jobs_seen: 10
+  source: yc-oss
+  yc_batch: S12
+  team_size: 100
+  startup: false
+  startup_evidence: YC S12, 100 staff
+  website: http://www.classdojo.com
+  location: San Francisco, CA, USA; Remote
+  sample_title: 0→1 Product Leader
+  name_check: match
+- company: Clipboard
+  ats: ashby
+  slug: clipboard
+  jobs_seen: 36
+  source: yc-oss
+  yc_batch: W17
+  team_size: 1000
+  startup: false
+  startup_evidence: YC W17, 1000 staff
+  website: https://www.clipboardworks.com/careers
+  location: San Francisco, CA, USA
+  sample_title: S&O Senior Associate
+  name_check: match
+- company: Coca-Cola
+  ats: workday
+  slug: coke:wd1:coca-cola-careers
+  jobs_seen: 213
+  startup: false
+  startup_evidence: global FMCG
+  source: curated
+  market: US
+  sample_title: Assistant Scientist, Stills, GDI
+- company: Comena
+  ats: ashby
+  slug: comena
+  jobs_seen: 6
+  source: yc-oss
+  yc_batch: S25
+  team_size: 8
+  startup: true
+  startup_evidence: YC S25, 8 staff
+  website: https://comena.ai
+  location: BY, Germany
+  sample_title: GTM Intern
+  name_check: match
+- company: Commonwealth Bank
+  ats: workday
+  slug: cba:wd3:CommBank_Careers
+  jobs_seen: 150
+  startup: false
+  startup_evidence: ASX-listed bank
+  source: curated
+  market: AU
+  sample_title: Customer Banking Specialist - Northpark (32.5hrs/wk)
+- company: Complir
+  ats: ashby
+  slug: complir
+  jobs_seen: 3
+  source: yc-oss
+  yc_batch: X26
+  team_size: 13
+  startup: true
+  startup_evidence: YC X26, 13 staff
+  website: https://complir.io/
+  location: Copenhagen, Denmark
+  sample_title: Product Engineer
+  name_check: match
+- company: Conveo
+  ats: ashby
+  slug: conveo
+  jobs_seen: 16
+  source: yc-oss
+  yc_batch: S24
+  team_size: 90
+  startup: true
+  startup_evidence: YC S24, 90 staff
+  website: https://conveo.ai/
+  location: London, England, United Kingdom
+  sample_title: Client Growth Manager - UK/Europe
+  name_check: match
+- company: Cosine
+  ats: ashby
+  slug: cosine
+  jobs_seen: 2
+  source: yc-oss
+  yc_batch: W23
+  team_size: 12
+  startup: true
+  startup_evidence: YC W23, 12 staff
+  website: http://www.cosine.sh
+  location: London, England, United Kingdom
+  sample_title: Forward Deployed Product Engineer
+  name_check: match
+- company: Culdesac
+  ats: lever
+  slug: culdesac
+  jobs_seen: 2
+  source: yc-oss
+  yc_batch: S18
+  team_size: 100
+  startup: true
+  startup_evidence: YC S18, 100 staff
+  website: http://culdesac.com
+  location: San Francisco, CA, USA; Tempe, AZ, USA
+  sample_title: Leasing & Community Operations Coordinator
+  name_check: match
+- company: Curri
+  ats: ashby
+  slug: curri
+  jobs_seen: 20
+  source: yc-oss
+  yc_batch: S19
+  team_size: 104
+  startup: true
+  startup_evidence: YC S19, 104 staff
+  website: http://www.curri.com
+  location: Los Angeles, CA, USA
+  sample_title: 'FP&A Director '
+  name_check: match
+- company: Datafold
+  ats: ashby
+  slug: datafold
+  jobs_seen: 3
+  source: yc-oss
+  yc_batch: S20
+  team_size: 30
+  startup: true
+  startup_evidence: YC S20, 30 staff
+  website: https://datafold.com
+  location: New York City, NY, USA; Remote
+  sample_title: Forward Deployed Data Engineer - US
+  name_check: match
+- company: Deepgram
+  ats: ashby
+  slug: deepgram
+  jobs_seen: 91
+  source: yc-oss
+  yc_batch: W16
+  team_size: 115
+  startup: true
+  startup_evidence: YC W16, 115 staff
+  website: https://www.deepgram.com
+  location: San Francisco, CA, USA; Remote
+  sample_title: Pre-Sales Solutions Engineer (EST or PST)
+  name_check: match
+- company: Deutsche Bank
+  ats: workday
+  slug: db:wd3:DBWebsite
+  jobs_seen: 1139
+  startup: false
+  startup_evidence: global bank
+  source: curated
+  market: UK
+  sample_title: Private Banking Manager, AVP
+- company: Diligent
+  ats: greenhouse
+  slug: diligent
+  jobs_seen: 6
+  source: yc-oss
+  yc_batch: S23
+  team_size: 10
+  startup: true
+  startup_evidence: YC S23, 10 staff
+  website: https://godiligent.ai
+  location: London, England, United Kingdom
+  sample_title: Crane Operator – Class B CDL
+  name_check: match
+- company: doola
+  ats: lever
+  slug: doola
+  jobs_seen: 8
+  source: yc-oss
+  yc_batch: S20
+  team_size: 43
+  startup: true
+  startup_evidence: YC S20, 43 staff
+  website: https://www.doola.com/
+  location: New York City, NY, USA; New York, NY, USA
+  sample_title: Account Executive
+  name_check: match
+- company: Doppler
+  ats: ashby
+  slug: doppler
+  jobs_seen: 1
+  source: yc-oss
+  yc_batch: W19
+  team_size: 25
+  startup: true
+  startup_evidence: YC W19, 25 staff
+  website: https://doppler.com
+  location: Austin, TX, USA; Remote
+  sample_title: 'General Application '
+  name_check: match
+- company: Double
+  ats: ashby
+  slug: double
+  jobs_seen: 3
+  source: yc-oss
+  yc_batch: S21
+  team_size: 80
+  startup: true
+  startup_evidence: YC S21, 80 staff
+  website: https://www.doublehq.com
+  location: New York City, NY, USA; Remote
+  sample_title: Customer Success Manager
+  name_check: match
+- company: Dropbox
+  ats: greenhouse
+  slug: dropbox
+  jobs_seen: 44
+  startup: false
+  startup_evidence: listed company (YC S07)
+  founded: 2007
+  source: curated
+  market: US
+  sample_title: Account Executive
+  name_check: match
+- company: DRW
+  ats: greenhouse
+  slug: drweng
+  jobs_seen: 165
+  startup: false
+  startup_evidence: established trading firm (1992)
+  founded: 1992
+  source: curated
+  market: UK
+  sample_title: Administrative Assistant - FICCO Trading Group
+  name_check: match
+- company: Duffel
+  ats: ashby
+  slug: duffel
+  jobs_seen: 13
+  source: yc-oss
+  yc_batch: S18
+  team_size: 55
+  startup: true
+  startup_evidence: YC S18, 55 staff
+  website: https://duffel.com/
+  location: London, England, United Kingdom
+  sample_title: Travel Support Consultant, US
+  name_check: match
+- company: Duolingo
+  ats: greenhouse
+  slug: duolingo
+  jobs_seen: 82
+  startup: false
+  startup_evidence: listed company (2011)
+  founded: 2011
+  source: curated
+  market: US
+  sample_title: Ad Sales Lead - West
+  name_check: match
+- company: DXC Technology
+  ats: workday
+  slug: dxctechnology:wd1:DXCJobs
+  jobs_seen: 1087
+  startup: false
+  startup_evidence: IT services
+  source: curated
+  market: AU
+  sample_title: Hybrid Cloud & Migration Services Intern
+- company: Eight Sleep
+  ats: ashby
+  slug: eightsleep
+  jobs_seen: 43
+  source: yc-oss
+  yc_batch: S15
+  team_size: 100
+  startup: true
+  startup_evidence: YC S15, 100 staff
+  website: http://eightsleep.com
+  location: New York City, NY, USA; New York, NY, USA; Remote
+  sample_title: Business Operations Manager (NY or SF)
+  name_check: match
+- company: Ello
+  ats: ashby
+  slug: ello
+  jobs_seen: 3
+  source: yc-oss
+  yc_batch: W20
+  team_size: 45
+  startup: true
+  startup_evidence: YC W20, 45 staff
+  website: https://www.ello.com
+  location: San Francisco, CA, USA
+  sample_title: General / Opportunistic Application
+  name_check: match
+- company: Elyos AI
+  ats: ashby
+  slug: elyos
+  jobs_seen: 7
+  source: yc-oss
+  yc_batch: S23
+  team_size: 20
+  startup: true
+  startup_evidence: YC S23, 20 staff
+  website: https://www.elyos.ai/
+  location: London, England, United Kingdom
+  sample_title: Senior Account Executive
+  name_check: match
+- company: Encord
+  ats: ashby
+  slug: encord
+  jobs_seen: 39
+  source: yc-oss
+  yc_batch: W21
+  team_size: 150
+  startup: true
+  startup_evidence: YC W21, 150 staff
+  website: https://encord.com
+  location: London, England, United Kingdom
+  sample_title: GTM Talent Partner
+  name_check: match
+- company: Enode
+  ats: ashby
+  slug: enode
+  jobs_seen: 9
+  source: yc-oss
+  yc_batch: W21
+  team_size: 70
+  startup: true
+  startup_evidence: YC W21, 70 staff
+  website: http://www.enode.com
+  location: Oslo, Oslo, Norway; Remote
+  sample_title: Senior Software Engineer (Home Energy)
+  name_check: match
+- company: Epic Games
+  ats: greenhouse
+  slug: epicgames
+  jobs_seen: 154
+  startup: false
+  startup_evidence: established company (1991)
+  founded: 1991
+  source: curated
+  market: US
+  sample_title: AI Programmer
+  name_check: match
+- company: Equinor
+  ats: workday
+  slug: equinor:wd3:EQNR
+  jobs_seen: 10
+  startup: false
+  startup_evidence: energy major
+  source: curated
+  market: UK
+  sample_title: Summer Internship 2027 US - Market Analysis & Trading
+- company: Escape
+  ats: ashby
+  slug: escape
+  jobs_seen: 4
+  source: yc-oss
+  yc_batch: W23
+  team_size: 29
+  startup: true
+  startup_evidence: YC W23, 29 staff
+  website: https://escape.tech
+  location: Paris, Île-de-France, France
+  sample_title: 'Senior Backend Engineer | Cybersecurity AI AppSec '
+  name_check: match
+- company: Faire
+  ats: greenhouse
+  slug: faire
+  jobs_seen: 76
+  source: yc-oss
+  yc_batch: W17
+  team_size: 900
+  startup: false
+  startup_evidence: YC W17, 900 staff
+  website: https://www.faire.com/
+  location: San Francisco, CA, USA
+  sample_title: Account Executive Bilingual (Spanish/English)
+  name_check: match
+- company: FamPay
+  ats: lever
+  slug: fampay
+  jobs_seen: 15
+  source: yc-oss
+  yc_batch: S19
+  team_size: 24
+  startup: true
+  startup_evidence: YC S19, 24 staff
+  website: https://fampay.in
+  location: Bengaluru, KA, India
+  sample_title: Assistant Manager(Controllership)
+  name_check: match
+- company: Fieldguide
+  ats: ashby
+  slug: fieldguide
+  jobs_seen: 43
+  source: yc-oss
+  yc_batch: S20
+  team_size: 200
+  startup: true
+  startup_evidence: YC S20, 200 staff
+  website: http://fieldguide.com
+  location: San Francisco, CA, USA
+  sample_title: Senior Infrastructure Engineer
+  name_check: match
+- company: Financial Conduct Authority
+  ats: workday
+  slug: fca:wd3:fca_careers
+  jobs_seen: 11
+  startup: false
+  startup_evidence: UK regulator
+  source: curated
+  market: UK
+  sample_title: Senior Benchmarks Supervision Associate
+- company: Finch
+  ats: ashby
+  slug: finch
+  jobs_seen: 3
+  source: yc-oss
+  yc_batch: S20
+  team_size: 73
+  startup: true
+  startup_evidence: YC S20, 73 staff
+  website: https://tryfinch.com
+  location: San Francisco, CA, USA
+  sample_title: Product Designer
+  name_check: match
+- company: Finni Health
+  ats: ashby
+  slug: finni-health
+  jobs_seen: 131
+  source: yc-oss
+  yc_batch: W23
+  team_size: 40
+  startup: true
+  startup_evidence: YC W23, 40 staff
+  website: https://www.finnihealth.com/
+  location: ''
+  sample_title: Start your ABA practice in Colorado! (BCBAs)
+  name_check: match
+- company: Finto
+  ats: ashby
+  slug: finto
+  jobs_seen: 7
+  source: yc-oss
+  yc_batch: S25
+  team_size: 10
+  startup: true
+  startup_evidence: YC S25, 10 staff
+  website: https://www.gofinto.com/
+  location: Munich, BY, Germany
+  sample_title: SAP Integration Architect
+  name_check: match
+- company: Five Rings
+  ats: greenhouse
+  slug: fiveringsllc
+  jobs_seen: 16
+  source: curated
+  market: US
+  sample_title: Campus Full Time 2027 - Quantitative Trader
+  name_check: match
+- company: Fleek
+  ats: ashby
+  slug: fleek
+  jobs_seen: 10
+  source: yc-oss
+  yc_batch: W22
+  team_size: 100
+  startup: true
+  startup_evidence: YC W22, 100 staff
+  website: https://www.joinfleek.com/
+  location: London, England, United Kingdom
+  sample_title: Head of Controllership
+  name_check: match
+- company: Flexport
+  ats: greenhouse
+  slug: flexport
+  jobs_seen: 199
+  source: yc-oss
+  yc_batch: W14
+  team_size: 3000
+  startup: false
+  startup_evidence: YC W14, 3000 staff
+  website: https://www.flexport.com/careers/jobs/
+  location: San Francisco, CA, USA
+  sample_title: '3PL Customer Success Manager '
+  name_check: match
+- company: Flint
+  ats: ashby
+  slug: flint
+  jobs_seen: 6
+  source: yc-oss
+  yc_batch: S20
+  team_size: 50
+  startup: true
+  startup_evidence: YC S20, 50 staff
+  website: https://withflint.com
+  location: Vancouver, BC, Canada; Remote
+  sample_title: Client Services
+  name_check: match
+- company: FlutterFlow
+  ats: ashby
+  slug: flutterflow
+  jobs_seen: 3
+  source: yc-oss
+  yc_batch: W21
+  team_size: 55
+  startup: true
+  startup_evidence: YC W21, 55 staff
+  website: https://flutterflow.io
+  location: San Francisco, CA, USA
+  sample_title: General Application - Future Openings
+  name_check: match
+- company: Formance
+  ats: ashby
+  slug: formance
+  jobs_seen: 3
+  source: yc-oss
+  yc_batch: S21
+  team_size: 33
+  startup: true
+  startup_evidence: YC S21, 33 staff
+  website: https://formance.com
+  location: Paris, Île-de-France, France
+  sample_title: Account Executive, Fintech
+  name_check: match
+- company: Frazer-Nash Consultancy
+  ats: workable
+  slug: frazernash
+  jobs_seen: 14
+  startup: false
+  startup_evidence: established consultancy
+  source: curated
+  market: UK
+  sample_title: Account Executive
+  name_check: match
+- company: Freshpaint
+  ats: ashby
+  slug: freshpaint
+  jobs_seen: 3
+  source: yc-oss
+  yc_batch: S19
+  team_size: 120
+  startup: true
+  startup_evidence: YC S19, 120 staff
+  website: https://freshpaint.io
+  location: San Francisco, CA, USA; Remote
+  sample_title: Senior Enterprise Account Manager
+  name_check: match
+- company: G-Research
+  ats: workday
+  slug: gresearch:wd103:G-Research
+  jobs_seen: 64
+  startup: false
+  startup_evidence: quant research firm
+  source: curated
+  market: UK
+  sample_title: Software Engineering Internship
+- company: Garage
+  ats: ashby
+  slug: garage
+  jobs_seen: 14
+  source: yc-oss
+  yc_batch: W24
+  team_size: 35
+  startup: true
+  startup_evidence: YC W24, 35 staff
+  website: https://www.shopgarage.com/
+  location: New York City, NY, USA
+  sample_title: Software Engineer
+  name_check: match
+- company: Gecko Robotics
+  ats: ashby
+  slug: gecko-robotics
+  jobs_seen: 21
+  source: yc-oss
+  yc_batch: W16
+  team_size: 230
+  startup: true
+  startup_evidence: YC W16, 230 staff
+  website: https://www.geckorobotics.com
+  location: Pittsburgh, PA, USA; Austin, TX, USA
+  sample_title: Forward Deployed Engineer
+  name_check: match
+- company: General Motors
+  ats: workday
+  slug: generalmotors:wd5:Careers_GM
+  jobs_seen: 818
+  startup: false
+  startup_evidence: automaker
+  source: curated
+  market: US
+  sample_title: Lab Group Manager, Manufacturing Research
+- company: Gigs
+  ats: greenhouse
+  slug: gigs
+  jobs_seen: 44
+  source: yc-oss
+  yc_batch: W21
+  team_size: 150
+  startup: true
+  startup_evidence: YC W21, 150 staff
+  website: https://gigs.com
+  location: San Francisco, CA, USA
+  sample_title: Brand Marketing Lead
+  name_check: match
+- company: GiveCampus
+  ats: greenhouse
+  slug: givecampus
+  jobs_seen: 11
+  source: yc-oss
+  yc_batch: S15
+  team_size: 130
+  startup: true
+  startup_evidence: YC S15, 130 staff
+  website: http://go.givecampus.com
+  location: Washington, DC, USA; Remote
+  sample_title: Account Executive, Higher Ed, Mid Market Accounts, West
+  name_check: match
+- company: Glencore Coal Assets Australia
+  ats: workday
+  slug: gcaa:wd3:GCAA_Careers
+  jobs_seen: 35
+  startup: false
+  startup_evidence: mining
+  source: curated
+  market: AU
+  sample_title: Graduate Program 2027 - Contracts Officer, Coal Assets Australia
+- company: GOAT Group
+  ats: greenhouse
+  slug: goatgroup
+  jobs_seen: 5
+  source: yc-oss
+  yc_batch: W11
+  team_size: 1600
+  startup: false
+  startup_evidence: YC W11, 1600 staff
+  website: https://www.goatgroup.com/
+  location: Los Angeles, CA, USA
+  sample_title: Assistant Manager, Inventory
+  name_check: match
+- company: GoLinks
+  ats: ashby
+  slug: golinks
+  jobs_seen: 5
+  source: yc-oss
+  yc_batch: W19
+  team_size: 70
+  startup: true
+  startup_evidence: YC W19, 70 staff
+  website: https://www.golinks.io
+  location: San Francisco, CA, USA; San Jose, CA, USA; Remote
+  sample_title: Sales Development Representative (Remote)
+  name_check: match
+- company: Gousto
+  ats: smartrecruiters
+  slug: gousto
+  jobs_seen: 7
+  startup: false
+  startup_evidence: founded 2012, ~1,000+ staff
+  founded: 2012
+  source: curated
+  market: UK
+  sample_title: Software Engineer
+  name_check: match
+- company: GovDash
+  ats: ashby
+  slug: govdash
+  jobs_seen: 4
+  source: yc-oss
+  yc_batch: W22
+  team_size: 56
+  startup: true
+  startup_evidence: YC W22, 56 staff
+  website: https://govdash.com/
+  location: New York City, NY, USA
+  sample_title: Account Executive
+  name_check: match
+- company: Great Question
+  ats: ashby
+  slug: greatquestion
+  jobs_seen: 1
+  source: yc-oss
+  yc_batch: W21
+  team_size: 41
+  startup: true
+  startup_evidence: YC W21, 41 staff
+  website: https://greatquestion.co
+  location: San Francisco, CA, USA; Remote
+  sample_title: Product Engineer (AI / Full-Stack)
+  name_check: match
+- company: Gridware
+  ats: lever
+  slug: gridware
+  jobs_seen: 20
+  source: yc-oss
+  yc_batch: W21
+  team_size: 125
+  startup: true
+  startup_evidence: YC W21, 125 staff
+  website: https://www.gridware.io
+  location: San Francisco, CA, USA
+  sample_title: Assistant Controller
+  name_check: match
+- company: Haleon
+  ats: workday
+  slug: gsknch:wd3:GSKCareers
+  jobs_seen: 356
+  startup: false
+  startup_evidence: FTSE 100 consumer health
+  source: curated
+  market: UK
+  sample_title: EHS & Engineering Director
+- company: Happl
+  ats: ashby
+  slug: happl
+  jobs_seen: 5
+  source: yc-oss
+  yc_batch: W22
+  team_size: 11
+  startup: true
+  startup_evidence: YC W22, 11 staff
+  website: https://happl.com/
+  location: London, England, United Kingdom
+  sample_title: Business Development Representative
+  name_check: match
+- company: Healthtech 1
+  ats: ashby
+  slug: healthtech-1
+  jobs_seen: 4
+  source: yc-oss
+  yc_batch: S23
+  team_size: 40
+  startup: true
+  startup_evidence: YC S23, 40 staff
+  website: https://www.healthtech1.uk/
+  location: London, England, United Kingdom
+  sample_title: Senior AI engineer
+  name_check: match
+- company: Helsing
+  ats: greenhouse
+  slug: helsing
+  jobs_seen: 155
+  founded: 2021
+  source: curated
+  market: UK
+  sample_title: Accountant
+  name_check: match
+- company: Hive
+  ats: greenhouse
+  slug: hive
+  jobs_seen: 10
+  source: yc-oss
+  yc_batch: S14
+  team_size: 65
+  startup: true
+  startup_evidence: YC S14, 65 staff
+  website: http://www.hive.co
+  location: Kitchener, ON, Canada; Remote
+  sample_title: Account Manager - Germany (f/m/d) | C2 German Required
+  name_check: match
+- company: HockeyStack
+  ats: ashby
+  slug: hockeystack
+  jobs_seen: 2
+  source: yc-oss
+  yc_batch: S23
+  team_size: 32
+  startup: true
+  startup_evidence: YC S23, 32 staff
+  website: https://hockeystack.com
+  location: San Francisco, CA, USA
+  sample_title: Team Lead Backend Engineer (Core Applications)
+  name_check: match
+- company: Houlihan Lokey
+  ats: workday
+  slug: hl:wd1:Campus
+  jobs_seen: 27
+  startup: false
+  startup_evidence: investment bank - campus site
+  source: curated
+  market: UK
+  sample_title: Corporate Development Intern (Summer 2027)
+- company: Howden
+  ats: workday
+  slug: hyperiongrp:wd3:Hyperion_External
+  jobs_seen: 310
+  startup: false
+  startup_evidence: insurance broker group
+  source: curated
+  market: UK
+  sample_title: Sr. Underwriter Workers Compensation
+- company: HP
+  ats: workday
+  slug: hp:wd5:ExternalCareerSite
+  jobs_seen: 923
+  startup: false
+  startup_evidence: computing hardware
+  source: curated
+  market: US
+  sample_title: Technical Solutions Cons I
+- company: Hudson River Trading
+  ats: greenhouse
+  slug: wehrtyou
+  jobs_seen: 87
+  startup: false
+  startup_evidence: established trading firm (2002)
+  founded: 2002
+  source: curated
+  market: US
+  sample_title: AI Research Engineer, Inference
+  name_check: match
+- company: Humaans
+  ats: ashby
+  slug: humaans
+  jobs_seen: 14
+  source: yc-oss
+  yc_batch: W21
+  team_size: 48
+  startup: true
+  startup_evidence: YC W21, 48 staff
+  website: https://humaans.io
+  location: London, England, United Kingdom
+  sample_title: Product Design Lead
+  name_check: match
+- company: Human Interest
+  ats: greenhouse
+  slug: humaninterest
+  jobs_seen: 74
+  source: yc-oss
+  yc_batch: S15
+  team_size: 765
+  startup: false
+  startup_evidence: YC S15, 765 staff
+  website: http://humaninterest.com
+  location: San Francisco, CA, USA; Remote
+  sample_title: Account Executive - Florida
+  name_check: match
+- company: Hyperbound
+  ats: ashby
+  slug: hyperbound
+  jobs_seen: 8
+  source: yc-oss
+  yc_batch: S23
+  team_size: 30
+  startup: true
+  startup_evidence: YC S23, 30 staff
+  website: https://hyperbound.ai
+  location: San Francisco, CA, USA
+  sample_title: Enterprise Account Executive
+  name_check: match
+- company: IMC Trading
+  ats: greenhouse
+  slug: imc
+  jobs_seen: 174
+  startup: false
+  startup_evidence: established trading firm (1989)
+  founded: 1989
+  source: curated
+  market: UK
+  sample_title: 2026 Chess Academy Australia & New Zealand - Expression of Interest
+  name_check: match
+- company: Infisical
+  ats: ashby
+  slug: infisical
+  jobs_seen: 10
+  source: yc-oss
+  yc_batch: W23
+  team_size: 50
+  startup: true
+  startup_evidence: YC W23, 50 staff
+  website: https://infisical.com
+  location: San Francisco, CA, USA
+  sample_title: 'Full Stack Engineer '
+  name_check: match
+- company: InfluxData
+  ats: ashby
+  slug: influxdata
+  jobs_seen: 4
+  source: yc-oss
+  yc_batch: W13
+  team_size: 210
+  startup: false
+  startup_evidence: YC W13, 210 staff
+  website: https://influxdata.com
+  location: New York City, NY, USA; San Francisco, CA, USA; Remote
+  sample_title: Director of Finance
+  name_check: match
+- company: Instacart
+  ats: greenhouse
+  slug: instacart
+  jobs_seen: 116
+  startup: false
+  startup_evidence: listed company (YC S12)
+  founded: 2012
+  source: curated
+  market: US
+  sample_title: Activation Sales Development Representative I
+  name_check: match
+- company: Instawork
+  ats: greenhouse
+  slug: instawork
+  jobs_seen: 55
+  source: yc-oss
+  yc_batch: S15
+  team_size: 500
+  startup: false
+  startup_evidence: YC S15, 500 staff
+  website: http://instawork.com
+  location: San Francisco, CA, USA
+  sample_title: Associate Director - Operations - Instawork Robotics Labs
+  name_check: match
+- company: Intel
+  ats: workday
+  slug: intel:wd1:External
+  jobs_seen: 600
+  startup: false
+  startup_evidence: semiconductor company
+  source: curated
+  market: US
+  sample_title: Senior Business Development Manager
+- company: Invert
+  ats: ashby
+  slug: invert
+  jobs_seen: 6
+  source: yc-oss
+  yc_batch: W22
+  team_size: 25
+  startup: true
+  startup_evidence: YC W22, 25 staff
+  website: http://www.invertbio.com/
+  location: San Francisco, CA, USA; Remote
+  sample_title: 'Implementation Manager '
+  name_check: match
+- company: Invopop
+  ats: ashby
+  slug: invopop
+  jobs_seen: 5
+  source: yc-oss
+  yc_batch: W23
+  team_size: 7
+  startup: true
+  startup_evidence: YC W23, 7 staff
+  website: https://www.invopop.com/
+  location: Madrid, Community of Madrid, Spain
+  sample_title: Sales Development Representative
+  name_check: match
+- company: Isomorphic Labs
+  ats: greenhouse
+  slug: isomorphiclabs
+  jobs_seen: 31
+  founded: 2021
+  source: curated
+  market: UK
+  sample_title: Application Support Engineer (Third Party Systems), London
+  name_check: match
+- company: Jiga
+  ats: ashby
+  slug: jiga
+  jobs_seen: 12
+  source: yc-oss
+  yc_batch: W21
+  team_size: 25
+  startup: true
+  startup_evidence: YC W21, 25 staff
+  website: https://jiga.io
+  location: Tel Aviv-Yafo, Tel Aviv District, Israel; Remote
+  sample_title: Content and Communications Manager, Aerospace and Defense
+  name_check: match
+- company: JLL
+  ats: workday
+  slug: jll:wd1:jllcareers
+  jobs_seen: 2000
+  startup: false
+  startup_evidence: global real-estate services
+  source: curated
+  market: UK
+  sample_title: Project CAD Coordinator 대리급 (분당 근무)
+- company: Johnson & Johnson
+  ats: workday
+  slug: jj:wd5:JJ
+  jobs_seen: 1968
+  startup: false
+  startup_evidence: global healthcare
+  source: curated
+  market: US
+  sample_title: Payroll Analyst
+- company: Johnson Matthey
+  ats: workday
+  slug: matthey:wd3:Ext_Career_Site
+  jobs_seen: 125
+  startup: false
+  startup_evidence: FTSE chemicals group
+  source: curated
+  market: UK
+  sample_title: Production Operator - FTC 6months (Renewable)
+- company: Junction
+  ats: ashby
+  slug: junction
+  jobs_seen: 12
+  source: yc-oss
+  yc_batch: W20
+  team_size: 19
+  startup: true
+  startup_evidence: YC W20, 19 staff
+  website: https://www.junction.com/
+  location: London, England, United Kingdom; Remote
+  sample_title: Product Engineer
+  name_check: match
+- company: Juno
+  ats: greenhouse
+  slug: juno
+  jobs_seen: 12
+  source: yc-oss
+  yc_batch: X26
+  team_size: 2
+  startup: true
+  startup_evidence: YC X26, 2 staff
+  website: https://junocompanion.com/
+  location: London, England, United Kingdom
+  sample_title: Growth Marketing Manager
+  name_check: match
+- company: Kalshi
+  ats: ashby
+  slug: kalshi
+  jobs_seen: 42
+  source: yc-oss
+  yc_batch: W19
+  team_size: 125
+  startup: true
+  startup_evidence: YC W19, 125 staff
+  website: https://www.kalshi.com
+  location: New York City, NY, USA; New York, NY, USA
+  sample_title: Site Reliability Engineer
+  name_check: match
+- company: KBR
+  ats: workday
+  slug: kbr:wd5:KBR_Careers
+  jobs_seen: 1790
+  startup: false
+  startup_evidence: engineering services
+  source: curated
+  market: AU
+  sample_title: Project Manager
+- company: Kinter
+  ats: lever
+  slug: kinter
+  jobs_seen: 3
+  source: yc-oss
+  yc_batch: W20
+  team_size: 30
+  startup: true
+  startup_evidence: YC W20, 30 staff
+  website: https://kinter.ai
+  location: San Francisco, CA, USA; Remote
+  sample_title: Don't see the right role for you?
+  name_check: match
+- company: Kivo Health
+  ats: ashby
+  slug: kivo-health
+  jobs_seen: 3
+  source: yc-oss
+  yc_batch: W23
+  team_size: 40
+  startup: true
+  startup_evidence: YC W23, 40 staff
+  website: https://kivohealth.com
+  location: San Francisco, CA, USA
+  sample_title: Patient Engagement Specialist
+  name_check: match
+- company: Kodex
+  ats: ashby
+  slug: kodex
+  jobs_seen: 7
+  source: yc-oss
+  yc_batch: S21
+  team_size: 30
+  startup: true
+  startup_evidence: YC S21, 30 staff
+  website: https://www.kodexglobal.com
+  location: Boston, MA, USA; Remote
+  sample_title: Threat Intelligence Specialist – APAC (Australia Applicants Only)
+  name_check: match
+- company: Kombo
+  ats: ashby
+  slug: kombo
+  jobs_seen: 15
+  source: yc-oss
+  yc_batch: S22
+  team_size: 77
+  startup: true
+  startup_evidence: YC S22, 77 staff
+  website: https://kombo.dev
+  location: Berlin, Berlin, Germany
+  sample_title: Enterprise Account Executive (US)
+  name_check: match
+- company: Kyndryl
+  ats: workday
+  slug: kyndryl:wd5:KyndrylEarlyCareers
+  jobs_seen: 55
+  startup: false
+  startup_evidence: IT services - early careers site
+  source: curated
+  market: UK
+  sample_title: HR Operations (Add‑On Services) Specialist
+- company: Lago
+  ats: ashby
+  slug: lago
+  jobs_seen: 1
+  source: yc-oss
+  yc_batch: S21
+  team_size: 27
+  startup: true
+  startup_evidence: YC S21, 27 staff
+  website: https://www.getlago.com/
+  location: San Francisco, CA, USA
+  sample_title: Engineering Squad Lead
+  name_check: match
+- company: Langdock
+  ats: ashby
+  slug: langdock
+  jobs_seen: 23
+  source: yc-oss
+  yc_batch: S23
+  team_size: 55
+  startup: true
+  startup_evidence: YC S23, 55 staff
+  website: https://langdock.com
+  location: Berlin, Berlin, Germany
+  sample_title: Account Executive - AI & Enterprise Solutions - m/f/d
+  name_check: match
+- company: Lattice
+  ats: greenhouse
+  slug: lattice
+  jobs_seen: 10
+  source: yc-oss
+  yc_batch: W16
+  team_size: 540
+  startup: false
+  startup_evidence: YC W16, 540 staff
+  website: https://lattice.com
+  location: San Francisco, CA, USA
+  sample_title: Account Executive
+  name_check: match
+- company: Legalist
+  ats: greenhouse
+  slug: legalist
+  jobs_seen: 5
+  source: yc-oss
+  yc_batch: S16
+  team_size: 40
+  startup: true
+  startup_evidence: YC S16, 40 staff
+  website: https://www.legalist.com
+  location: San Francisco, CA, USA
+  sample_title: Business Development Associate, Legal Partnerships
+  name_check: match
+- company: Legora
+  ats: ashby
+  slug: legora
+  jobs_seen: 277
+  source: yc-oss
+  yc_batch: W24
+  team_size: 400
+  startup: true
+  startup_evidence: YC W24, 400 staff
+  website: https://www.legora.com/
+  location: Stockholm, Stockholm County, Sweden
+  sample_title: Engagement Manager - Scaled Accounts
+  name_check: match
+- company: Lightdash
+  ats: ashby
+  slug: lightdash
+  jobs_seen: 2
+  source: yc-oss
+  yc_batch: S20
+  team_size: 23
+  startup: true
+  startup_evidence: YC S20, 23 staff
+  website: http://lightdash.com/
+  location: London, England, United Kingdom; Remote
+  sample_title: Analytics Engineering Advocate - Europe
+  name_check: match
+- company: LiveFlow
+  ats: ashby
+  slug: liveflow
+  jobs_seen: 4
+  source: yc-oss
+  yc_batch: W21
+  team_size: 51
+  startup: true
+  startup_evidence: YC W21, 51 staff
+  website: https://www.liveflow.com
+  location: New York City, NY, USA
+  sample_title: Senior Full Stack Engineer
+  name_check: match
+- company: Living Carbon
+  ats: lever
+  slug: livingcarbon
+  jobs_seen: 2
+  source: yc-oss
+  yc_batch: W20
+  team_size: 40
+  startup: true
+  startup_evidence: YC W20, 40 staff
+  website: https://www.livingcarbon.com
+  location: San Francisco, CA, USA
+  sample_title: Land Partnerships Associate / Senior Associate
+  name_check: match
+- company: Lloyds Banking Group
+  ats: workday
+  slug: lbg:wd3:Graduate_careers
+  jobs_seen: 35
+  startup: false
+  startup_evidence: FTSE 100 bank - graduate site
+  source: curated
+  market: UK
+  sample_title: Accounting and Business Insights Graduate Scheme (South West)
+- company: Lloyds Banking Group
+  ats: workday
+  slug: lbg:wd3:LBG_Careers
+  jobs_seen: 86
+  startup: false
+  startup_evidence: FTSE 100 bank
+  source: curated
+  market: UK
+  sample_title: Assistant Marketing Manager – Social & Influencer
+- company: Lob
+  ats: greenhouse
+  slug: lob
+  jobs_seen: 6
+  source: yc-oss
+  yc_batch: S13
+  team_size: 150
+  startup: false
+  startup_evidence: YC S13, 150 staff
+  website: http://lob.com
+  location: New York City, NY, USA; San Francisco, CA, USA
+  sample_title: "Business Operations Manager \t"
+  name_check: match
+- company: LSEG
+  ats: workday
+  slug: lseg:wd3:Graduate_Careers
+  jobs_seen: 21
+  startup: false
+  startup_evidence: FTSE 100 exchange group - graduate site
+  source: curated
+  market: UK
+  sample_title: Business Graduate Programme (FTSE Russell)
+- company: LSEG
+  ats: workday
+  slug: lseg:wd3:Careers
+  jobs_seen: 698
+  startup: false
+  startup_evidence: FTSE 100 exchange group
+  source: curated
+  market: UK
+  sample_title: Senior Software Engineer C++
+- company: Lucis
+  ats: ashby
+  slug: lucis
+  jobs_seen: 13
+  source: yc-oss
+  yc_batch: X25
+  team_size: 17
+  startup: true
+  startup_evidence: YC X25, 17 staff
+  website: https://www.lucis.life
+  location: Paris, Île-de-France, France
+  sample_title: Customer Care Team Lead
+  name_check: match
+- company: Luminai
+  ats: ashby
+  slug: luminai
+  jobs_seen: 15
+  source: yc-oss
+  yc_batch: S20
+  team_size: 50
+  startup: true
+  startup_evidence: YC S20, 50 staff
+  website: https://www.luminai.com
+  location: San Francisco, CA, USA
+  sample_title: Senior Software Engineer, Product
+  name_check: match
+- company: Lyft
+  ats: greenhouse
+  slug: lyft
+  jobs_seen: 175
+  startup: false
+  startup_evidence: listed company (2012)
+  founded: 2012
+  source: curated
+  market: US
+  sample_title: Account Manager, Automotive Vertical
+  name_check: match
+- company: Mach9
+  ats: ashby
+  slug: mach9
+  jobs_seen: 13
+  source: yc-oss
+  yc_batch: S21
+  team_size: 25
+  startup: true
+  startup_evidence: YC S21, 25 staff
+  website: https://www.mach9.ai/
+  location: San Francisco, CA, USA
+  sample_title: Account Executive
+  name_check: match
+- company: Macquarie Group
+  ats: workday
+  slug: mq:wd3:CareersatMQ
+  jobs_seen: 30
+  startup: false
+  startup_evidence: ASX-listed investment bank
+  source: curated
+  market: AU
+  sample_title: Business Analyst, Curriculum
+- company: Marsh McLennan
+  ats: workday
+  slug: mmc:wd1:MMC
+  jobs_seen: 1958
+  startup: false
+  startup_evidence: professional services
+  source: curated
+  market: US
+  sample_title: Account Handler
+- company: Mashgin
+  ats: lever
+  slug: mashgin
+  jobs_seen: 15
+  source: yc-oss
+  yc_batch: W15
+  team_size: 150
+  startup: true
+  startup_evidence: YC W15, 150 staff
+  website: http://mashgin.com
+  location: San Francisco, CA, USA
+  sample_title: AI Developer Experience
+  name_check: match
+- company: Mastercard
+  ats: workday
+  slug: mastercard:wd1:Campus
+  jobs_seen: 54
+  startup: false
+  startup_evidence: payments network - campus site
+  source: curated
+  market: UK
+  sample_title: Associate Product Specialist, Launch Graduate Program 2027 – Lisbon,
+    Portugal
+- company: Mastercard
+  ats: workday
+  slug: mastercard:wd1:CorporateCareers
+  jobs_seen: 1046
+  startup: false
+  startup_evidence: payments network
+  source: curated
+  market: UK
+  sample_title: Specialist, B2B Field Marketing
+- company: May Mobility
+  ats: greenhouse
+  slug: maymobility
+  jobs_seen: 46
+  source: yc-oss
+  yc_batch: S17
+  team_size: 260
+  startup: true
+  startup_evidence: YC S17, 260 staff
+  website: http://maymobility.com
+  location: Ann Arbor, MI, USA
+  sample_title: 'Autonomous Vehicle Operations Specialist '
+  name_check: match
+- company: MBDA
+  ats: workday
+  slug: mbda:wd3:MBDA-UK
+  jobs_seen: 236
+  startup: false
+  startup_evidence: missile systems, UK site
+  source: curated
+  market: UK
+  sample_title: Finance - Graduate Programme 2027
+- company: MedMe Health
+  ats: recruitee
+  slug: medmehealth
+  jobs_seen: 8
+  source: yc-oss
+  yc_batch: W21
+  team_size: 60
+  startup: true
+  startup_evidence: YC W21, 60 staff
+  website: https://www.medmehealth.com
+  location: Toronto, ON, Canada
+  sample_title: IT Manager
+  name_check: match
+- company: Mednet
+  ats: ashby
+  slug: mednet
+  jobs_seen: 6
+  source: yc-oss
+  yc_batch: W17
+  team_size: 35
+  startup: true
+  startup_evidence: YC W17, 35 staff
+  website: https://www.themednet.org
+  location: New York City, NY, USA
+  sample_title: Medical Director of Oncology
+  name_check: match
+- company: Medtronic
+  ats: workday
+  slug: medtronic:wd1:MedtronicCareers
+  jobs_seen: 1122
+  startup: false
+  startup_evidence: medical devices
+  source: curated
+  market: US
+  sample_title: Sales Rep I    Reg/Ctry
+- company: Merck (MSD)
+  ats: workday
+  slug: msd:wd5:SearchJobs
+  jobs_seen: 995
+  startup: false
+  startup_evidence: global pharma
+  source: curated
+  market: US
+  sample_title: Principal Scientist, Drug Discovery
+- company: Mercura
+  ats: ashby
+  slug: mercura
+  jobs_seen: 10
+  source: yc-oss
+  yc_batch: W25
+  team_size: 20
+  startup: true
+  startup_evidence: YC W25, 20 staff
+  website: https://www.mercura.ai
+  location: BY, Germany
+  sample_title: (Senior) Fullstack Engineer
+  name_check: match
+- company: Meru Health
+  ats: greenhouse
+  slug: meruhealth
+  jobs_seen: 1
+  source: yc-oss
+  yc_batch: S18
+  team_size: 55
+  startup: true
+  startup_evidence: YC S18, 55 staff
+  website: http://www.meruhealth.com
+  location: San Francisco, CA, USA; Helsinki, Finland
+  sample_title: Remote Licensed Therapist, Part-Time
+  name_check: match
+- company: Meticulous
+  ats: ashby
+  slug: meticulous
+  jobs_seen: 6
+  source: yc-oss
+  yc_batch: S21
+  team_size: 15
+  startup: true
+  startup_evidence: YC S21, 15 staff
+  website: https://www.meticulous.ai
+  location: London, England, United Kingdom
+  sample_title: Software Engineer
+  name_check: match
+- company: Metriport
+  ats: ashby
+  slug: metriport
+  jobs_seen: 19
+  source: yc-oss
+  yc_batch: S22
+  team_size: 29
+  startup: true
+  startup_evidence: YC S22, 29 staff
+  website: https://metriport.com/
+  location: San Francisco, CA, USA
+  sample_title: Staff Technical Product Manager
+  name_check: match
+- company: Middesk
+  ats: ashby
+  slug: middesk
+  jobs_seen: 17
+  source: yc-oss
+  yc_batch: W19
+  team_size: 130
+  startup: true
+  startup_evidence: YC W19, 130 staff
+  website: http://www.middesk.com
+  location: San Francisco, CA, USA
+  sample_title: Software Engineer
+  name_check: match
+- company: Modern Health
+  ats: greenhouse
+  slug: modernhealth
+  jobs_seen: 11
+  source: yc-oss
+  yc_batch: W18
+  team_size: 375
+  startup: true
+  startup_evidence: YC W18, 375 staff
+  website: https://www.modernhealth.com/
+  location: Boston, MA, USA; San Francisco, CA, USA; Remote
+  sample_title: Associate Principal - Outcomes Researcher
+  name_check: match
+- company: Modern Treasury
+  ats: ashby
+  slug: moderntreasury
+  jobs_seen: 9
+  source: yc-oss
+  yc_batch: S18
+  team_size: 160
+  startup: true
+  startup_evidence: YC S18, 160 staff
+  website: http://www.moderntreasury.com/
+  location: San Francisco, CA, USA
+  sample_title: 'Software Engineer '
+  name_check: match
+- company: Moderna
+  ats: workday
+  slug: modernatx:wd1:M_tx
+  jobs_seen: 207
+  startup: false
+  startup_evidence: biotech
+  source: curated
+  market: US
+  sample_title: Director, Analytical Development
+- company: Mondelez
+  ats: workday
+  slug: mdlz:wd3:External
+  jobs_seen: 1287
+  startup: false
+  startup_evidence: global FMCG
+  source: curated
+  market: UK
+  sample_title: Taste The Future - IT Procurement Internship (m/f/x)
+- company: Morgan Stanley
+  ats: workday
+  slug: ms:wd5:External
+  jobs_seen: 1345
+  startup: false
+  startup_evidence: global investment bank
+  source: curated
+  market: UK
+  sample_title: 'Compliance Officer (Legal and Compliance) : Job Level - Executive
+    Director'
+- company: Motorway
+  ats: ashby
+  slug: motorway
+  jobs_seen: 19
+  founded: 2017
+  source: curated
+  market: UK
+  sample_title: Contact Centre Team Leader
+  name_check: match
+- company: Mytos
+  ats: lever
+  slug: mytos
+  jobs_seen: 11
+  source: yc-oss
+  yc_batch: S18
+  team_size: 26
+  startup: true
+  startup_evidence: YC S18, 26 staff
+  website: https://www.mytos.bio
+  location: London, England, United Kingdom
+  sample_title: Chief of Staff
+  name_check: match
+- company: NAB
+  ats: workday
+  slug: nab:wd3:nab_careers
+  jobs_seen: 250
+  startup: false
+  startup_evidence: ASX-listed bank
+  source: curated
+  market: AU
+  sample_title: Senior/ Consultant, Talent Acquisition
+- company: Nabis
+  ats: greenhouse
+  slug: nabis
+  jobs_seen: 26
+  source: yc-oss
+  yc_batch: W19
+  team_size: 700
+  startup: false
+  startup_evidence: YC W19, 700 staff
+  website: https://www.nabis.com/
+  location: New York City, NY, USA
+  sample_title: 'Accounts Receivable Associate '
+  name_check: match
+- company: NanoNets
+  ats: ashby
+  slug: nanonets
+  jobs_seen: 3
+  source: yc-oss
+  yc_batch: W17
+  team_size: 102
+  startup: true
+  startup_evidence: YC W17, 102 staff
+  website: https://nanonets.com
+  location: San Francisco, CA, USA
+  sample_title: Mid-Market Account Executive
+  name_check: match
+- company: NASA JPL
+  ats: workday
+  slug: citjpl:wd5:Jobs
+  jobs_seen: 82
+  startup: false
+  startup_evidence: NASA research centre (Caltech)
+  source: curated
+  market: US
+  sample_title: Structural Systems Engineer  II
+- company: Nasdaq
+  ats: workday
+  slug: nasdaq:wd1:Global_External_Site
+  jobs_seen: 175
+  startup: false
+  startup_evidence: exchange operator
+  source: curated
+  market: US
+  sample_title: Data Analyst - Surveillance
+- company: Nash
+  ats: ashby
+  slug: nash
+  jobs_seen: 23
+  source: yc-oss
+  yc_batch: S21
+  team_size: 40
+  startup: true
+  startup_evidence: YC S21, 40 staff
+  website: https://www.usenash.com/
+  location: San Francisco, CA, USA
+  sample_title: Anything
+  name_check: match
+- company: NatWest Group
+  ats: workday
+  slug: rbs:wd3:RBS
+  jobs_seen: 131
+  startup: false
+  startup_evidence: FTSE 100 bank
+  source: curated
+  market: UK
+  sample_title: Commercial Banking - Relationship Management - Internship
+- company: nbn co
+  ats: workday
+  slug: nbn:wd3:nbncareers
+  jobs_seen: 71
+  startup: false
+  startup_evidence: Australian government network company
+  source: curated
+  market: AU
+  sample_title: Customer Field Technician I Ipswich
+- company: NewDay
+  ats: workday
+  slug: newday:wd3:NewDay
+  jobs_seen: 13
+  startup: false
+  startup_evidence: UK consumer credit provider
+  source: curated
+  market: UK
+  sample_title: Head of Technology Relationships & Cost Management
+- company: Newton Europe
+  ats: greenhouse
+  slug: newton
+  jobs_seen: 2
+  startup: false
+  startup_evidence: established consultancy (2001)
+  founded: 2001
+  source: curated
+  market: UK
+  sample_title: Sales Director - USA
+  name_check: match
+- company: Nimble
+  ats: recruitee
+  slug: nimble
+  jobs_seen: 7
+  source: yc-oss
+  yc_batch: S17
+  team_size: 25
+  startup: true
+  startup_evidence: YC S17, 25 staff
+  website: http://www.hirenimble.com
+  location: Miami, FL, USA; Remote
+  sample_title: Senior Accountant (Bangkok, On-site)
+  name_check: match
+- company: Nomic Bio
+  ats: ashby
+  slug: nomic
+  jobs_seen: 5
+  source: yc-oss
+  yc_batch: W20
+  team_size: 100
+  startup: true
+  startup_evidence: YC W20, 100 staff
+  website: http://www.nomic.bio
+  location: Montreal, QC, Canada
+  sample_title: Data Scientist/Data Engineer (Mid to Sr Levels)
+  name_check: match
+- company: Northern Trust
+  ats: workday
+  slug: ntrs:wd1:northerntrust
+  jobs_seen: 639
+  startup: false
+  startup_evidence: bank & asset servicer
+  source: curated
+  market: US
+  sample_title: Specialist - Strategic Finance & Analysis (Wealth Management)
+- company: Northrop Grumman
+  ats: workday
+  slug: ngc:wd1:Northrop_Grumman_External_Site
+  jobs_seen: 3775
+  startup: false
+  startup_evidence: defence contractor
+  source: curated
+  market: US
+  sample_title: Logistics Assessor
+- company: Norton Rose Fulbright
+  ats: workday
+  slug: nrf:wd3:Graduates
+  jobs_seen: 18
+  startup: false
+  startup_evidence: global law firm - graduates site
+  source: curated
+  market: UK
+  sample_title: Business & Legal Operations Graduate Scheme 2027
+- company: Notabene
+  ats: ashby
+  slug: notabene
+  jobs_seen: 6
+  source: yc-oss
+  yc_batch: S20
+  team_size: 47
+  startup: true
+  startup_evidence: YC S20, 47 staff
+  website: https://notabene.id
+  location: New York City, NY, USA
+  sample_title: Enterprise Account Executive, Americas
+  name_check: match
+- company: Nothing
+  ats: greenhouse
+  slug: nothing
+  jobs_seen: 9
+  founded: 2020
+  source: curated
+  market: UK
+  sample_title: Account Manager, North America Carrier — 3–6 Month Consultancy
+  name_check: match
+- company: Nova Credit
+  ats: greenhouse
+  slug: novacredit
+  jobs_seen: 9
+  source: yc-oss
+  yc_batch: S16
+  team_size: 100
+  startup: true
+  startup_evidence: YC S16, 100 staff
+  website: http://www.novacredit.com/
+  location: New York City, NY, USA
+  sample_title: Campaign Marketing Lead
+  name_check: match
+- company: Novartis
+  ats: workday
+  slug: novartis:wd3:Novartis_Careers
+  jobs_seen: 850
+  startup: false
+  startup_evidence: global pharma
+  source: curated
+  market: US
+  sample_title: Medical Representative _ Cardiovascular & Metabolism _ HCM
+- company: Numeral
+  ats: ashby
+  slug: numeral
+  jobs_seen: 25
+  source: yc-oss
+  yc_batch: W23
+  team_size: 110
+  startup: true
+  startup_evidence: YC W23, 110 staff
+  website: https://www.numeral.com/
+  location: San Francisco, CA, USA
+  sample_title: Software Engineer, Product
+  name_check: match
+- company: Nvidia
+  ats: workday
+  slug: nvidia:wd5:NVIDIAExternalCareerSite
+  jobs_seen: 2000
+  startup: false
+  startup_evidence: semiconductor company
+  source: curated
+  market: US
+  sample_title: Senior Infrastructure Automation Engineer, Compute Platform - EDA
+    Infrastructure
+- company: Ocado Group
+  ats: greenhouse
+  slug: ocadogroup
+  jobs_seen: 54
+  startup: false
+  startup_evidence: listed company (2000)
+  founded: 2000
+  source: curated
+  market: UK
+  sample_title: 엔지니어링 테크니션
+  name_check: match
+- company: Odeko
+  ats: greenhouse
+  slug: odeko
+  jobs_seen: 23
+  source: yc-oss
+  yc_batch: S19
+  team_size: 371
+  startup: true
+  startup_evidence: YC S19, 371 staff
+  website: http://www.odeko.com
+  location: New York City, NY, USA; New York, NY, USA
+  sample_title: Delivery Driver - ATL
+  name_check: match
+- company: Ofcom
+  ats: workday
+  slug: ofcom:wd3:Ofcom_Careers
+  jobs_seen: 5
+  startup: false
+  startup_evidence: UK regulator
+  source: curated
+  market: UK
+  sample_title: Senior Associate, Online Safety Policy Development
+- company: Okta
+  ats: greenhouse
+  slug: okta
+  jobs_seen: 333
+  startup: false
+  startup_evidence: listed company (2009)
+  founded: 2009
+  source: curated
+  market: US
+  sample_title: Account Executive Auth0
+  name_check: match
+- company: Old Mission
+  ats: greenhouse
+  slug: oldmissioncapital
+  jobs_seen: 37
+  startup: false
+  startup_evidence: established trading firm (2008)
+  founded: 2008
+  source: curated
+  market: US
+  sample_title: Associate Head of Trader Education
+  name_check: match
+- company: OneChronos
+  ats: ashby
+  slug: onechronos
+  jobs_seen: 1
+  source: yc-oss
+  yc_batch: S16
+  team_size: 75
+  startup: true
+  startup_evidence: YC S16, 75 staff
+  website: https://www.onechronos.com/
+  location: New York City, NY, USA
+  sample_title: Business Development, Mission Control | OneChronos Markets
+  name_check: match
+- company: Oneleet
+  ats: ashby
+  slug: oneleet
+  jobs_seen: 16
+  source: yc-oss
+  yc_batch: S22
+  team_size: 75
+  startup: true
+  startup_evidence: YC S22, 75 staff
+  website: https://www.oneleet.com/?utm_source=yc&utm_medium=bookface
+  location: Amsterdam, NH, Netherlands
+  sample_title: Senior Product Designer
+  name_check: match
+- company: Ophelia
+  ats: greenhouse
+  slug: ophelia
+  jobs_seen: 13
+  source: yc-oss
+  yc_batch: W20
+  team_size: 250
+  startup: true
+  startup_evidence: YC W20, 250 staff
+  website: https://ophelia.com
+  location: New York City, NY, USA; New York, NY, USA
+  sample_title: Associate, Clinical Operations (Data and Systems)
+  name_check: match
+- company: Optiver
+  ats: greenhouse
+  slug: optiverus
+  jobs_seen: 166
+  startup: false
+  startup_evidence: established trading firm (1986)
+  founded: 1986
+  source: curated
+  market: UK
+  sample_title: 2027 Shanghai FPGA Developer Summer Internship
+  name_check: match
+- company: Overview
+  ats: ashby
+  slug: overview
+  jobs_seen: 49
+  source: yc-oss
+  yc_batch: W19
+  team_size: 40
+  startup: true
+  startup_evidence: YC W19, 40 staff
+  website: https://overview.ai
+  location: San Francisco, CA, USA
+  sample_title: Applications Manager
+  name_check: match
+- company: Padlet
+  ats: ashby
+  slug: padlet
+  jobs_seen: 18
+  source: yc-oss
+  yc_batch: W13
+  team_size: 65
+  startup: false
+  startup_evidence: YC W13, 65 staff
+  website: https://padlet.com
+  location: San Francisco, CA, USA
+  sample_title: Software Engineer – Mobile
+  name_check: match
+- company: Pair Team
+  ats: greenhouse
+  slug: pairteam
+  jobs_seen: 20
+  source: yc-oss
+  yc_batch: S19
+  team_size: 500
+  startup: false
+  startup_evidence: YC S19, 500 staff
+  website: https://pairteam.com/
+  location: San Francisco, CA, USA; Remote
+  sample_title: 'Bilingual Field Care Coordinator / Field Case Management '
+  name_check: match
+- company: Paragon
+  ats: ashby
+  slug: paragon
+  jobs_seen: 2
+  source: yc-oss
+  yc_batch: W20
+  team_size: 48
+  startup: true
+  startup_evidence: YC W20, 48 staff
+  website: http://useparagon.com
+  location: Los Angeles, CA, USA
+  sample_title: 'Account Executive '
+  name_check: match
+- company: Pelago
+  ats: greenhouse
+  slug: pelago
+  jobs_seen: 14
+  source: yc-oss
+  yc_batch: W18
+  team_size: 180
+  startup: true
+  startup_evidence: YC W18, 180 staff
+  website: https://www.pelagohealth.com
+  location: New York City, NY, USA
+  sample_title: Addiction Medicine Physician- NJ/IMLC (Part Time, Remote)
+  name_check: match
+- company: People.ai
+  ats: lever
+  slug: people-ai
+  jobs_seen: 9
+  source: yc-oss
+  yc_batch: S16
+  team_size: 300
+  startup: true
+  startup_evidence: YC S16, 300 staff
+  website: https://people.ai
+  location: San Francisco, CA, USA
+  sample_title: Key Account Executive
+  name_check: match
+- company: PermitFlow
+  ats: ashby
+  slug: permitflow
+  jobs_seen: 42
+  source: yc-oss
+  yc_batch: W22
+  team_size: 80
+  startup: true
+  startup_evidence: YC W22, 80 staff
+  website: http://www.permitflow.com
+  location: New York City, NY, USA
+  sample_title: Staff Product Designer
+  name_check: match
+- company: Pfizer
+  ats: workday
+  slug: pfizer:wd1:PfizerCareers
+  jobs_seen: 530
+  startup: false
+  startup_evidence: global pharma
+  source: curated
+  market: US
+  sample_title: 辉瑞生物制药-高级医学信息沟通主管-LC-上海
+- company: PhysicsX
+  ats: greenhouse
+  slug: physicsx
+  jobs_seen: 42
+  startup: true
+  startup_evidence: founded 2019, <300 staff (curated estimate)
+  founded: 2019
+  source: curated
+  market: UK
+  sample_title: Applied Scientist - All Levels
+  name_check: match
+- company: Pinterest
+  ats: greenhouse
+  slug: pinterest
+  jobs_seen: 151
+  startup: false
+  startup_evidence: listed company (2010)
+  founded: 2010
+  source: curated
+  market: US
+  sample_title: Administrative Business Partner I - Engineering, Product and Design
+  name_check: match
+- company: PJT Partners
+  ats: workday
+  slug: pjtpartners:wd1:Students
+  jobs_seen: 15
+  startup: false
+  startup_evidence: investment bank - students site
+  source: curated
+  market: UK
+  sample_title: 2027 July Off-Cycle Analyst (Strategic Advisory & Restructuring) Madrid
+- company: Popl
+  ats: ashby
+  slug: popl
+  jobs_seen: 4
+  source: yc-oss
+  yc_batch: W21
+  team_size: 60
+  startup: true
+  startup_evidence: YC W21, 60 staff
+  website: https://popl.co/
+  location: New York City, NY, USA; Remote
+  sample_title: 'Customer Success Manager '
+  name_check: match
+- company: PostHog
+  ats: ashby
+  slug: posthog
+  jobs_seen: 8
+  source: yc-oss
+  yc_batch: W20
+  team_size: 150
+  startup: true
+  startup_evidence: YC W20, 150 staff
+  website: https://www.posthog.com
+  location: San Francisco, CA, USA; Remote
+  sample_title: Technical Customer Success Manager - EMEA
+  name_check: match
+- company: Postscript
+  ats: greenhouse
+  slug: postscript
+  jobs_seen: 6
+  source: yc-oss
+  yc_batch: W19
+  team_size: 180
+  startup: true
+  startup_evidence: YC W19, 180 staff
+  website: https://postscript.io
+  location: Remote
+  sample_title: Client Strategist
+  name_check: match
+- company: Prelim
+  ats: ashby
+  slug: prelim
+  jobs_seen: 8
+  source: yc-oss
+  yc_batch: S17
+  team_size: 49
+  startup: true
+  startup_evidence: YC S17, 49 staff
+  website: https://prelim.com/
+  location: San Francisco, CA, USA; Remote
+  sample_title: 'Implementation Architect '
+  name_check: match
+- company: Procter & Gamble
+  ats: workday
+  slug: pg:wd5:1000
+  jobs_seen: 815
+  startup: false
+  startup_evidence: global FMCG
+  source: curated
+  market: UK
+  sample_title: Project Engineer
+- company: Prodigal
+  ats: greenhouse
+  slug: prodigal
+  jobs_seen: 11
+  source: yc-oss
+  yc_batch: S18
+  team_size: 99
+  startup: true
+  startup_evidence: YC S18, 99 staff
+  website: https://prodigaltech.com/
+  location: San Francisco, CA, USA
+  sample_title: Account Executive
+  name_check: match
+- company: Prolific
+  ats: greenhouse
+  slug: prolific
+  jobs_seen: 35
+  source: yc-oss
+  yc_batch: S19
+  team_size: 180
+  startup: true
+  startup_evidence: YC S19, 180 staff
+  website: https://www.prolific.com
+  location: London, England, United Kingdom
+  sample_title: AI Research Engineer
+  name_check: match
+- company: Prospa
+  ats: greenhouse
+  slug: prospa
+  jobs_seen: 8
+  source: yc-oss
+  yc_batch: W21
+  team_size: 70
+  startup: true
+  startup_evidence: YC W21, 70 staff
+  website: https://getprospa.com
+  location: London, England, United Kingdom
+  sample_title: Business Development Manager
+  name_check: match
+- company: Prosper
+  ats: lever
+  slug: prosper
+  jobs_seen: 12
+  source: yc-oss
+  yc_batch: S23
+  team_size: 60
+  startup: true
+  startup_evidence: YC S23, 60 staff
+  website: https://www.getprosper.ai?utm_source=yc&utm_medium=directory&utm_campaign=yc_directory
+  location: New York City, NY, USA
+  sample_title: Corporate Legal Counsel (Capital Markets)
+  name_check: match
+- company: PwC
+  ats: workday
+  slug: pwc:wd3:Global_Campus_Careers
+  jobs_seen: 1481
+  startup: false
+  startup_evidence: Big Four - campus site
+  source: curated
+  market: UK
+  sample_title: January 2027 - Deals Forensics CPA - Full time - Montreal
+- company: PwC US
+  ats: workday
+  slug: pwc:wd3:US_Entry_Level_Careers
+  jobs_seen: 216
+  startup: false
+  startup_evidence: Big Four - US entry-level site
+  source: curated
+  market: US
+  sample_title: Transfer Pricing PhD - Senior Associate - Summer/Fall 2027
+- company: Quadrature Capital
+  ats: greenhouse
+  slug: quadraturecapital
+  jobs_seen: 4
+  source: curated
+  market: UK
+  sample_title: Internships
+  name_check: match
+- company: Quicknode
+  ats: ashby
+  slug: quicknode
+  jobs_seen: 4
+  source: yc-oss
+  yc_batch: W21
+  team_size: 115
+  startup: true
+  startup_evidence: YC W21, 115 staff
+  website: https://www.quicknode.com
+  location: Miami, FL, USA
+  sample_title: Senior Software Engineer - Go
+  name_check: match
+- company: Quindar
+  ats: ashby
+  slug: quindar
+  jobs_seen: 20
+  source: yc-oss
+  yc_batch: S22
+  team_size: 57
+  startup: true
+  startup_evidence: YC S22, 57 staff
+  website: https://www.quindar.space
+  location: Denver, CO, USA
+  sample_title: Vice President of Programs
+  name_check: match
+- company: Qventus
+  ats: greenhouse
+  slug: qventus
+  jobs_seen: 15
+  source: yc-oss
+  yc_batch: W15
+  team_size: 230
+  startup: true
+  startup_evidence: YC W15, 230 staff
+  website: http://qventus.com
+  location: San Francisco, CA, USA; Remote
+  sample_title: AI Tooling Engineer
+  name_check: match
+- company: RADAR
+  ats: ashby
+  slug: radar
+  jobs_seen: 20
+  source: yc-oss
+  yc_batch: W13
+  team_size: 120
+  startup: false
+  startup_evidence: YC W13, 120 staff
+  website: https://goradar.com
+  location: New York City, NY, USA
+  sample_title: Senior / Staff Product Engineer, Mobile
+  name_check: match
+- company: Reach
+  ats: ashby
+  slug: reach
+  jobs_seen: 6
+  source: yc-oss
+  yc_batch: S15
+  team_size: 45
+  startup: true
+  startup_evidence: YC S15, 45 staff
+  website: https://reachpower.com
+  location: San Francisco, CA, USA
+  sample_title: Staff Software Engineer (Backend)
+  name_check: match
+- company: Ready
+  ats: ashby
+  slug: ready
+  jobs_seen: 5
+  source: yc-oss
+  yc_batch: S20
+  team_size: 60
+  startup: true
+  startup_evidence: YC S20, 60 staff
+  website: https://ready.net
+  location: San Francisco, CA, USA; Remote
+  sample_title: Don't see a role for you? Feel free to apply directly here!
+  name_check: match
+- company: Reality Defender
+  ats: ashby
+  slug: realitydefender
+  jobs_seen: 2
+  source: yc-oss
+  yc_batch: W22
+  team_size: 54
+  startup: true
+  startup_evidence: YC W22, 54 staff
+  website: http://www.realitydefender.com
+  location: New York City, NY, USA
+  sample_title: Software Engineer II
+  name_check: match
+- company: Recall.ai
+  ats: ashby
+  slug: recall
+  jobs_seen: 6
+  source: yc-oss
+  yc_batch: W20
+  team_size: 30
+  startup: true
+  startup_evidence: YC W20, 30 staff
+  website: https://www.recall.ai
+  location: San Francisco, CA, USA
+  sample_title: Systems Engineer
+  name_check: match
+- company: Recidiviz
+  ats: greenhouse
+  slug: recidiviz
+  jobs_seen: 10
+  source: yc-oss
+  yc_batch: S19
+  team_size: 120
+  startup: true
+  startup_evidence: YC S19, 120 staff
+  website: https://www.recidiviz.org/
+  location: New York City, NY, USA
+  sample_title: Data Analyst
+  name_check: match
+- company: RELX
+  ats: workday
+  slug: relx:wd3:relx
+  jobs_seen: 780
+  startup: false
+  startup_evidence: FTSE 100 information group
+  source: curated
+  market: UK
+  sample_title: Client Manager - Legal & Professional
+- company: Replit
+  ats: ashby
+  slug: replit
+  jobs_seen: 75
+  source: yc-oss
+  yc_batch: W18
+  team_size: 65
+  startup: true
+  startup_evidence: YC W18, 65 staff
+  website: https://replit.com
+  location: San Francisco, CA, USA
+  sample_title: Design Engineer
+  name_check: match
+- company: Rescale
+  ats: ashby
+  slug: rescale
+  jobs_seen: 19
+  source: yc-oss
+  yc_batch: W12
+  team_size: 250
+  startup: false
+  startup_evidence: YC W12, 250 staff
+  website: https://rescale.com
+  location: San Francisco, CA, USA
+  sample_title: Customer Success Engineer - Remote in the US
+  name_check: match
+- company: RevenueCat
+  ats: ashby
+  slug: revenuecat
+  jobs_seen: 19
+  source: yc-oss
+  yc_batch: S18
+  team_size: 160
+  startup: true
+  startup_evidence: YC S18, 160 staff
+  website: https://www.revenuecat.com/
+  location: San Francisco, CA, USA; Remote
+  sample_title: Senior Product Designer
+  name_check: match
+- company: Riot
+  ats: lever
+  slug: tryriot
+  jobs_seen: 23
+  source: yc-oss
+  yc_batch: W20
+  team_size: 160
+  startup: true
+  startup_evidence: YC W20, 160 staff
+  website: https://tryriot.com/
+  location: Paris, Île-de-France, France
+  sample_title: Account Executive, Mid-market, France - Sales
+  name_check: match
+- company: Riverlane
+  ats: greenhouse
+  slug: riverlane
+  jobs_seen: 27
+  startup: true
+  startup_evidence: founded 2016, ~150 staff (curated estimate)
+  founded: 2016
+  source: curated
+  market: UK
+  sample_title: Business Development Manager - U.S. Department of Defense
+  name_check: match
+- company: Roblox
+  ats: greenhouse
+  slug: roblox
+  jobs_seen: 257
+  startup: false
+  startup_evidence: listed company (2004)
+  founded: 2004
+  source: curated
+  market: US
+  sample_title: '[2027] Associate Product Designer, Early Career'
+  name_check: match
+- company: Roboflow
+  ats: ashby
+  slug: roboflow
+  jobs_seen: 35
+  source: yc-oss
+  yc_batch: S20
+  team_size: 100
+  startup: true
+  startup_evidence: YC S20, 100 staff
+  website: https://roboflow.com
+  location: San Francisco, CA, USA
+  sample_title: Commercial Sales Leader
+  name_check: match
+- company: Rolls-Royce
+  ats: workday
+  slug: rollsroyce:wd3:Intern_Graduate
+  jobs_seen: 98
+  startup: false
+  startup_evidence: FTSE 100 engineer - intern & graduate site
+  source: curated
+  market: UK
+  sample_title: Working Student - Finance (f/m/d)
+- company: Rolls-Royce
+  ats: workday
+  slug: rollsroyce:wd3:professional
+  jobs_seen: 460
+  startup: false
+  startup_evidence: FTSE 100 engineer
+  source: curated
+  market: UK
+  sample_title: Senior Manager Containerization & Enclosure Projects (m/w/d)
+- company: Rollstack
+  ats: ashby
+  slug: rollstack
+  jobs_seen: 3
+  source: yc-oss
+  yc_batch: W23
+  team_size: 30
+  startup: true
+  startup_evidence: YC W23, 30 staff
+  website: https://www.rollstack.com
+  location: New York City, NY, USA; Remote
+  sample_title: AI Software Engineer
+  name_check: match
+- company: RTX
+  ats: workday
+  slug: globalhr:wd5:REC_RTX_Ext_Gateway
+  jobs_seen: 4817
+  startup: false
+  startup_evidence: aerospace & defence
+  source: curated
+  market: US
+  sample_title: Mechanical Engineering Intern (Summer 2027)
+- company: Runa
+  ats: ashby
+  slug: runa
+  jobs_seen: 1
+  source: yc-oss
+  yc_batch: W18
+  team_size: 100
+  startup: true
+  startup_evidence: YC W18, 100 staff
+  website: http://runahr.com/
+  location: Mexico City, CDMX, Mexico
+  sample_title: Senior Software Engineer (Java)
+  name_check: match
+- company: Rutter
+  ats: ashby
+  slug: rutter
+  jobs_seen: 1
+  source: yc-oss
+  yc_batch: S19
+  team_size: 24
+  startup: true
+  startup_evidence: YC S19, 24 staff
+  website: https://rutter.com
+  location: New York City, NY, USA
+  sample_title: Solutions Architect
+  name_check: match
+- company: S&P Global
+  ats: workday
+  slug: spgi:wd5:SPGI_Careers
+  jobs_seen: 275
+  startup: false
+  startup_evidence: ratings & data
+  source: curated
+  market: US
+  sample_title: Head of Data, Valuations and Insights Sales, Japan
+- company: Salesforce
+  ats: workday
+  slug: salesforce:wd12:External_Career_Site
+  jobs_seen: 1520
+  startup: false
+  startup_evidence: enterprise software
+  source: curated
+  market: US
+  sample_title: Senior Engagement Manager（BTC）
+- company: Samsara
+  ats: greenhouse
+  slug: samsara
+  jobs_seen: 249
+  startup: false
+  startup_evidence: listed company (2015, 3,000+ staff)
+  founded: 2015
+  source: curated
+  market: US
+  sample_title: Account Development Representative - Canada
+  name_check: match
+- company: Sanofi
+  ats: workday
+  slug: sanofi:wd3:SanofiCareers
+  jobs_seen: 842
+  startup: false
+  startup_evidence: global pharma
+  source: curated
+  market: US
+  sample_title: 糖尿病事业部-地区经理-喀什
+- company: Santander
+  ats: workday
+  slug: santander:wd3:SantanderCareers
+  jobs_seen: 1115
+  startup: false
+  startup_evidence: global bank
+  source: curated
+  market: UK
+  sample_title: Investment Banking Analyst
+- company: Sendbird
+  ats: greenhouse
+  slug: sendbird
+  jobs_seen: 9
+  source: yc-oss
+  yc_batch: W16
+  team_size: 300
+  startup: true
+  startup_evidence: YC W16, 300 staff
+  website: https://sendbird.com
+  location: San Francisco, CA, USA
+  sample_title: ' AI Agent Engineer, Intern'
+  name_check: match
+- company: Shepherd
+  ats: ashby
+  slug: shepherd
+  jobs_seen: 21
+  source: yc-oss
+  yc_batch: W21
+  team_size: 60
+  startup: true
+  startup_evidence: YC W21, 60 staff
+  website: https://shepherdinsurance.com
+  location: San Francisco, CA, USA
+  sample_title: Senior Underwriter
+  name_check: match
+- company: Short Story
+  ats: ashby
+  slug: shortstory
+  jobs_seen: 19
+  source: yc-oss
+  yc_batch: S19
+  team_size: 120
+  startup: true
+  startup_evidence: YC S19, 120 staff
+  website: https://shortstorybox.com
+  location: San Francisco, CA, USA
+  sample_title: Personal Stylist (Remote CA, WA, NV, TX, OH, GA, FL, NC, SC)
+  name_check: match
+- company: SigNoz
+  ats: ashby
+  slug: signoz
+  jobs_seen: 16
+  source: yc-oss
+  yc_batch: W21
+  team_size: 38
+  startup: true
+  startup_evidence: YC W21, 38 staff
+  website: https://signoz.io
+  location: San Francisco, CA, USA; Remote
+  sample_title: Sr Backend Engineer - Platform
+  name_check: match
+- company: SnapMagic
+  ats: ashby
+  slug: snapmagic
+  jobs_seen: 5
+  source: yc-oss
+  yc_batch: S15
+  team_size: 23
+  startup: true
+  startup_evidence: YC S15, 23 staff
+  website: https://www.snapmagic.com
+  location: San Francisco, CA, USA
+  sample_title: Head of Engineering
+  name_check: match
+- company: Snowflake
+  ats: ashby
+  slug: snowflake
+  jobs_seen: 349
+  startup: false
+  startup_evidence: listed company (2012)
+  founded: 2012
+  source: curated
+  market: US
+  sample_title: Lead, Strategic Finance - Deals (International)
+  name_check: match
+- company: SoFi
+  ats: greenhouse
+  slug: sofi
+  jobs_seen: 57
+  startup: false
+  startup_evidence: listed company (2011)
+  founded: 2011
+  source: curated
+  market: US
+  sample_title: Applications Administrator, Home Lending
+  name_check: match
+- company: Solve Intelligence
+  ats: ashby
+  slug: solveintelligence
+  jobs_seen: 18
+  source: yc-oss
+  yc_batch: S23
+  team_size: 50
+  startup: true
+  startup_evidence: YC S23, 50 staff
+  website: https://www.solveintelligence.com/
+  location: London, England, United Kingdom
+  sample_title: Sales Development / GTM
+  name_check: match
+- company: Sony
+  ats: workday
+  slug: sonyglobal:wd1:Sony_Europe_Careers
+  jobs_seen: 20
+  startup: false
+  startup_evidence: global electronics - Europe site
+  source: curated
+  market: UK
+  sample_title: Channel Marketing Manager – Digital Imaging
+- company: SOUNDBOKS
+  ats: recruitee
+  slug: soundboks
+  jobs_seen: 2
+  source: yc-oss
+  yc_batch: W16
+  team_size: 50
+  startup: true
+  startup_evidence: YC W16, 50 staff
+  website: http://soundboks.com
+  location: Copenhagen, Denmark
+  sample_title: Acoustic Engineer
+  name_check: match
+- company: Spade
+  ats: ashby
+  slug: spade
+  jobs_seen: 10
+  source: yc-oss
+  yc_batch: W22
+  team_size: 30
+  startup: true
+  startup_evidence: YC W22, 30 staff
+  website: https://www.spade.com
+  location: New York City, NY, USA
+  sample_title: Backend Engineer (Mid-Level)
+  name_check: match
+- company: Sparkles
+  ats: recruitee
+  slug: sparkles
+  jobs_seen: 1
+  source: yc-oss
+  yc_batch: W26
+  team_size: 1
+  startup: true
+  startup_evidence: YC W26, 1 staff
+  website: https://sparkles.dev
+  location: London, England, United Kingdom
+  sample_title: Ervaren Developer
+  name_check: match
+- company: Speak
+  ats: ashby
+  slug: speak
+  jobs_seen: 36
+  source: yc-oss
+  yc_batch: W17
+  team_size: 40
+  startup: true
+  startup_evidence: YC W17, 40 staff
+  website: http://speak.com
+  location: San Francisco, CA, USA
+  sample_title: AI Product Engineer
+  name_check: match
+- company: Spotify
+  ats: lever
+  slug: spotify
+  jobs_seen: 80
+  startup: false
+  startup_evidence: listed company (2006)
+  founded: 2006
+  source: curated
+  market: UK
+  sample_title: Android Engineer - Experience
+  name_check: match
+- company: SpruceID
+  ats: ashby
+  slug: spruceid
+  jobs_seen: 5
+  source: yc-oss
+  yc_batch: W21
+  team_size: 25
+  startup: true
+  startup_evidence: YC W21, 25 staff
+  website: https://www.spruceid.com
+  location: New York City, NY, USA; Remote
+  sample_title: Senior Forward Deployed Engineer
+  name_check: match
+- company: Squarepoint Capital
+  ats: greenhouse
+  slug: squarepointcapital
+  jobs_seen: 89
+  startup: false
+  startup_evidence: established hedge fund (2014, 1,000+ staff)
+  founded: 2014
+  source: curated
+  market: UK
+  sample_title: Accountant
+  name_check: match
+- company: Stable
+  ats: ashby
+  slug: stable
+  jobs_seen: 5
+  source: yc-oss
+  yc_batch: W20
+  team_size: 30
+  startup: true
+  startup_evidence: YC W20, 30 staff
+  website: https://useStable.com
+  location: New York City, NY, USA
+  sample_title: Product Engineer
+  name_check: match
+- company: Standard AI
+  ats: recruitee
+  slug: standard
+  jobs_seen: 2
+  source: yc-oss
+  yc_batch: S17
+  team_size: 150
+  startup: true
+  startup_evidence: YC S17, 150 staff
+  website: https://standard.ai
+  location: San Francisco, CA, USA; Milan, Lombardy, Italy; Remote
+  sample_title: Recruiter*in (Muster)
+  name_check: match
+- company: Stilta
+  ats: ashby
+  slug: stilta
+  jobs_seen: 4
+  source: yc-oss
+  yc_batch: W26
+  team_size: 4
+  startup: true
+  startup_evidence: YC W26, 4 staff
+  website: https://stilta.com
+  location: Stockholm, Stockholm County, Sweden
+  sample_title: Founding Engineer
+  name_check: match
+- company: Subsets
+  ats: ashby
+  slug: subsets
+  jobs_seen: 1
+  source: yc-oss
+  yc_batch: S23
+  team_size: 7
+  startup: true
+  startup_evidence: YC S23, 7 staff
+  website: https://www.subsets.com
+  location: Copenhagen, Denmark
+  sample_title: Account Executive - Enterprise
+  name_check: match
+- company: Suger
+  ats: lever
+  slug: suger
+  jobs_seen: 13
+  source: yc-oss
+  yc_batch: W23
+  team_size: 50
+  startup: true
+  startup_evidence: YC W23, 50 staff
+  website: https://www.suger.io/
+  location: San Francisco, CA, USA
+  sample_title: Customer Success Manager - Enterprise
+  name_check: match
+- company: Swayable
+  ats: greenhouse
+  slug: swayable
+  jobs_seen: 15
+  source: yc-oss
+  yc_batch: W18
+  team_size: 30
+  startup: true
+  startup_evidence: YC W18, 30 staff
+  website: http://swayable.com
+  location: New York City, NY, USA; New York, NY, USA
+  sample_title: Account Director
+  name_check: match
+- company: Tailor
+  ats: ashby
+  slug: tailor
+  jobs_seen: 55
+  source: yc-oss
+  yc_batch: S22
+  team_size: 40
+  startup: true
+  startup_evidence: YC S22, 40 staff
+  website: https://www.tailor.tech/
+  location: Tokyo, Tokyo, Japan
+  sample_title: Business [新卒採用]
+  name_check: match
+- company: Taktile
+  ats: ashby
+  slug: taktile
+  jobs_seen: 42
+  source: yc-oss
+  yc_batch: S20
+  team_size: 150
+  startup: true
+  startup_evidence: YC S20, 150 staff
+  website: http://www.taktile.com
+  location: Berlin, Berlin, Germany
+  sample_title: Lead Solutions Engineer
+  name_check: match
+- company: Tavus
+  ats: ashby
+  slug: tavus
+  jobs_seen: 14
+  source: yc-oss
+  yc_batch: S21
+  team_size: 75
+  startup: true
+  startup_evidence: YC S21, 75 staff
+  website: https://www.tavus.io
+  location: San Francisco, CA, USA
+  sample_title: Customer Engineer
+  name_check: match
+- company: Tekton Dynamics
+  ats: ashby
+  slug: tekton-dynamics
+  jobs_seen: 2
+  source: yc-oss
+  yc_batch: W24
+  team_size: 3
+  startup: true
+  startup_evidence: YC W24, 3 staff
+  website: https://www.tekton-dynamics.com
+  location: London, England, United Kingdom
+  sample_title: General Application
+  name_check: match
+- company: telli
+  ats: ashby
+  slug: telli
+  jobs_seen: 21
+  source: yc-oss
+  yc_batch: F24
+  team_size: 16
+  startup: true
+  startup_evidence: YC F24, 16 staff
+  website: https://telli.com
+  location: Berlin, Berlin, Germany
+  sample_title: Engineering, All
+  name_check: match
+- company: Telstra
+  ats: workday
+  slug: telstra:wd3:Telstra_Careers
+  jobs_seen: 214
+  startup: false
+  startup_evidence: ASX-listed telco
+  source: curated
+  market: AU
+  sample_title: 'Telstra Retail: Customer Service & Sales Consultant (Expression of
+    Interest)'
+- company: Tempo
+  ats: ashby
+  slug: tempo
+  jobs_seen: 9
+  source: yc-oss
+  yc_batch: W15
+  team_size: 158
+  startup: true
+  startup_evidence: YC W15, 158 staff
+  website: https://tempo.fit/
+  location: San Francisco, CA, USA
+  sample_title: Product Designer - Agent+
+  name_check: match
+- company: Thomson Reuters
+  ats: workday
+  slug: thomsonreuters:wd5:External_Career_Site
+  jobs_seen: 458
+  startup: false
+  startup_evidence: information group
+  source: curated
+  market: UK
+  sample_title: Sales Director, Japan (Legal)
+- company: Thunkable
+  ats: lever
+  slug: thunkable
+  jobs_seen: 2
+  source: yc-oss
+  yc_batch: W16
+  team_size: 40
+  startup: true
+  startup_evidence: YC W16, 40 staff
+  website: http://thunkable.com
+  location: San Francisco, CA, USA
+  sample_title: Product Designer
+  name_check: match
+- company: Tilt (f.k.a. Delphia)
+  ats: ashby
+  slug: tilt
+  jobs_seen: 2
+  source: yc-oss
+  yc_batch: W18
+  team_size: 25
+  startup: true
+  startup_evidence: YC W18, 25 staff
+  website: http://tilt.io
+  location: Toronto, ON, Canada; Remote
+  sample_title: Inventory & Operations Associate
+  name_check: match
+- company: Toast
+  ats: greenhouse
+  slug: toast
+  jobs_seen: 345
+  startup: false
+  startup_evidence: listed company (2011)
+  founded: 2011
+  source: curated
+  market: US
+  sample_title: 'AI Operations Lead, Toast IQ '
+  name_check: match
+- company: Topline Pro
+  ats: ashby
+  slug: topline-pro
+  jobs_seen: 14
+  source: yc-oss
+  yc_batch: W21
+  team_size: 28
+  startup: true
+  startup_evidence: YC W21, 28 staff
+  website: https://www.toplinepro.com
+  location: New York City, NY, USA; Boston, MA, USA
+  sample_title: Business Development Representative - 2026
+  name_check: match
+- company: Tovala
+  ats: lever
+  slug: tovala
+  jobs_seen: 9
+  source: yc-oss
+  yc_batch: W16
+  team_size: 375
+  startup: true
+  startup_evidence: YC W16, 375 staff
+  website: http://www.tovala.com
+  location: Chicago, IL, USA
+  sample_title: Assembler (Food Manufacturing)
+  name_check: match
+- company: Tower Research Capital
+  ats: greenhouse
+  slug: towerresearchcapital
+  jobs_seen: 91
+  startup: false
+  startup_evidence: established trading firm (1998)
+  founded: 1998
+  source: curated
+  market: US
+  sample_title: Agentic System Developer
+  name_check: match
+- company: Trainline
+  ats: ashby
+  slug: trainline
+  jobs_seen: 27
+  startup: false
+  startup_evidence: listed company (1997)
+  founded: 1997
+  source: curated
+  market: UK
+  sample_title: IT Support Analyst
+  name_check: match
+- company: Triomics
+  ats: ashby
+  slug: triomics
+  jobs_seen: 18
+  source: yc-oss
+  yc_batch: W21
+  team_size: 50
+  startup: true
+  startup_evidence: YC W21, 50 staff
+  website: https://triomics.com/
+  location: New York City, NY, USA
+  sample_title: Account Manager
+  name_check: match
+- company: TRM Labs
+  ats: ashby
+  slug: trm-labs
+  jobs_seen: 104
+  source: yc-oss
+  yc_batch: S19
+  team_size: 400
+  startup: true
+  startup_evidence: YC S19, 400 staff
+  website: https://trmlabs.com/
+  location: San Francisco, CA, USA; Remote
+  sample_title: Account Director, Defence and Intel (Canada)
+  name_check: match
+- company: Twenty
+  ats: ashby
+  slug: twenty
+  jobs_seen: 30
+  source: yc-oss
+  yc_batch: S23
+  team_size: 11
+  startup: true
+  startup_evidence: YC S23, 11 staff
+  website: https://twenty.com
+  location: Paris, Île-de-France, France
+  sample_title: Staff / Principal Backend Software Engineer
+  name_check: match
+- company: Unilever
+  ats: workday
+  slug: unilever:wd3:Unilever_Experienced_Professionals
+  jobs_seen: 226
+  startup: false
+  startup_evidence: FTSE 100 FMCG
+  source: curated
+  market: UK
+  sample_title: Sale Representative – HORECA Central
+- company: Unilever
+  ats: workday
+  slug: unilever:wd3:Unilever_Early_Careers
+  jobs_seen: 12
+  startup: false
+  startup_evidence: FTSE 100 FMCG - early careers site
+  source: curated
+  market: UK
+  sample_title: Unilever Future Leadership Programme - Sales UK
+- company: Uniqlo (Fast Retailing)
+  ats: workday
+  slug: fastretailing:wd3:graduates_eu_Uniqlo
+  jobs_seen: 11
+  startup: false
+  startup_evidence: global retailer - EU graduate site
+  source: curated
+  market: UK
+  sample_title: UNIQLO Management Candidate Graduate Programme |  Luxembourg 2027
+- company: UpCodes
+  ats: ashby
+  slug: upcodes
+  jobs_seen: 3
+  source: yc-oss
+  yc_batch: S17
+  team_size: 35
+  startup: true
+  startup_evidence: YC S17, 35 staff
+  website: https://up.codes/
+  location: Austin, TX, USA; Remote
+  sample_title: Senior Account Executive
+  name_check: match
+- company: Vanta
+  ats: ashby
+  slug: vanta
+  jobs_seen: 88
+  source: yc-oss
+  yc_batch: W18
+  team_size: 700
+  startup: false
+  startup_evidence: YC W18, 700 staff
+  website: https://vanta.com
+  location: San Francisco, CA, USA
+  sample_title: Sales Development Representative, Inbound
+  name_check: match
+- company: Verge Genomics
+  ats: ashby
+  slug: verge-genomics
+  jobs_seen: 1
+  source: yc-oss
+  yc_batch: S15
+  team_size: 50
+  startup: true
+  startup_evidence: YC S15, 50 staff
+  website: http://vergegenomics.com
+  location: San Francisco, CA, USA
+  sample_title: Business Development Consultant
+  name_check: unverified
+- company: Verse Medical
+  ats: ashby
+  slug: versemedical
+  jobs_seen: 32
+  source: yc-oss
+  yc_batch: S18
+  team_size: 200
+  startup: true
+  startup_evidence: YC S18, 200 staff
+  website: http://versemedical.com/
+  location: New York City, NY, USA
+  sample_title: Senior Account Manager - Partnerships
+  name_check: match
+- company: Verto
+  ats: ashby
+  slug: verto
+  jobs_seen: 1
+  source: yc-oss
+  yc_batch: W19
+  team_size: 170
+  startup: true
+  startup_evidence: YC W19, 170 staff
+  website: http://www.vertofx.com
+  location: London, England, United Kingdom
+  sample_title: People Partner
+  name_check: match
+- company: Vetcove
+  ats: ashby
+  slug: vetcove
+  jobs_seen: 27
+  source: yc-oss
+  yc_batch: S16
+  team_size: 170
+  startup: true
+  startup_evidence: YC S16, 170 staff
+  website: https://www.vetcove.com
+  location: Miami, FL, USA; Remote
+  sample_title: Controller
+  name_check: match
+- company: Viatris
+  ats: workday
+  slug: viatris:wd5:External
+  jobs_seen: 376
+  startup: false
+  startup_evidence: global pharma
+  source: curated
+  market: UK
+  sample_title: Maintenance Fitter
+- company: ViiV Healthcare
+  ats: workday
+  slug: gsk:wd5:ViiV_Careers
+  jobs_seen: 44
+  startup: false
+  startup_evidence: GSK-majority pharma
+  source: curated
+  market: UK
+  sample_title: Territory Account Manager - Clevland
+- company: Virtu Financial
+  ats: greenhouse
+  slug: virtu
+  jobs_seen: 49
+  startup: false
+  startup_evidence: listed trading firm (2008)
+  founded: 2008
+  source: curated
+  market: US
+  sample_title: '2027 Internship – Core Operations Engineer '
+  name_check: match
+- company: voize
+  ats: ashby
+  slug: voize
+  jobs_seen: 50
+  source: yc-oss
+  yc_batch: W22
+  team_size: 140
+  startup: true
+  startup_evidence: YC W22, 140 staff
+  website: https://voize.de/
+  location: Berlin, Berlin, Germany
+  sample_title: Jnr. Customer Success Manager - German Speaking (m/f/d)
+  name_check: match
+- company: Vori
+  ats: ashby
+  slug: vori
+  jobs_seen: 11
+  source: yc-oss
+  yc_batch: W20
+  team_size: 29
+  startup: true
+  startup_evidence: YC W20, 29 staff
+  website: https://www.vori.com
+  location: San Francisco, CA, USA; East Palo Alto, CA, USA
+  sample_title: Forward Deployed Data Engineer
+  name_check: match
+- company: Waymo
+  ats: greenhouse
+  slug: waymo
+  jobs_seen: 358
+  startup: false
+  startup_evidence: Alphabet subsidiary
+  source: curated
+  market: US
+  sample_title: 2027 Summer Intern, BS/MS, Embedded, Software Engineer
+  name_check: match
+- company: Webflow
+  ats: greenhouse
+  slug: webflow
+  jobs_seen: 27
+  source: yc-oss
+  yc_batch: S13
+  team_size: 600
+  startup: false
+  startup_evidence: YC S13, 600 staff
+  website: https://webflow.com
+  location: San Francisco, CA, USA
+  sample_title: Account Executive, EMEA (Germany)
+  name_check: match
+- company: Weekday
+  ats: recruitee
+  slug: weekday
+  jobs_seen: 1
+  source: yc-oss
+  yc_batch: W21
+  team_size: 38
+  startup: true
+  startup_evidence: YC W21, 38 staff
+  website: https://weekday.works
+  location: Bengaluru, KA, India; Remote
+  sample_title: Key Account Manager
+  name_check: match
+- company: Weir Group
+  ats: workday
+  slug: weir:wd3:Weir_External_Careers
+  jobs_seen: 203
+  startup: false
+  startup_evidence: FTSE engineering group
+  source: curated
+  market: UK
+  sample_title: Senior Engineer
+- company: Within
+  ats: ashby
+  slug: within
+  jobs_seen: 14
+  source: yc-oss
+  yc_batch: S18
+  team_size: 128
+  startup: true
+  startup_evidence: YC S18, 128 staff
+  website: http://within.ai
+  location: San Francisco, CA, USA
+  sample_title: Senior/Staff AI Frontend Engineer
+  name_check: match
+- company: Workday
+  ats: workday
+  slug: workday:wd5:Workday_Early_Career
+  jobs_seen: 3
+  startup: false
+  startup_evidence: enterprise software - early careers site
+  source: curated
+  market: UK
+  sample_title: Workday Intern Cohort 2026 (US)
+- company: Xendit
+  ats: greenhouse
+  slug: xendit
+  jobs_seen: 29
+  source: yc-oss
+  yc_batch: S15
+  team_size: 700
+  startup: false
+  startup_evidence: YC S15, 700 staff
+  website: https://www.xendit.co/
+  location: Jakarta, Jakarta, Indonesia
+  sample_title: Account Manager
+  name_check: match
+- company: XTX Markets
+  ats: greenhouse
+  slug: xtxmarketstechnologies
+  jobs_seen: 9
+  founded: 2015
+  source: curated
+  market: UK
+  sample_title: AI Research Internship - XTY Labs
+  name_check: match
+- company: Y Combinator
+  ats: ashby
+  slug: ycombinator
+  jobs_seen: 9
+  source: yc-oss
+  yc_batch: Unspecified
+  team_size: 100
+  startup_evidence: YC Unspecified, 100 staff
+  website: https://www.ycombinator.com
+  location: ''
+  sample_title: Product Engineer, Internal Tools
+  name_check: match
+- company: Zapier
+  ats: ashby
+  slug: zapier
+  jobs_seen: 10
+  source: yc-oss
+  yc_batch: S12
+  team_size: 700
+  startup: false
+  startup_evidence: YC S12, 700 staff
+  website: http://zapier.com
+  location: San Francisco, CA, USA; Mountain View, CA, USA; Remote
+  sample_title: Finance Manager, Marketing
+  name_check: match
+- company: Zego
+  ats: ashby
+  slug: zego
+  jobs_seen: 47
+  founded: 2016
+  source: curated
+  market: UK
+  sample_title: Lead AI Product Manager - Telematics
+  name_check: match
+- company: Zeit AI
+  ats: ashby
+  slug: zeit-ai
+  jobs_seen: 6
+  source: yc-oss
+  yc_batch: S24
+  team_size: 12
+  startup: true
+  startup_evidence: YC S24, 12 staff
+  website: https://zeit-ai.com/
+  location: Munich, BY, Germany
+  sample_title: Staff Backend Engineer, Platform
+  name_check: match
+- company: Ziina
+  ats: ashby
+  slug: ziina
+  jobs_seen: 15
+  source: yc-oss
+  yc_batch: W21
+  team_size: 57
+  startup: true
+  startup_evidence: YC W21, 57 staff
+  website: https://www.ziina.com
+  location: Dubai, United Arab Emirates
+  sample_title: Backend Engineer, Payments Platform
+  name_check: match
+- company: Zip
+  ats: ashby
+  slug: zip
+  jobs_seen: 122
+  source: yc-oss
+  yc_batch: S20
+  team_size: 500
+  startup: false
+  startup_evidence: YC S20, 500 staff
+  website: https://ziphq.com/
+  location: San Francisco, CA, USA
+  sample_title: Senior / Principal Product Manager
+  name_check: unverified
+- company: Zippi
+  ats: lever
+  slug: zippi
+  jobs_seen: 5
+  source: yc-oss
+  yc_batch: S19
+  team_size: 60
+  startup: true
+  startup_evidence: YC S19, 60 staff
+  website: https://www.zippi.com.br
+  location: São Paulo, SP, Brazil
+  sample_title: Banco de Talentos | Estágio
+  name_check: match
+- company: Zuma
+  ats: lever
+  slug: getzuma
+  jobs_seen: 6
+  source: yc-oss
+  yc_batch: S21
+  team_size: 50
+  startup: true
+  startup_evidence: YC S21, 50 staff
+  website: https://www.getzuma.com/
+  location: Los Angeles, CA, USA
+  sample_title: Principal Product Designer
+  name_check: match

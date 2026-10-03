@@ -1,0 +1,546 @@
+companies:
+- company: Accenture
+  ats: recruitee
+  slug: accenture
+  jobs_seen: 2
+- company: Accenture
+  ats: workday
+  slug: accenture:wd103:AccentureCareers
+  jobs_seen: 2000
+- company: Airtable
+  ats: greenhouse
+  slug: airtable
+  jobs_seen: 16
+- company: Anthropic
+  ats: greenhouse
+  slug: anthropic
+  jobs_seen: 585
+- company: Asana
+  ats: greenhouse
+  slug: asana
+  jobs_seen: 113
+- company: Asda
+  ats: workday
+  slug: asda:wd103:AsdaJobs
+  jobs_seen: 556
+- company: AstraZeneca
+  ats: workday
+  slug: astrazeneca:wd3:Careers
+  jobs_seen: 1138
+- company: Aviva
+  ats: workday
+  slug: aviva:wd1:External
+  jobs_seen: 148
+- company: BCG
+  ats: greenhouse
+  slug: bcg
+  jobs_seen: 2
+- company: BP
+  ats: recruitee
+  slug: bp
+  jobs_seen: 1
+- company: Brex
+  ats: greenhouse
+  slug: brex
+  jobs_seen: 277
+- company: Bupa
+  ats: workable
+  slug: bupa
+  jobs_seen: 15
+- company: Caffe Nero
+  ats: smartrecruiters
+  slug: caffenero
+  jobs_seen: 1
+- company: Canva
+  ats: smartrecruiters
+  slug: canva
+  jobs_seen: 1
+- company: Checkout.com
+  ats: ashby
+  slug: Checkout.com
+  jobs_seen: 169
+- company: Cisco
+  ats: workday
+  slug: cisco:wd5:Cisco_Careers
+  jobs_seen: 1290
+- company: Cleo
+  ats: greenhouse
+  slug: cleo
+  jobs_seen: 4
+- company: Cloudflare
+  ats: greenhouse
+  slug: cloudflare
+  jobs_seen: 327
+- company: Cognism
+  ats: greenhouse
+  slug: cognism
+  jobs_seen: 17
+- company: Coinbase
+  ats: greenhouse
+  slug: coinbase
+  jobs_seen: 187
+- company: Databricks
+  ats: greenhouse
+  slug: databricks
+  jobs_seen: 860
+- company: Datadog
+  ats: greenhouse
+  slug: datadog
+  jobs_seen: 444
+- company: Deliveroo
+  ats: ashby
+  slug: deliveroo
+  jobs_seen: 200
+- company: Diageo
+  ats: workday
+  slug: diageo:wd3:Diageo_Careers
+  jobs_seen: 205
+- company: Discord
+  ats: greenhouse
+  slug: discord
+  jobs_seen: 49
+- company: Dominos
+  ats: smartrecruiters
+  slug: dominos
+  jobs_seen: 1
+- company: DPD
+  ats: recruitee
+  slug: dpd
+  jobs_seen: 21
+- company: Dyson
+  ats: workday
+  slug: dyson:wd3:Dyson_Careers
+  jobs_seen: 414
+- company: Elastic
+  ats: greenhouse
+  slug: elastic
+  jobs_seen: 358
+- company: ElevenLabs
+  ats: ashby
+  slug: elevenlabs
+  jobs_seen: 253
+- company: EY
+  ats: recruitee
+  slug: ey
+  jobs_seen: 3
+- company: Faculty
+  ats: ashby
+  slug: faculty
+  jobs_seen: 69
+- company: Figma
+  ats: greenhouse
+  slug: figma
+  jobs_seen: 157
+- company: Flow Traders
+  ats: greenhouse
+  slug: flowtraders
+  jobs_seen: 43
+- company: Form3
+  ats: greenhouse
+  slug: form3
+  jobs_seen: 9
+- company: Freetrade
+  ats: ashby
+  slug: freetrade
+  jobs_seen: 9
+- company: GitLab
+  ats: greenhouse
+  slug: gitlab
+  jobs_seen: 229
+- company: GoCardless
+  ats: greenhouse
+  slug: gocardless
+  jobs_seen: 23
+- company: Graphcore
+  ats: greenhouse
+  slug: graphcore
+  jobs_seen: 186
+- company: Greene King
+  ats: smartrecruiters
+  slug: greeneking
+  jobs_seen: 1
+- company: Griffin
+  ats: ashby
+  slug: griffin
+  jobs_seen: 4
+- company: GSK
+  ats: workday
+  slug: gsk:wd5:GskCareers
+  jobs_seen: 713
+- company: Gusto
+  ats: greenhouse
+  slug: gusto
+  jobs_seen: 88
+- company: Improbable
+  ats: ashby
+  slug: improbable
+  jobs_seen: 7
+- company: Jane Street
+  ats: greenhouse
+  slug: janestreet
+  jobs_seen: 234
+- company: JD Sports
+  ats: greenhouse
+  slug: jdsports
+  jobs_seen: 204
+- company: Jump Trading
+  ats: greenhouse
+  slug: jumptrading
+  jobs_seen: 107
+- company: Lendable
+  ats: ashby
+  slug: lendable
+  jobs_seen: 67
+- company: Linear
+  ats: ashby
+  slug: linear
+  jobs_seen: 28
+- company: Lush
+  ats: greenhouse
+  slug: lush
+  jobs_seen: 217
+- company: Man Group
+  ats: greenhouse
+  slug: mangroup
+  jobs_seen: 54
+- company: Marshmallow
+  ats: ashby
+  slug: marshmallow
+  jobs_seen: 11
+- company: Matillion
+  ats: lever
+  slug: matillion
+  jobs_seen: 17
+- company: Miro
+  ats: ashby
+  slug: miro
+  jobs_seen: 38
+- company: MongoDB
+  ats: greenhouse
+  slug: mongodb
+  jobs_seen: 407
+- company: Monzo
+  ats: greenhouse
+  slug: monzo
+  jobs_seen: 65
+- company: Mott MacDonald
+  ats: smartrecruiters
+  slug: mottmacdonald
+  jobs_seen: 1
+- company: Multiverse
+  ats: ashby
+  slug: multiverse
+  jobs_seen: 22
+- company: Notion
+  ats: ashby
+  slug: notion
+  jobs_seen: 132
+- company: OpenAI
+  ats: ashby
+  slug: openai
+  jobs_seen: 766
+- company: Paddle
+  ats: ashby
+  slug: paddle
+  jobs_seen: 17
+- company: PagerDuty
+  ats: greenhouse
+  slug: pagerduty
+  jobs_seen: 43
+- company: Palantir
+  ats: smartrecruiters
+  slug: palantir
+  jobs_seen: 1
+- company: Peak
+  ats: greenhouse
+  slug: peak
+  jobs_seen: 45
+- company: Plaid
+  ats: ashby
+  slug: plaid
+  jobs_seen: 103
+- company: Pleo
+  ats: ashby
+  slug: pleo
+  jobs_seen: 31
+- company: Point72
+  ats: greenhouse
+  slug: point72
+  jobs_seen: 233
+- company: PolyAI
+  ats: greenhouse
+  slug: polyai
+  jobs_seen: 14
+- company: Pret A Manger
+  ats: recruitee
+  slug: pretamanger
+  jobs_seen: 11
+- company: Primark
+  ats: smartrecruiters
+  slug: primark
+  jobs_seen: 1
+- company: Primer
+  ats: ashby
+  slug: primer
+  jobs_seen: 23
+- company: PureGym
+  ats: recruitee
+  slug: puregym
+  jobs_seen: 30
+- company: Quantexa
+  ats: ashby
+  slug: quantexa
+  jobs_seen: 30
+- company: Ramp
+  ats: ashby
+  slug: ramp
+  jobs_seen: 139
+- company: Reddit
+  ats: greenhouse
+  slug: reddit
+  jobs_seen: 147
+- company: Robinhood
+  ats: greenhouse
+  slug: robinhood
+  jobs_seen: 133
+- company: Scale AI
+  ats: greenhouse
+  slug: scaleai
+  jobs_seen: 211
+- company: Sentry
+  ats: ashby
+  slug: sentry
+  jobs_seen: 39
+- company: Shell
+  ats: workday
+  slug: shell:wd3:ShellCareers
+  jobs_seen: 142
+- company: Sodexo
+  ats: smartrecruiters
+  slug: sodexo
+  jobs_seen: 1
+- company: Stability AI
+  ats: greenhouse
+  slug: stabilityai
+  jobs_seen: 7
+- company: Starling Bank
+  ats: workable
+  slug: starling-bank
+  jobs_seen: 100
+- company: Stripe
+  ats: greenhouse
+  slug: stripe
+  jobs_seen: 608
+- company: SumUp
+  ats: greenhouse
+  slug: sumup
+  jobs_seen: 402
+- company: Synthesia
+  ats: ashby
+  slug: synthesia
+  jobs_seen: 58
+- company: Thales
+  ats: smartrecruiters
+  slug: thales
+  jobs_seen: 1
+- company: Thales
+  ats: workday
+  slug: thales:wd3:Careers
+  jobs_seen: 2000
+- company: Thought Machine
+  ats: ashby
+  slug: thought-machine
+  jobs_seen: 43
+- company: Tide
+  ats: greenhouse
+  slug: tide
+  jobs_seen: 84
+- company: Tractable
+  ats: ashby
+  slug: tractable
+  jobs_seen: 5
+- company: TrueLayer
+  ats: greenhouse
+  slug: truelayer
+  jobs_seen: 3
+- company: Twilio
+  ats: greenhouse
+  slug: twilio
+  jobs_seen: 141
+- company: Uber
+  ats: smartrecruiters
+  slug: uber
+  jobs_seen: 1
+- company: Vercel
+  ats: greenhouse
+  slug: vercel
+  jobs_seen: 88
+- company: Wayve
+  ats: greenhouse
+  slug: wayve
+  jobs_seen: 160
+- company: Wise
+  ats: greenhouse
+  slug: wise
+  jobs_seen: 21
+- company: Yapily
+  ats: workable
+  slug: yapily
+  jobs_seen: 10
+- company: Zilch
+  ats: ashby
+  slug: zilch
+  jobs_seen: 13
+- company: Zopa
+  ats: lever
+  slug: zopa
+  jobs_seen: 29
+not_found:
+- ABB
+- AECOM
+- Airbus
+- Aldi
+- Arup
+- AstraZeneca
+- Atkins
+- B&M
+- B&Q
+- BAE Systems
+- BP
+- BT
+- Babcock
+- Bain
+- Balfour Beatty
+- Balyasny
+- Barchester Healthcare
+- Barclays
+- Beauhurst
+- BenevolentAI
+- Boots
+- Bosch
+- Builder.ai
+- Buro Happold
+- Capgemini
+- Care UK
+- Centrica
+- Citadel
+- ClearScore
+- Compass Group
+- Costa Coffee
+- Costain
+- Croda
+- Currys
+- Curve
+- DHL
+- DRW
+- Darktrace
+- David Lloyd
+- Decathlon
+- Dell
+- Deloitte
+- Dyson
+- EDF
+- Evri
+- Five Guys
+- Fnality
+- G-Research
+- GSK
+- Gail's
+- Greggs
+- H&M
+- HC-One
+- HSBC
+- Habito
+- Haleon
+- HashiCorp
+- Holland & Barrett
+- Hopin
+- IBM
+- IKEA
+- IMC Trading
+- ISS
+- Itsu
+- JLR
+- Jacobs
+- John Lewis
+- Johnson Matthey
+- Just Eat
+- KFC
+- KPMG
+- Laing O'Rourke
+- Legal & General
+- Leon
+- Leonardo
+- Lidl
+- Lloyds Banking Group
+- MBDA
+- Marks and Spencer
+- Marshall Wace
+- McDonalds
+- McKinsey
+- Millennium
+- Mitchells & Butlers
+- Mitie
+- Moderna
+- Modulr
+- Moneybox
+- Morrisons
+- Mott MacDonald
+- Nandos
+- NatWest
+- National Grid
+- Network Rail
+- New Look
+- Next
+- Nutmeg
+- Nvidia
+- Octopus Energy
+- Old Mission
+- Onfido
+- Optiver
+- Payhawk
+- PensionBee
+- Pizza Hut
+- PizzaExpress
+- PwC
+- QinetiQ
+- Qube Research
+- Ramboll
+- Reckitt
+- Retool
+- Revolut
+- Rippling
+- River Island
+- Rolls Royce SMR
+- Rolls-Royce
+- Royal Mail
+- SSE
+- Sainsburys
+- Salesforce
+- Schneider Electric
+- Screwfix
+- Shell
+- Siemens
+- Skanska
+- Snyk
+- Soldo
+- Squarepoint
+- Starbucks
+- Superdrug
+- Susquehanna
+- TK Maxx
+- Tesco
+- The Body Shop
+- The Gym Group
+- Travis Perkins
+- Two Sigma
+- Unilever
+- Uniqlo
+- Vodafone
+- WHSmith
+- WSP
+- Wagamama
+- Waterstones
+- Whitbread
+- Workday
+- XTX Markets

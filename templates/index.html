@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Job Scout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+
+<div class="masthead">
+  <button class="rail-toggle" id="btn-rail-toggle" aria-label="Show filters" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="wordmark"><b>Job Scout</b><span>every kind of job, on your terms</span></div>
+  <nav class="tabs">
+    <button class="tab on" data-view="positions">Positions</button>
+    <button class="tab"    data-view="review">Review</button>
+    <button class="tab"    data-view="tracker">Tracker</button>
+    <button class="tab"    data-view="assistant">Assistant</button>
+    <button class="tab"    data-view="profile">Profile</button>
+    <button class="tab"    data-view="criteria">Criteria</button>
+  </nav>
+  <div class="spacer"></div>
+  <div class="stat-strip">
+    <div class="item"><div class="n" id="s-total">-</div><div class="k">Stored</div></div>
+    <div class="item"><div class="n" id="s-strong">-</div><div class="k">Strong</div></div>
+    <div class="item"><div class="n" id="s-avg">-</div><div class="k">Avg score</div></div>
+  </div>
+  <button class="btn ghost-light" id="btn-scrape">Run scrape</button>
+</div>
+<div class="progress"><i id="scrape-bar" style="width:0"></i></div>
+
+<div class="shell">
+  <div class="rail-backdrop" id="rail-backdrop"></div>
+  <!-- ------------------------------------------------------------- filters -->
+  <aside class="rail" id="rail">
+    <div class="field">
+      <label class="micro">Search</label>
+      <input type="text" id="f-q" placeholder="title, company, skill...">
+    </div>
+    <div class="field">
+      <label class="micro">Minimum score</label>
+      <div class="rangewrap">
+        <input type="range" id="f-score" min="0" max="90" step="5" value="0">
+        <b id="f-score-v">0</b>
+      </div>
+    </div>
+    <div class="field">
+      <label class="micro">Status</label>
+      <select id="f-status"><option value="all">All</option></select>
+    </div>
+    <div class="field">
+      <label class="micro">Source</label>
+      <select id="f-source"><option value="all">All sources</option></select>
+    </div>
+    <div class="field">
+      <label class="micro">Sort by</label>
+      <select id="f-order">
+        <option value="score">Match score</option>
+        <option value="date">Date posted</option>
+        <option value="new">Recently found</option>
+        <option value="closing">Closing soonest</option>
+        <option value="company">Company</option>
+        <option value="salary">Salary</option>
+        <option value="employment">Job type</option>
+        <option value="family">Field of work</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="micro" for="f-startups">Startups</label>
+      <select id="f-startups">
+        <option value="any">Include startups</option>
+        <option value="hide">Hide startups</option>
+        <option value="only">Startups only</option>
+      </select>
+      <div class="where" style="margin-top:4px;font-size:11px">
+        Tagged from the company registry. Employers it knows nothing about stay in view.
+      </div>
+    </div>
+    <div class="field">
+      <label class="micro">Job type</label>
+      <div class="facet" id="f-employment"></div>
+    </div>
+    <div class="field">
+      <label class="micro">Field of work</label>
+      <div class="facet tall" id="f-family"></div>
+    </div>
+    <div class="field"><div class="row">
+      <input type="checkbox" id="f-unclassified">
+      <label for="f-unclassified" style="margin:0">Also show unstated</label>
+    </div>
+    <div class="where" style="font-size:11px;margin-top:3px">
+      Two thirds of postings never say their hours or field. Tick to include those
+      as well as the type you picked. Has no effect until you pick one.
+    </div></div>
+    <hr>
+    <div class="field"><div class="row">
+      <input type="checkbox" id="f-star"><label for="f-star" style="margin:0">Starred only</label>
+    </div></div>
+    <div class="field"><div class="row">
+      <input type="checkbox" id="f-remote"><label for="f-remote" style="margin:0">Remote only</label>
+    </div></div>
+    <div class="field"><div class="row">
+      <input type="checkbox" id="f-unviewed">
+      <label for="f-unviewed" style="margin:0">Hide ones I've opened</label>
+    </div></div>
+    <div class="field"><div class="row">
+      <input type="checkbox" id="f-sponsored">
+      <label for="f-sponsored" style="margin:0">Visa sponsors only</label>
+    </div>
+    <div class="where" id="f-sponsored-note" style="margin-top:4px;font-size:11px"></div>
+    </div>
+    <div class="field"><div class="row">
+      <input type="checkbox" id="f-salary">
+      <label for="f-salary" style="margin:0">Salary disclosed only</label>
+    </div>
+    <div class="where" style="margin-top:4px;font-size:11px">
+      Roughly a quarter of postings omit pay even where the law requires it.
+    </div>
+    </div>
+    <div class="field" id="own-facets-field" style="display:none">
+      <label class="micro">Your filters</label>
+      <div class="facet" id="f-own"></div>
+    </div>
+    <div class="field">
+      <button class="btn sm" id="btn-add-filter" style="width:100%">
+        + Add your own filter</button>
+      <div class="where" style="font-size:11px;margin-top:4px">
+        Anything the lists above do not cover &mdash; a shift pattern, a chain, four
+        towns near you. Yours, not ours.
+      </div>
+    </div>
+    <hr>
+    <button class="btn" id="btn-reset" style="width:100%">Reset filters</button>
+    <div class="where" id="view-saved-note" style="margin-top:6px;font-size:11px">
+      Your filters are remembered between visits.</div>
+    <div style="margin-top:18px" class="micro">Sources</div>
+    <div id="source-tally" style="margin-top:7px;color:var(--muted);font-size:11.5px;line-height:1.7"></div>
+  </aside>
+
+  <main class="main">
+    <!-- ---------------------------------------------------------- positions -->
+    <section class="view on" id="view-positions">
+      <div class="toolbar">
+        <span class="count" id="result-count">loading...</span>
+        <span class="spacer"></span>
+        <button class="btn sm" id="btn-export-new">Export tracker</button>
+        <button class="btn sm primary" id="btn-export-append">Add to my workbook</button>
+      </div>
+      <table class="grid">
+        <thead><tr>
+          <th style="width:26px"></th>
+          <th>Role</th><th style="width:150px">Location</th>
+          <th style="width:110px">Salary</th><th style="width:120px">Score</th>
+          <th style="width:140px">Signals</th><th style="width:96px">Status</th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty" id="empty" style="display:none">
+        <h3>Nothing matches those filters</h3>
+        <p>Loosen the score threshold, or run a scrape to pull fresh postings.</p>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------------------- review -->
+    <section class="view" id="view-review">
+      <div class="deckwrap">
+        <div class="deckhead">
+          <div>
+            <div class="micro">Review queue</div>
+            <div class="deckcount"><b id="deck-remaining">0</b> waiting
+              &middot; <span id="deck-shortlisted">0</span> saved
+              &middot; <span id="deck-reviewed">0</span> decided</div>
+          </div>
+          <button class="btn sm" id="deck-undo" disabled>Undo</button>
+        </div>
+
+        <div class="deck" id="deck">
+          <div class="deckempty" id="deck-empty">
+            <h3>Queue clear</h3>
+            <p>Every stored job has a decision. Run a scrape for more,
+               or loosen the criteria.</p>
+          </div>
+        </div>
+
+        <div class="deckbar">
+          <button class="swipebtn pass"  id="btn-pass"  title="Left arrow">
+            <span>&larr;</span> Pass</button>
+          <button class="swipebtn star"  id="btn-star"  title="Up arrow">
+            <span>&uarr;</span> Star</button>
+          <button class="swipebtn short" id="btn-short" title="Right arrow">
+            Save <span>&rarr;</span></button>
+        </div>
+        <div class="deckhint">
+          Arrow keys work. Swiping right <b>saves</b> the posting &mdash; it goes on your
+          tracker with the apply link, ready for whenever you sit down to apply.
+          Nothing is ever submitted for you: no application leaves this machine. Unlike
+          an auto-apply tool, nothing gets sent to the wrong role, the wrong location or
+          in the wrong language while you are not looking &mdash; you see every one
+          before it goes anywhere.
+        </div>
+      </div>
+      <div class="packwrap"><div id="pack-host"></div></div>
+    </section>
+
+    <!-- ------------------------------------------------------------ tracker -->
+    <section class="view" id="view-tracker">
+      <div class="pad">
+        <div class="panel" id="panel-followups" style="display:none">
+          <h3>Gone quiet</h3>
+          <p class="sub">
+            Applications marked <b>applied</b> with nothing back for three weeks or
+            more. Not knowing when to stop waiting and do something about it is the
+            most commonly cited frustration in job-search discussion &mdash; this is
+            that decision made for you, using the same 21-day threshold as the
+            &ldquo;Chase&rdquo; alert in the exported workbook, so the two never
+            disagree.
+          </p>
+          <div id="followups-body"></div>
+        </div>
+
+        <div class="panel">
+          <h3>Spreadsheet tracker</h3>
+          <p class="sub">
+            Exports match your existing workbook exactly - 21 columns, the same dropdown
+            lists, and the <b>Days Left</b> / <b>Alert</b> formulas. Job Scout fills the
+            blue &ldquo;when you find a role&rdquo; and &ldquo;detail&rdquo; columns; the
+            apply and progress columns stay yours to fill in.
+          </p>
+          <div class="grid2">
+            <div>
+              <div class="micro" style="margin-bottom:6px">Auto-filled for you</div>
+              <div class="taglist" id="cols-auto"></div>
+            </div>
+            <div>
+              <div class="micro" style="margin-bottom:6px">You fill in</div>
+              <div class="taglist" id="cols-manual"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Add to your own workbook</h3>
+          <p class="sub">
+            Copies your tracker workbook (set <code>profile.tracker_path</code>), appends the current results to the
+            Tracker sheet, and leaves your Dashboard and <code>Calc</code> sheets untouched,
+            so the Sankey keeps working. Your original file is never modified - a new dated
+            copy is written to <code>out/</code>.
+          </p>
+          <button class="btn primary" id="btn-t-append">Append to a copy of my workbook</button>
+        </div>
+
+        <div class="panel">
+          <h3>Standalone workbook</h3>
+          <p class="sub">
+            A fresh file with the same Tracker layout plus its own Settings sheet and a
+            dashboard - funnel by round reached, outcome split, and deadline KPIs.
+          </p>
+          <button class="btn" id="btn-t-new">Build standalone tracker</button>
+        </div>
+
+        <div class="panel">
+          <h3>Recent exports</h3>
+          <div id="export-list" style="color:var(--muted)">None yet this session.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------------- assistant -->
+    <section class="view" id="view-assistant">
+      <div class="chatwrap">
+        <div class="suggest">
+          <button>only London and hybrid roles</button>
+          <button>minimum score 45</button>
+          <button>I do not want anything unpaid</button>
+          <button>sort by date</button>
+          <button>show me solidworks roles</button>
+          <button>which sources are working?</button>
+          <button>I need visa sponsorship as an international student</button>
+          <button>hybrid mechanical design placement in London</button>
+        </div>
+        <div class="chatlog" id="chatlog">
+          <div class="msg bot">
+            <div class="who">JS</div>
+            <div class="body">
+              Tell me how to change the search and I will edit the criteria and re-score
+              what is stored. I can also filter the table, set statuses and export the
+              tracker. <span id="engine-note"></span>
+            </div>
+          </div>
+        </div>
+        <div class="chatbar">
+          <input type="text" id="chat-input" placeholder="e.g. hide anything outside the UK and raise the score floor to 50">
+          <button class="btn primary" id="chat-send">Send</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ------------------------------------------------------------ profile -->
+    <section class="view" id="view-profile">
+      <div class="pad">
+
+        <div class="panel" id="panel-account">
+          <h3>Sign in</h3>
+          <p class="sub">
+            A lock on <b>your</b> data, not on the job list. Your profile and criteria
+            load when you sign in. The postings are employers' public adverts and are
+            not hidden either way.
+          </p>
+          <div id="account-state"></div>
+        </div>
+
+        <div class="panel">
+          <h3>Link your LinkedIn</h3>
+          <p class="sub">
+            So you never type your skills, your degree or your experience into this app.
+            Hand it the copy of your data LinkedIn gives you, and it reads what it needs.
+          </p>
+          <div id="import-guide"></div>
+          <div class="grid2" style="margin-top:12px">
+            <div class="field">
+              <label class="micro">Path to your export .zip or profile .pdf</label>
+              <input type="text" id="p-path"
+                     placeholder="C:\Users\you\Downloads\Basic_LinkedInDataExport.zip">
+            </div>
+            <div class="field">
+              <label class="micro">&nbsp;</label>
+              <button class="btn primary" id="btn-import" style="width:100%">
+                Read my LinkedIn</button>
+            </div>
+          </div>
+          <details style="margin-top:6px">
+            <summary class="micro" style="cursor:pointer">
+              Or paste your profile text instead</summary>
+            <textarea id="p-text" rows="5" style="width:100%;margin-top:8px"
+                      placeholder="Open your own LinkedIn profile, select all, paste here."></textarea>
+            <button class="btn sm" id="btn-import-text" style="margin-top:8px">
+              Read pasted text</button>
+          </details>
+          <div id="import-result" style="margin-top:14px"></div>
+        </div>
+
+        <div class="panel" id="panel-profile">
+          <h3>What Job Scout knows about you</h3>
+          <div id="profile-body"></div>
+        </div>
+
+        <div class="panel" id="panel-profile-review">
+          <h3>How complete is your LinkedIn profile?</h3>
+          <p class="sub">
+            Checked against LinkedIn's own profile-strength framework &mdash; the same
+            seven sections its Beginner/Intermediate/All-Star meter counts &mdash; plus
+            a short, separately-labelled list of Job Scout's own quality checks. Your
+            own profile only; this app never fetches or scores anyone else's.
+          </p>
+          <div id="profile-review-body"></div>
+        </div>
+
+        <div class="panel">
+          <h3>Who's hiring in your field</h3>
+          <p class="sub">
+            Companies with the most early-career postings in your subject, counted from
+            what this install has actually scraped &mdash; not LinkedIn alumni data,
+            which nobody publishes an API for and which only LinkedIn itself can show,
+            to someone signed in, browsing it themselves.
+          </p>
+          <div id="employers-body"></div>
+        </div>
+
+        <div class="panel">
+          <h3>Your own skills</h3>
+          <p class="sub">
+            The built-in vocabulary knows about three hundred technical terms and will
+            never know your niche instrument, your society, or an in-house tool. Anything
+            you add here is matched and scored exactly like a recognised skill.
+          </p>
+          <div class="taglist" id="p-skills"></div>
+          <input type="text" id="p-skill-add" placeholder="add a skill, then Enter"
+                 style="margin-top:8px;max-width:320px">
+        </div>
+
+        <div class="panel">
+          <h3>Your own filters</h3>
+          <p class="sub">
+            A label, some words, and what to do when they appear. Tick
+            &ldquo;show as a checkbox&rdquo; and it joins the filters in the sidebar with
+            its own live count.
+          </p>
+          <div id="rules-list"></div>
+          <div class="rulerow new" id="rule-new">
+            <input type="text" id="r-label" placeholder="Name it, e.g. No night shifts">
+            <input type="text" id="r-terms" placeholder="words, comma separated">
+            <select id="r-mode">
+              <option value="exclude">Never show these</option>
+              <option value="require">Only show these</option>
+              <option value="boost">Rank these higher</option>
+            </select>
+            <select id="r-field">
+              <option value="any">anywhere</option>
+              <option value="title">in the title</option>
+              <option value="company">in the company</option>
+              <option value="location">in the location</option>
+              <option value="description">in the description</option>
+            </select>
+            <label class="inline"><input type="checkbox" id="r-facet" checked>
+              <span>show as a checkbox</span></label>
+            <button class="btn sm primary" id="btn-rule-add">Add</button>
+          </div>
+        </div>
+
+        <div class="panel" id="panel-privacy">
+          <h3>What is stored, and where</h3>
+          <div id="privacy-body"></div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ----------------------------------------------------------- criteria -->
+    <section class="view" id="view-criteria">
+      <div class="pad">
+        <div class="panel">
+          <h3>What counts as a match</h3>
+          <p class="sub">Editing these re-scores every stored posting. Rows that no longer
+            qualify are hidden rather than deleted &mdash; loosen the criteria and they
+            come back. Anything you have starred or moved off &ldquo;new&rdquo; is never
+            hidden at all.</p>
+          <div class="grid2" style="margin-bottom:4px">
+            <div class="field">
+              <label class="micro">Country / market</label>
+              <select id="c-country"></select>
+              <div id="c-country-note" class="where" style="margin-top:5px"></div>
+            </div>
+            <div class="field">
+              <label class="micro">Visa sponsorship</label>
+              <select id="c-visa">
+                <option value="any">Not relevant to me</option>
+                <option value="prefer">Prefer employers who can sponsor</option>
+                <option value="require">Only employers who can sponsor</option>
+              </select>
+              <div class="where" style="margin-top:5px;line-height:1.5">
+                Checked against the official government register of licensed sponsors,
+                not guesswork. Useful if you need work authorisation.
+              </div>
+            </div>
+            <div class="field">
+              <label class="micro">Working arrangement</label>
+              <div class="row" style="gap:14px">
+                <span><input type="checkbox" class="c-mode" value="remote" id="m-remote">
+                      <label for="m-remote" style="margin:0">Remote</label></span>
+                <span><input type="checkbox" class="c-mode" value="hybrid" id="m-hybrid">
+                      <label for="m-hybrid" style="margin:0">Hybrid</label></span>
+                <span><input type="checkbox" class="c-mode" value="onsite" id="m-onsite">
+                      <label for="m-onsite" style="margin:0">On-site</label></span>
+              </div>
+              <div class="where" style="margin-top:5px;line-height:1.5">
+                Postings that do not state an arrangement are never dropped on this.
+              </div>
+            </div>
+            <div class="field">
+              <label class="micro">Career stage</label>
+              <select id="c-stage">
+                <option value="student">Student - placement or internship</option>
+                <option value="graduate">Recent graduate - first role</option>
+                <option value="professional">Professional - a few years in</option>
+                <option value="senior">Senior - lead, principal or manager</option>
+                <option value="any">Any level</option>
+              </select>
+              <div class="where" style="margin-top:5px;line-height:1.5">
+                Sets which roles are filtered out as too junior or too senior, how the
+                outreach messages introduce you, and who to approach first.
+              </div>
+            </div>
+          </div>
+          <div class="grid2">
+            <div class="field">
+              <label class="micro">Target job titles</label>
+              <div class="taglist" id="c-titles"></div>
+              <input type="text" id="c-title-add" placeholder="add a title, then Enter" style="margin-top:7px">
+            </div>
+            <div class="field">
+              <label class="micro">Keywords that help</label>
+              <div class="taglist" id="c-keywords"></div>
+              <input type="text" id="c-keyword-add" placeholder="add a keyword, then Enter" style="margin-top:7px">
+            </div>
+            <div class="field">
+              <label class="micro">Never show (exclusions)</label>
+              <div class="taglist" id="c-excluded"></div>
+              <input type="text" id="c-excluded-add" placeholder="add an exclusion, then Enter" style="margin-top:7px">
+            </div>
+            <div class="field">
+              <label class="micro">Locations, best first</label>
+              <div class="taglist" id="c-locations"></div>
+              <input type="text" id="c-location-add" placeholder="add a location, then Enter" style="margin-top:7px">
+            </div>
+          </div>
+          <div class="grid2" style="margin-top:6px">
+            <div class="field">
+              <label class="micro">Minimum score to keep</label>
+              <input type="number" id="c-minscore" min="0" max="100">
+            </div>
+            <div class="field">
+              <label class="micro">Maximum age (days)</label>
+              <input type="number" id="c-maxage" min="1" max="365">
+            </div>
+            <div class="field">
+              <label class="micro">Salary floor (blank = any)</label>
+              <input type="number" id="c-salary" min="0" step="1000">
+            </div>
+            <div class="field">
+              <label class="micro">Toggles</label>
+              <div class="row"><input type="checkbox" id="c-remote"><label for="c-remote" style="margin:0">Allow remote</label></div>
+              <div class="row" style="margin-top:5px"><input type="checkbox" id="c-senior"><label for="c-senior" style="margin:0">Hide senior roles</label></div>
+            </div>
+          </div>
+          <button class="btn primary" id="btn-save-criteria">Save and re-score</button>
+          <span id="criteria-msg" style="margin-left:12px;color:var(--muted)"></span>
+        </div>
+
+        <div class="panel">
+          <h3>Scoring weights</h3>
+          <p class="sub">How much each factor contributes to the 0-100 match score.</p>
+          <div class="grid2" id="weights"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ----------------------------------------------------------------- drawer -->
+<aside class="drawer" id="drawer">
+  <button class="close" id="drawer-close">&times;</button>
+  <header>
+    <div class="micro" id="d-company"></div>
+    <h2 id="d-title"></h2>
+    <div class="where" id="d-meta"></div>
+  </header>
+  <div class="dtabs">
+    <button class="dtab on" data-pane="overview">Overview</button>
+    <button class="dtab"    data-pane="prep">Interview prep</button>
+    <button class="dtab"    data-pane="contacts">Who to talk to</button>
+    <button class="dtab"    data-pane="notes">Notes</button>
+  </div>
+  <div class="dbody">
+    <div class="dpane on" id="pane-overview"></div>
+    <div class="dpane"    id="pane-prep"></div>
+    <div class="dpane"    id="pane-contacts"></div>
+    <div class="dpane"    id="pane-notes"></div>
+  </div>
+</aside>
+
+<script src="/static/app.js"></script>
+<script src="/static/deck.js"></script>
+<script src="/static/profile.js"></script>
+</body>
+</html>

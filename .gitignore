@@ -1,0 +1,24 @@
+# Your own settings - each install makes its own from config.example.yaml
+config.yaml
+
+# Your data: job history, statuses, notes, logins, the session-signing key
+data/*.db
+data/*.db-*
+data/accounts/
+data/session.key
+data/cache/
+data/company_cache.json
+data/stability_cache.json
+data/sponsors_*.csv
+data/*.log
+
+# Exports and scratch output
+out/
+
+# Local tooling and Python leftovers
+.claude/
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env
