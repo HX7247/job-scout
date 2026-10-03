@@ -1357,6 +1357,42 @@ def main() -> None:
           lambda: "SimplifyJobs/Summer2027-Internships" in _seasons
           and "SimplifyJobs/Summer2028-Internships" in _seasons or f"got {_seasons[:4]}")
 
+    # ---- the employer's own link always wins over an aggregator's copy
+    _lk_db = ROOT / "out" / "_audit_links.db"
+    if _lk_db.exists():
+        _lk_db.unlink()
+    _lk = Store(_lk_db)
+    _direct = Job(source="ashby", source_kind="ats_direct", company="LinkCo",
+                  title="Graduate Analyst", url="https://jobs.ashbyhq.com/linkco/1",
+                  location="London", description="The full advert from the employer.")
+    _copy = Job(source="arbeitnow", source_kind="aggregator", company="LinkCo",
+                title="Graduate Analyst", url="https://www.arbeitnow.com/jobs/linkco-1",
+                location="London", description="Short excerpt")
+    _lk.upsert([_direct])
+    _lk.upsert([_copy])
+    _after_copy = _lk.get(_direct.id)
+    check("links: an aggregator copy never replaces the employer's own link",
+          lambda: (_after_copy["url"] == _direct.url
+                   and _after_copy["description"].startswith("The full advert"))
+          or f"link became {_after_copy['url']}")
+    _first_seen_agg = Job(source="arbeitnow", source_kind="aggregator", company="LaterCo",
+                          title="Placement Student", url="https://www.arbeitnow.com/jobs/lc",
+                          location="Leeds")
+    _later_direct = Job(source="greenhouse", source_kind="ats_direct", company="LaterCo",
+                        title="Placement Student",
+                        url="https://job-boards.greenhouse.io/laterco/jobs/9",
+                        location="Leeds")
+    _lk.upsert([_first_seen_agg])
+    _lk.upsert([_later_direct])
+    _upgraded = _lk.query(limit=10, search="Placement Student")[0]
+    check("links: a job found later on the employer's own board switches to that link",
+          lambda: (_upgraded["url"] == _later_direct.url
+                   and _upgraded["source_kind"] == "ats_direct"
+                   and _upgraded["source"] == "greenhouse")
+          or f"still {_upgraded['source']} / {_upgraded['url']}")
+    _lk.close()
+    _lk_db.unlink()
+
     # ---- every scan: removed and expired postings
     _dl_db = ROOT / "out" / "_audit_delist.db"
     if _dl_db.exists():

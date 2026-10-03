@@ -173,16 +173,36 @@ class Store:
         """Insert or refresh. Returns (new_count, updated_count).
 
         A posting already stored under a different source (same dedupe_key) is treated
-        as a duplicate: we keep the first row and only refresh last_seen.
+        as a duplicate and kept as one row. The employer's own board wins: its link and
+        details are never replaced by an aggregator's copy, and an aggregator row is
+        upgraded to the employer's link once the employer's board lists it.
         """
         new_count = updated = 0
         stamp = now()
         cur = self.conn.cursor()
         for job in jobs:
             existing = cur.execute(
-                "SELECT id, score FROM jobs WHERE id = ? OR dedupe_key = ? LIMIT 1",
+                "SELECT id, score, source_kind FROM jobs WHERE id = ? OR dedupe_key = ? "
+                "LIMIT 1",
                 (job.id, job.dedupe_key),
             ).fetchone()
+            if existing and existing["source_kind"] == "ats_direct" \
+                    and job.source_kind != "ats_direct":
+                # The employer's own board is the authority on its posting: its link
+                # goes straight to the real Apply button and its description is the
+                # full one. A copy from an aggregator or a job list only confirms the
+                # posting is still live - it used to overwrite the employer's link with
+                # its own (an Ashby posting ending up pointing at Arbeitnow).
+                cur.execute("UPDATE jobs SET last_seen = ?, delisted_at = '' WHERE id = ?",
+                            (stamp, existing["id"]))
+                updated += 1
+                continue
+            if existing and job.source_kind == "ats_direct" \
+                    and existing["source_kind"] != "ats_direct":
+                # Seen first via an aggregator, now found on the employer's own board:
+                # adopt the direct link and say where it really comes from.
+                cur.execute("UPDATE jobs SET source = ?, source_kind = ? WHERE id = ?",
+                            (job.source, job.source_kind, existing["id"]))
             if existing:
                 # Refresh everything the source owns - employers edit postings, and a
                 # parser fix should reach rows we have already seen. User-owned fields
