@@ -63,7 +63,7 @@ Everything stays on your machine: your job list, criteria, notes and CV never le
 |---|---|---|---|
 | **Company career pages** | Employers' own boards on Greenhouse, Lever, Ashby, Workable, Recruitee, Personio, Workday and Oracle HCM - ~450 employers incl. graduate recruiters and YC startups, plus boards found automatically behind TARGETjobs' apply links (see below) | All | - |
 | **TARGETjobs** | ~650 placements and ~600 internships, each with a closing date and most with a start date | UK | - |
-| **Gradcracker** | STEM placements, internships, graduate jobs | UK | - |
+| **Gradcracker** | STEM placements, internships, graduate jobs - **off by default**: its terms prohibit scraping, so it is linked from the *Unscrapable sites* tab instead (add `gradcracker` to `sources.aggregators` to read it anyway) | UK | - |
 | **RateMyPlacement** (higherin.com) | Year-in-industry placements and internships | UK | - |
 | **GradConnection** | Graduate jobs and internships | AU, NZ, SG | - |
 | **GitHub job lists** | Community trackers: SimplifyJobs (internships + new grad), vanshb03, zapplyjobs, jobright-ai, plus European, Canadian and Singapore internship lists - ~5,000 listings | Mostly US, some EU/CA/SG | - |
@@ -691,8 +691,9 @@ Five more sources, in `jobscout/sources/student_boards.py`, `reddit.py`,
 people actually go looking for internships beyond company boards and aggregators:
 
 - **Gradcracker** and **RateMyPlacement** (now trading as **higherin.com**) - UK
-  student-specific boards, scraped directly (HTML, not JSON), on by default, no key
-  needed. **Bright Network** was evaluated too but sits behind a Cloudflare JS
+  student-specific boards, scraped directly (HTML, not JSON), no key needed.
+  RateMyPlacement is on by default; Gradcracker is off since its terms prohibit
+  scraping, and is linked from the *Unscrapable sites* tab with Trackr instead. **Bright Network** was evaluated too but sits behind a Cloudflare JS
   challenge that blocks every plain HTTP request including `/robots.txt` itself, so
   its adapter is real but permanently returns nothing - it is not enabled by default.
 - **GitHub internship trackers** (`SimplifyJobs/Summer2026-Internships` and

@@ -106,7 +106,7 @@ class SourceConfig:
         # COMMUNITY_ADAPTERS. All keyless ones are on by default; "reddit" and
         # "usajobs" need a free key each (see README "Adding coverage") and are
         # skipped with a "no API key" note until one is set, same as adzuna/reed.
-        "gradcracker", "ratemyplacement", "targetjobs", "github_internships",
+        "ratemyplacement", "targetjobs", "github_internships",
         "reddit", "usajobs",
         # GradConnection serves AU/NZ/SG and skips itself elsewhere; Careerjet needs a
         # free key (CAREERJET_API_KEY); hn_hiring is Hacker News' monthly hiring thread.

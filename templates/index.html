@@ -24,6 +24,7 @@
     <button class="tab"    data-view="assistant">Assistant</button>
     <button class="tab"    data-view="profile">Profile</button>
     <button class="tab"    data-view="criteria">Criteria</button>
+    <button class="tab"    data-view="unscrapable">Unscrapable sites</button>
   </nav>
   <div class="spacer"></div>
   <div class="stat-strip">
@@ -586,6 +587,45 @@
           <h3>Scoring weights</h3>
           <p class="sub">How much each factor contributes to the 0-100 match score.</p>
           <div class="grid2" id="weights"></div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- -------------------------------------------------------- unscrapable -->
+    <section class="view" id="view-unscrapable">
+      <div class="pad">
+        <div class="panel">
+          <h3>Sites to check yourself</h3>
+          <p class="sub">These sites list placements that are not in the Positions table,
+            because their terms do not allow automated collection. Open them in your
+            browser and add anything worth applying to on the Tracker tab.</p>
+        </div>
+
+        <div class="panel">
+          <h3>Gradcracker</h3>
+          <p class="sub">STEM placements, internships and graduate jobs in the UK. Its
+            terms of use prohibit scraping, so job-scout no longer reads it.</p>
+          <div class="linkrow">
+            <a class="btn" href="https://www.gradcracker.com/search/all-disciplines/work-placements-internships" target="_blank" rel="noopener noreferrer">All placements &amp; internships</a>
+            <a class="btn" href="https://www.gradcracker.com/search/mechanical-manufacturing/work-placements-internships" target="_blank" rel="noopener noreferrer">Mechanical &amp; manufacturing</a>
+            <a class="btn" href="https://www.gradcracker.com/search/computing-technology/work-placements-internships" target="_blank" rel="noopener noreferrer">Computing &amp; technology</a>
+            <a class="btn" href="https://www.gradcracker.com/" target="_blank" rel="noopener noreferrer">Home page</a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Trackr</h3>
+          <p class="sub">Opening and closing dates for UK internships, placements and
+            graduate schemes, by sector. Its terms forbid automated scraping. Some lists
+            need a free account.</p>
+          <div class="linkrow">
+            <a class="btn" href="https://app.the-trackr.com/uk-engineering" target="_blank" rel="noopener noreferrer">UK engineering</a>
+            <a class="btn" href="https://app.the-trackr.com/uk-tech" target="_blank" rel="noopener noreferrer">UK tech</a>
+            <a class="btn" href="https://app.the-trackr.com/uk-finance" target="_blank" rel="noopener noreferrer">UK finance</a>
+            <a class="btn" href="https://app.the-trackr.com/uk-law" target="_blank" rel="noopener noreferrer">UK law</a>
+            <a class="btn" href="https://www.the-trackr.com/" target="_blank" rel="noopener noreferrer">Home page</a>
+          </div>
         </div>
       </div>
     </section>

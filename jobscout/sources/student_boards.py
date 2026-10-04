@@ -175,6 +175,10 @@ HTML:
 class GradcrackerSource(BaseAggregator):
     """STEM-focused UK placement/internship/graduate board.
 
+    Off by default since 2026-10-05: its terms of use prohibit scraping (they allow
+    personal copies, but not automated collection). The app's "Unscrapable sites" tab
+    links to it instead. Add ``gradcracker`` to ``sources.aggregators`` to read it.
+
     robots.txt (gradcracker.com) allows `/search/...` pages generally; it specifically
     disallows `/keyword-search` (the site's live-typeahead endpoint, which we never
     call), `/search/*?order=` / `&order=` (a sort-order query param, which we never

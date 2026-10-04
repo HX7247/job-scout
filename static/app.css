@@ -97,7 +97,7 @@ a:hover { text-decoration: underline; }
 .tabs { display: flex; gap: 2px; margin-left: 8px; }
 .tab {
   background: transparent; border: 0; cursor: pointer;
-  color: #a9b6c8; padding: 8px 14px; height: 54px;
+  color: #a9b6c8; padding: 8px 14px; height: 54px; white-space: nowrap;
   font-size: 12px; font-weight: 500; letter-spacing: .04em;
   border-bottom: 2px solid transparent;
 }
@@ -340,6 +340,8 @@ tr.seen .role { font-weight: 430; color: var(--text); }
 .panel p.sub { margin: 0 0 14px; color: var(--muted); font-size: 12px; line-height: 1.5; }
 .pad { padding: 20px 24px; max-width: 940px; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.linkrow { display: flex; flex-wrap: wrap; gap: 6px; }
+a.btn { display: inline-block; color: var(--text); text-decoration: none; }
 .taglist { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
 .tag {
   display: inline-flex; align-items: center; gap: 5px; padding: 3px 5px 3px 9px;
