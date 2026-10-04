@@ -1703,6 +1703,144 @@ def main() -> None:
     check("google jobs: an empty query spends no search",
           lambda: _gempty == [] or "searched for nothing")
 
+    # ---- harvested boards: apply links -> ATS boards, self-pruning
+    from jobscout import harvest as _hv
+    _bf = _hv.board_for
+    check("harvest: workday link with or without a locale gives the board",
+          lambda: _bf("https://lbg.wd3.myworkdayjobs.com/en-US/LBG_Careers/job/x")
+                  == _bf("https://lbg.wd3.myworkdayjobs.com/en-us/LBG_Careers/job/x")
+                  == ("workday", "lbg:wd3:LBG_Careers") or "locale taken as the board")
+    check("harvest: a bare locale or Workday's own paths are not boards",
+          lambda: _bf("https://lbg.wd3.myworkdayjobs.com/en-GB") is None
+                  and _bf("https://lbg.wd3.myworkdayjobs.com/wday/cxs/x") is None
+                  or "plumbing harvested as a board")
+    check("harvest: myworkdaysite and Oracle links map to their slug formats",
+          lambda: _bf("https://wd3.myworkdaysite.com/recruiting/mdlz/External/job/1")
+                  == ("workday", "mdlz:wd3:External:myworkdaysite")
+                  and _bf("https://x.fa.em2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/9")
+                  == ("oracle", "x.fa.em2.oraclecloud.com/CX_1") or "slug format drifted")
+    check("harvest: greenhouse embeds give the company, never 'embed'",
+          lambda: _bf("https://boards.greenhouse.io/embed/job_board?for=acme") == ("greenhouse", "acme")
+                  and _bf("https://boards.greenhouse.io/embed") is None or "harvested 'embed'")
+    check("harvest: links without a trailing slash still count",
+          lambda: _bf("https://jobs.lever.co/acme") == ("lever", "acme")
+                  and _bf("https://apply.workable.com/acme") == ("workable", "acme") or "missed")
+    check("harvest: SmartRecruiters (robots.txt-blocked API) and junk are skipped",
+          lambda: _bf("https://jobs.smartrecruiters.com/Acme/1") is None
+                  and _bf("javascript:alert(1)") is None and _bf("") is None or "kept")
+    check("harvest: board words are trimmed from a scraped employer name",
+          lambda: (_hv.clean_company("Organon Searchjobs"), _hv.clean_company("Careers"))
+                  == ("Organon", "Careers") or "name not cleaned")
+    _hv_path = ROOT / "out" / "_audit_harvest.yaml"
+    _hv_path.parent.mkdir(exist_ok=True)
+    _hv._write(_hv_path, [
+        {"company": "Gone", "ats": "lever", "slug": "gone", "misses": 2},
+        {"company": "Alive", "ats": "lever", "slug": "alive", "misses": 2},
+        {"company": "Unread", "ats": "lever", "slug": "unread", "misses": 2}])
+    _hv_jobs = [Job(source="targetjobs", source_kind="board", company="New Co", title="Placement",
+                    url="https://targetjobs.co.uk/x",
+                    raw={"apply_url": "https://jobs.lever.co/newco/123"}),
+                Job(source="targetjobs", source_kind="board", company="Known", title="Placement",
+                    url="https://jobs.lever.co/known/1")]
+    try:
+        _hv_out = _hv.update(_hv_jobs, {("lever", "known")},
+                             {("lever", "gone"): 0, ("lever", "alive"): 7}, _hv_path)
+        _hv_left = {e["slug"]: e for e in _hv.load_harvested(_hv_path)}
+    finally:
+        _hv_path.unlink(missing_ok=True)
+    check("harvest: a board empty MISS_LIMIT scans running is dropped, a live one reset",
+          lambda: ("gone" not in _hv_left and _hv_left["alive"]["misses"] == 0
+                   and _hv_left["alive"]["jobs_seen"] == 7) or f"got {_hv_left}")
+    check("harvest: a board not read this scan is not aged",
+          lambda: _hv_left.get("unread", {}).get("misses") == 2 or "aged without a read")
+    check("harvest: new boards are added, ones already in the registry are not",
+          lambda: ("newco" in _hv_left and "known" not in _hv_left
+                   and _hv_out == {"added": 1, "dropped": 1, "total": 3}) or f"got {_hv_out}")
+
+    # ---- TARGETjobs
+    from jobscout.sources import targetjobs as _tj
+    check("targetjobs: tracker wrappers unwrap to the employer's link",
+          lambda: _tj.unwrap_link("https://ad.doubleclick.net/ddm/clk/1;2;?https://acme.com/a%3Fb%3D1")
+                  == "https://acme.com/a?b=1"
+                  and _tj.unwrap_link("https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Facme.com")
+                  == "https://acme.com"
+                  and _tj.unwrap_link("https://ad.doubleclick.net/ddm/clk/1") == ""
+                  and _tj.unwrap_link("mailto:x@y.z") == "" or "wrapper kept")
+    _tj_job = _tj.TargetJobsSource()._job({
+        "title": "Finance Placement", "organisation": {}, "sourceOrganisationName": "Acme",
+        "path": "/x/1", "nid": 5, "location": "x" * 200,
+        "salary": {"ranges": ["£25,000 to £30,000"]}, "opportunityStartDate": 1788220800,
+        "applicationDeadline": "2026-12-01T00:00:00Z", "body": "<p>Hi</p>"}, "Placement")
+    check("targetjobs: no organisation falls back to the source name; prose location dropped",
+          lambda: (_tj_job and _tj_job.company == "Acme" and _tj_job.location == ""
+                   and _tj_job.salary_raw.startswith("£25,000") and _tj_job.closes_at
+                   and "Start date: September 2026" in _tj_job.description) or f"got {_tj_job}")
+    check("targetjobs: a posting with no employer at all is dropped",
+          lambda: _tj.TargetJobsSource()._job({"title": "T", "path": "/p"}, "Placement") is None
+                  or "invented an employer")
+
+    # ---- the polite HTTP layer: per-host throttle, Retry-After, circuit breaker
+    from jobscout.http import PoliteSession as _PS
+    class _Resp:
+        def __init__(self, h): self.headers = h
+    check("http: Retry-After seconds, HTTP dates and junk",
+          lambda: (_PS._retry_after(_Resp({"Retry-After": "120"})) == 120.0
+                   and _PS._retry_after(_Resp({"Retry-After": "Wed, 21 Oct 2015 07:28:00 GMT"})) == 0.0
+                   and _PS._retry_after(_Resp({"Retry-After": "soon"})) is None
+                   and _PS._retry_after(_Resp({})) is None) or "misread Retry-After")
+    _ps = _PS(min_gap=1.0)
+    for _ in range(_PS.FAIL_LIMIT - 1):
+        _ps._failed("dead.example", "ConnectionError")
+    _ps_before = _ps._breaker_open("dead.example")
+    _ps._failed("dead.example", "ConnectionError")
+    check("http: the breaker opens at FAIL_LIMIT failures, not before",
+          lambda: (not _ps_before and _ps._breaker_open("dead.example")
+                   and "dead.example" in _ps.health()["failing_hosts"]) or "breaker wrong")
+    check("http: an open breaker stops requests without touching the network",
+          lambda: _ps.request("GET", "https://dead.example/x", check_robots=False) is None
+                  and _ps.stats["breaker_skips"] == 1 and _ps.stats["requests"] == 0
+                  or f"stats {_ps.stats}")
+    _ps._failed("slow.example", "HTTP 429", rest=5)
+    _ps.reset_health()
+    check("http: a new scan clears the breakers and counters",
+          lambda: (not _ps._breaker_open("dead.example") and not _ps.health()["failing_hosts"]
+                   and not any(_ps.stats.values())) or "state carried over")
+    import time as _t
+    _ps._throttle("https://a.example/1")
+    _t0 = _t.time()
+    _ps._throttle("https://b.example/1")
+    _other = _t.time() - _t0
+    _ps._throttle("https://a.example/2")
+    _same = _t.time() - _t0
+    check("http: one host's throttle never delays another; the same host waits min_gap",
+          lambda: (_other < 0.2 and _same >= 0.7) or f"other {_other:.2f}s same {_same:.2f}s")
+
+    _ps2 = _PS(min_gap=1.0)
+    _g0 = _ps2._gap("api.ashbyhq.com")
+    _ps2._slow_down("api.ashbyhq.com")
+    _g1 = _ps2._gap("api.ashbyhq.com")
+    for _ in range(10):
+        _ps2._slow_down("api.ashbyhq.com")
+    _g2 = _ps2._gap("api.ashbyhq.com")
+    _ps2.reset_health()
+    check("http: a 429 widens that host's gap (capped), a new scan restores it",
+          lambda: (_g0 < 1.0 and _g1 >= 1.0 and _g2 == 5.0
+                   and _ps2._gap("api.ashbyhq.com") == _g0
+                   and _ps2._gap("other.example") == 1.0) or f"gaps {_g0} {_g1} {_g2}")
+
+    # ---- source health: what went quiet since the last scan
+    from jobscout.pipeline import source_health as _sh
+    _shr = _sh({"targetjobs": 0, "gradcracker": 40, "reed": 0},
+               {"Acme": 0, "Beta": 12},
+               {"per_source": {"targetjobs": 1200, "gradcracker": 35, "reed": 0},
+                "per_company": {"Acme": 30, "Beta": 10, "Tiny": 2}})
+    check("source health: a source or board that fell to zero is flagged, nothing else",
+          lambda: ([q["source"] for q in _shr["sources_gone_quiet"]] == ["targetjobs"]
+                   and [b["company"] for b in _shr["boards_gone_quiet"]] == ["Acme"])
+                  or f"got {_shr}")
+    check("source health: no previous scan flags nothing",
+          lambda: _sh({"a": 0}, {"b": 0}, None)["sources_gone_quiet"] == [] or "flagged")
+
     # ---- the page itself
     _page = (ROOT / "templates" / "index.html").read_text("utf-8")
     _ids = _sec_re.findall(r'\sid="([^"]+)"', _page)

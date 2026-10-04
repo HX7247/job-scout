@@ -9,6 +9,7 @@ data/session.key
 data/cache/
 data/company_cache.json
 data/stability_cache.json
+data/companies_harvested.yaml
 data/sponsors_*.csv
 data/*.log
 

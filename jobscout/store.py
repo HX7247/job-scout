@@ -389,6 +389,14 @@ class Store:
         )
         self.conn.commit()
 
+    def last_run_detail(self) -> dict:
+        row = self.conn.execute(
+            "SELECT detail FROM runs ORDER BY id DESC LIMIT 1").fetchone()
+        try:
+            return json.loads(row["detail"]) if row and row["detail"] else {}
+        except (TypeError, ValueError):
+            return {}
+
     # ------------------------------------------------------------------- read
     def query(self, *, status: str | None = None, source: str | None = None,
               company: str | None = None, min_score: float = 0.0, search: str = "",

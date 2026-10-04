@@ -106,7 +106,7 @@ class SourceConfig:
         # COMMUNITY_ADAPTERS. All keyless ones are on by default; "reddit" and
         # "usajobs" need a free key each (see README "Adding coverage") and are
         # skipped with a "no API key" note until one is set, same as adzuna/reed.
-        "gradcracker", "ratemyplacement", "github_internships",
+        "gradcracker", "ratemyplacement", "targetjobs", "github_internships",
         "reddit", "usajobs",
         # GradConnection serves AU/NZ/SG and skips itself elsewhere; Careerjet needs a
         # free key (CAREERJET_API_KEY); hn_hiring is Hacker News' monthly hiring thread.
@@ -132,7 +132,10 @@ class SourceConfig:
     # Per-source caps that override max_per_source. The GitHub trackers are ~25 README
     # downloads however many rows are kept, and hold ~5,000 live listings, so the
     # general cap would throw most of them away for no saving at all.
-    source_limits: dict = field(default_factory=lambda: {"github_internships": 4000})
+    source_limits: dict = field(default_factory=lambda: {"github_internships": 4000,
+                                                          "targetjobs": 1500})
+    # Add the ATS boards behind job-board apply links to the company list (harvest.py).
+    harvest_boards: bool = True
     # Re-run tools/discover_startups.py at the end of a scan once the extra company list
     # is this many days old - new startups start hiring, boards move ATS. 0 = never.
     registry_refresh_days: int = 14

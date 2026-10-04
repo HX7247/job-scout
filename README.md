@@ -61,7 +61,8 @@ Everything stays on your machine: your job list, criteria, notes and CV never le
 
 | Source | What it is | Region | Needs |
 |---|---|---|---|
-| **Company career pages** | Employers' own boards on Greenhouse, Lever, Ashby, SmartRecruiters, Workable, Recruitee, Personio and Workday - ~450 employers incl. graduate recruiters and YC startups | All | - |
+| **Company career pages** | Employers' own boards on Greenhouse, Lever, Ashby, Workable, Recruitee, Personio, Workday and Oracle HCM - ~450 employers incl. graduate recruiters and YC startups, plus boards found automatically behind TARGETjobs' apply links (see below) | All | - |
+| **TARGETjobs** | ~650 placements and ~600 internships, each with a closing date and most with a start date | UK | - |
 | **Gradcracker** | STEM placements, internships, graduate jobs | UK | - |
 | **RateMyPlacement** (higherin.com) | Year-in-industry placements and internships | UK | - |
 | **GradConnection** | Graduate jobs and internships | AU, NZ, SG | - |
@@ -183,7 +184,25 @@ index them, with full descriptions and no scraping of rendered HTML.
 | `workable` | `apply.workable.com/api/v1/widget/accounts/{slug}` |
 | `recruitee` | `{slug}.recruitee.com/api/offers/` |
 | `personio` | `{slug}.jobs.personio.de/xml` |
-| `workday` | `{tenant}.wd{N}.myworkdayjobs.com/wday/cxs/...` (slug form `tenant:wd5:Site`) |
+| `workday` | `{tenant}.wd{N}.myworkdayjobs.com/wday/cxs/...` (slug form `tenant:wd5:Site`), or `wd{N}.myworkdaysite.com/wday/cxs/...` (slug form `tenant:wd3:Site:myworkdaysite`) |
+| `oracle` | `{host}/hcmRestApi/resources/latest/recruitingCEJobRequisitions` (slug form `host/siteNumber`) |
+
+SmartRecruiters' API is in the code but returns nothing: `api.smartrecruiters.com/robots.txt`
+disallows every crawler except LinkedIn's, and the app obeys robots.txt.
+
+**Harvested boards.** After each scan, apply links from the UK boards (TARGETjobs above all)
+are mapped to the ATS board behind them - a Lloyds placement linking to
+`lbg.wd3.myworkdayjobs.com` means every Lloyds posting is one request away. New boards go to
+`data/companies_harvested.yaml` (git-ignored, safe to delete) and are read from the next
+scan; one that comes back empty three scans running is dropped. Turn it off with
+`sources.harvest_boards: false`.
+
+**When a source breaks.** Each host is throttled on its own (one slow site no longer holds up
+the rest), a 429's `Retry-After` is honoured, and a host that fails four times running is
+left alone for ten minutes rather than retried on every board. The scan then compares itself
+with the previous one: a source or board that went from postings to none - almost always a
+changed page or API, not an empty market - is listed under *Source health* in the sidebar,
+with any host still failing.
 
 **Third-party boards.** `arbeitnow`, `remotive`, `themuse`, `jobicy`, `himalayas`,
 `remoteok` and `hn_hiring` need no key. `adzuna` and `reed` do, and they are the two
@@ -802,10 +821,13 @@ job-scout/
   config.yaml             all search criteria
   jobscout/
     models.py             the canonical Job record, null-normalised
-    http.py               polite HTTP: robots.txt, per-host rate limit, disk cache
-    sources/ats.py        eight company-board adapters
+    http.py               polite HTTP: robots.txt, per-host rate limit, Retry-After,
+                          per-host circuit breaker, disk cache
+    harvest.py            grows the company list from job boards' apply links
+    sources/ats.py        nine company-board adapters
     sources/aggregators.py nine third-party board adapters
     sources/student_boards.py  Gradcracker, RateMyPlacement/higherin.com, Bright Network
+    sources/targetjobs.py TARGETjobs placements and internships (its search JSON)
     sources/reddit.py     r/internships et al, via Reddit's OAuth API + an LLM filter
     sources/github_boards.py   the community-run internship-tracker READMEs
     sources/usajobs.py    the official US federal jobs API

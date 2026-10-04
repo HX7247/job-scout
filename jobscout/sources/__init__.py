@@ -19,6 +19,7 @@ from .usajobs import USAJobsSource
 from .customfeeds import CustomFeedSource
 from .grad_boards import GradConnectionSource, CareerjetSource, GRAD_BOARD_ADAPTERS
 from .google_jobs import GoogleJobsSource
+from .targetjobs import TargetJobsSource
 
 # The community/forum/student-board tier: same BaseAggregator contract as
 # AGGREGATOR_ADAPTERS, kept in its own dict only because they were built and are
@@ -26,6 +27,7 @@ from .google_jobs import GoogleJobsSource
 COMMUNITY_ADAPTERS = {
     **STUDENT_BOARD_ADAPTERS,
     **GRAD_BOARD_ADAPTERS,
+    TargetJobsSource.name: TargetJobsSource(),
     GoogleJobsSource.name: GoogleJobsSource(),
     RedditSource.name: RedditSource(),
     GitHubInternshipsSource.name: GitHubInternshipsSource(),

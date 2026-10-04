@@ -225,11 +225,18 @@ def _labelled(soup: BeautifulSoup) -> dict:
 def _workday(url: str):
     m = re.match(r"https?://([\w-]+)\.(wd\d+)\.myworkdayjobs\.com/(?:[a-z]{2}-[A-Z]{2}/)?"
                  r"([^/?#]+)/(job/[^?#]+)", url)
-    if not m:
-        return None
-    tenant, wd, site, rest = m.groups()
-    data = SESSION.get_json(f"https://{tenant}.{wd}.myworkdayjobs.com/wday/cxs/"
-                            f"{tenant}/{site}/{rest}", retries=2, timeout=20)
+    if m:
+        tenant, wd, site, rest = m.groups()
+        api = f"https://{tenant}.{wd}.myworkdayjobs.com"
+    else:
+        # Workday's second domain: wd3.myworkdaysite.com/recruiting/{tenant}/{site}/job/...
+        m = re.match(r"https?://(wd\d+)\.myworkdaysite\.com/(?:[a-z]{2}-[A-Z]{2}/)?"
+                     r"recruiting/([\w-]+)/([^/?#]+)/(job/[^?#]+)", url)
+        if not m:
+            return None
+        wd, tenant, site, rest = m.groups()
+        api = f"https://{wd}.myworkdaysite.com"
+    data = SESSION.get_json(f"{api}/wday/cxs/{tenant}/{site}/{rest}", retries=2, timeout=20)
     info = (data or {}).get("jobPostingInfo")
     if not info:
         return {}
@@ -255,6 +262,31 @@ def _greenhouse(url: str):
             "deadline": _iso(data.get("application_deadline")),
             "posted": _iso(data.get("first_published")),
             "description": strip_html(data.get("content", ""))}
+
+
+def _oracle(url: str):
+    m = re.match(r"https?://([\w.-]+\.oraclecloud\.com)/hcmUI/CandidateExperience/[\w-]+/"
+                 r"sites/([\w-]+)/(?:requisitions/preview|job)/(\d+)", url)
+    if not m:
+        return None
+    host, site, req_id = m.groups()
+    data = SESSION.get_json(
+        f"https://{host}/hcmRestApi/resources/latest/recruitingCEJobRequisitionDetails",
+        params={"expand": "all", "onlyData": "true",
+                "finder": f'ById;Id="{req_id}",siteNumber={site}'},
+        retries=2, timeout=20, check_robots=False)
+    items = (data or {}).get("items") or []
+    if not items:
+        return {}
+    info = items[0]
+    text = " ".join(filter(None, (info.get(k) for k in (
+        "ExternalDescriptionStr", "ExternalResponsibilitiesStr",
+        "ExternalQualificationsStr", "CorporateDescriptionStr"))))
+    return {"title": clean(info.get("Title", "")),
+            "location": clean(info.get("PrimaryLocation", "")),
+            "deadline": _iso(info.get("ExternalPostedEndDate")),
+            "posted": _iso(info.get("ExternalPostedStartDate")),
+            "description": strip_html(text)}
 
 
 def _page(url: str):
@@ -290,7 +322,7 @@ def fetch_details(url: str) -> tuple[dict, str]:
     if site:
         return {}, f"{site} does not allow automated reading - fill this one in by hand."
     try:
-        for reader in (_workday, _greenhouse):
+        for reader in (_workday, _greenhouse, _oracle):
             found = reader(url)
             if found is not None:
                 break

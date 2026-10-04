@@ -9,6 +9,7 @@ import random
 import threading
 import time
 import urllib.robotparser
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -36,20 +37,52 @@ class PoliteSession:
         self.obey_robots = obey_robots
         self._last_hit: dict[str, float] = {}
         self._robots: dict[str, urllib.robotparser.RobotFileParser | None] = {}
+        self._robots_locks: dict[str, threading.Lock] = {}
         self._lock = threading.Lock()
+        # Circuit breaker, per host: after FAIL_LIMIT failures in a row the host is
+        # left alone until _open_until passes, so one site that is down (or asking us
+        # to back off) costs a few seconds instead of retries x timeouts x boards.
+        self._fail_streak: dict[str, int] = {}
+        self._open_until: dict[str, float] = {}
+        self._host_errors: dict[str, str] = {}
+        self._gaps: dict[str, float] = {}       # a host's gap, once a 429 has widened it
         self.session = requests.Session()
+        # The default pool keeps 10 connections per host; the scrape runs more
+        # workers than that against a few big hosts (Workday, Greenhouse).
+        adapter = requests.adapters.HTTPAdapter(pool_connections=32, pool_maxsize=32)
+        self.session.mount("https://", adapter)
+        self.session.mount("http://", adapter)
         self.session.headers.update({
             "User-Agent": USER_AGENT,
             "Accept": "application/json, text/html;q=0.9, */*;q=0.8",
             "Accept-Language": "en-GB,en;q=0.9",
         })
-        self.stats = {"requests": 0, "cache_hits": 0, "errors": 0, "robots_blocked": 0}
+        self.stats = {"requests": 0, "cache_hits": 0, "errors": 0, "robots_blocked": 0,
+                      "rate_limited": 0, "breaker_skips": 0}
+
+    FAIL_LIMIT = 4               # consecutive failures before a host is rested
+    REST_SECONDS = 600           # how long a tripped host is left alone
+    MAX_RETRY_AFTER = 60.0       # longer than this and the host is rested instead
+    # Public job-board APIs built to be read by programs, each serving hundreds of the
+    # registry's boards from one host. At the default gap the 179 Ashby boards alone
+    # took three minutes. A 429 doubles the gap for the rest of the scan.
+    HOST_GAPS = {"api.ashbyhq.com": 0.4, "boards-api.greenhouse.io": 0.4,
+                 "api.lever.co": 0.4}
 
     # ---------------------------------------------------------------- robots
     def _robots_for(self, url: str):
         host = urlparse(url).netloc
         if host in self._robots:
             return self._robots[host]
+        # One fetch per host, even when eight workers ask for it at the same moment.
+        with self._lock:
+            host_lock = self._robots_locks.setdefault(host, threading.Lock())
+        with host_lock:
+            if host in self._robots:
+                return self._robots[host]
+            return self._fetch_robots(url, host)
+
+    def _fetch_robots(self, url: str, host: str):
         parser = urllib.robotparser.RobotFileParser()
         robots_url = f"{urlparse(url).scheme}://{host}/robots.txt"
         try:
@@ -77,13 +110,86 @@ class PoliteSession:
 
     # ---------------------------------------------------------------- limits
     def _throttle(self, url: str) -> None:
+        """Wait for this host's next free slot, at least min_gap after the last one.
+
+        The slot is booked under the lock but slept for outside it. Sleeping while
+        holding the lock - as this used to - made every thread wait on whichever host
+        was busiest, so eight workers fetching eight different hosts went one at a time.
+        """
         host = urlparse(url).netloc
         with self._lock:
-            gap = time.time() - self._last_hit.get(host, 0.0)
-            wait = self.min_gap - gap
-            if wait > 0:
-                time.sleep(wait + random.uniform(0, 0.25))
-            self._last_hit[host] = time.time()
+            now = time.time()
+            slot = max(now, self._last_hit.get(host, 0.0) + self._gap(host))
+            self._last_hit[host] = slot + random.uniform(0, 0.25)
+        if slot > now:
+            time.sleep(slot - now)
+
+    def _gap(self, host: str) -> float:
+        return self._gaps.get(host) or self.HOST_GAPS.get(host) or self.min_gap
+
+    def _hold_off(self, host: str, seconds: float) -> None:
+        """Push this host's next slot back - what a 429's Retry-After asks for."""
+        with self._lock:
+            self._last_hit[host] = max(self._last_hit.get(host, 0.0),
+                                       time.time() + seconds - self._gap(host))
+
+    def _slow_down(self, host: str) -> None:
+        """A 429 means the gap is too short for this host: double it, up to 5s."""
+        with self._lock:
+            self._gaps[host] = min(5.0, max(self.min_gap, 2 * self._gap(host)))
+
+    # ---------------------------------------------------------------- health
+    def _breaker_open(self, host: str) -> bool:
+        return self._open_until.get(host, 0.0) > time.time()
+
+    def _failed(self, host: str, why: str, rest: float | None = None) -> None:
+        with self._lock:
+            streak = self._fail_streak.get(host, 0) + 1
+            self._fail_streak[host] = streak
+            self._host_errors[host] = why
+            if rest is not None or streak >= self.FAIL_LIMIT:
+                rest = rest or self.REST_SECONDS
+                self._open_until[host] = time.time() + rest
+                log.warning("%s failing (%s) - leaving it alone for %ds", host, why, rest)
+
+    def _succeeded(self, host: str) -> None:
+        if self._fail_streak.get(host):
+            with self._lock:
+                self._fail_streak[host] = 0
+                self._open_until.pop(host, None)
+                self._host_errors.pop(host, None)
+
+    def health(self) -> dict:
+        """Request counters plus the hosts failing right now, for the scan summary."""
+        now = time.time()
+        with self._lock:
+            failing = {host: {"error": why,
+                              "streak": self._fail_streak.get(host, 0),
+                              "resting_for": max(0, int(self._open_until.get(host, 0) - now))}
+                       for host, why in self._host_errors.items()}
+        return {"stats": dict(self.stats), "failing_hosts": failing}
+
+    def reset_health(self) -> None:
+        """Start a scan with a clean slate: a host that was down last time gets a try."""
+        with self._lock:
+            self._fail_streak.clear()
+            self._open_until.clear()
+            self._host_errors.clear()
+            self._gaps.clear()
+            for key in self.stats:
+                self.stats[key] = 0
+
+    @staticmethod
+    def _retry_after(resp) -> float | None:
+        raw = (resp.headers.get("Retry-After") or "").strip()
+        if not raw:
+            return None
+        if raw.isdigit():
+            return float(raw)
+        try:
+            return max(0.0, parsedate_to_datetime(raw).timestamp() - time.time())
+        except (TypeError, ValueError):
+            return None
 
     # ---------------------------------------------------------------- cache
     def _cache_path(self, method: str, url: str, body: str) -> Path:
@@ -168,8 +274,12 @@ class PoliteSession:
         if cached is not None:
             return cached["data"]
 
+        host = urlparse(url).netloc
         last_error = None
         for attempt in range(retries):
+            if self._breaker_open(host):       # possibly tripped by another thread
+                self.stats["breaker_skips"] += 1
+                return None
             self._throttle(url)
             try:
                 self.stats["requests"] += 1
@@ -179,8 +289,20 @@ class PoliteSession:
                 )
                 if resp.status_code == 429 or resp.status_code >= 500:
                     # Worth another try: rate-limited or the server is having a moment.
-                    time.sleep(2 ** attempt + random.uniform(0, 1))
+                    # A Retry-After is honoured, for every thread on this host; one
+                    # asking for longer than a scan should wait rests the host instead.
                     last_error = f"HTTP {resp.status_code}"
+                    if resp.status_code == 429:
+                        self.stats["rate_limited"] += 1
+                        self._slow_down(host)
+                    wait = self._retry_after(resp)
+                    if wait is not None and wait > self.MAX_RETRY_AFTER:
+                        self._failed(host, f"{last_error}, asked to wait {int(wait)}s",
+                                     rest=wait)
+                        break
+                    if wait is None:
+                        wait = 2 ** attempt + random.uniform(0, 1)
+                    self._hold_off(host, wait)
                     continue
                 if 400 <= resp.status_code < 500:
                     # Not worth another try: a 404, a 401, or - the surprisingly common
@@ -190,16 +312,26 @@ class PoliteSession:
                     # sleep before giving up anyway, so this returns immediately, and
                     # caches the outcome when the caller says the failure mode itself is
                     # informative (a page that does not exist tends to keep not existing).
+                    # The host did answer, so as far as the breaker goes it is healthy.
+                    self._succeeded(host)
                     if cache_misses:
                         self._cache_write(cache_path, {"data": None})
                     return None
                 resp.raise_for_status()
                 data = resp.json() if expect_json else resp.text
+                self._succeeded(host)
                 self._cache_write(cache_path, {"data": data})
                 return data
             except (requests.RequestException, json.JSONDecodeError) as exc:
                 last_error = str(exc)[:160]
+                if isinstance(exc, (requests.ConnectionError, requests.Timeout)):
+                    # Unreachable or hanging: counted per attempt, so a dead host
+                    # trips the breaker within one board instead of after dozens.
+                    self._failed(host, type(exc).__name__)
                 time.sleep(1.2 * (attempt + 1))
+        else:
+            if last_error and last_error.startswith("HTTP"):
+                self._failed(host, last_error)
         self.stats["errors"] += 1
         log.debug("giving up on %s (%s)", url, last_error)
         return None

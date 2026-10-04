@@ -381,6 +381,32 @@ function renderFacetCounts() {
   }
 }
 
+// What broke on the last scan: sources or boards that returned postings before and
+// nothing now (usually a site redesign), and hosts the scraper had to back off from.
+function renderSourceHealth(run) {
+  const box = $("#source-health");
+  if (!box) return;
+  let health = null;
+  try { health = run && run.detail ? JSON.parse(run.detail).health : null; } catch (e) { health = null; }
+  const lines = [];
+  if (health) {
+    (health.sources_gone_quiet || []).forEach((q) =>
+      lines.push(`<b>${esc(q.source)}</b> returned nothing (was ${q.was})`));
+    const boards = health.boards_gone_quiet || [];
+    if (boards.length) {
+      lines.push(`${boards.length} company board${boards.length > 1 ? "s" : ""} went quiet: `
+        + boards.slice(0, 4).map((b) => esc(b.company)).join(", ")
+        + (boards.length > 4 ? "…" : ""));
+    }
+    Object.entries(health.failing_hosts || {}).slice(0, 5).forEach(([host, h]) =>
+      lines.push(`${esc(host)}: ${esc(h.error)}`));
+  }
+  box.hidden = !lines.length;
+  box.innerHTML = lines.length
+    ? `<span class="micro" style="color:var(--warn, #b45309)">Source health</span><br>${lines.join("<br>")}`
+    : "";
+}
+
 async function loadStats() {
   const s = await api("/api/stats");
   $("#s-total").textContent  = s.total;
@@ -431,6 +457,7 @@ async function loadStats() {
           ? `${reg.organisations.toLocaleString()} licensed sponsors on file`
           : "Official register on file";
   }
+  renderSourceHealth(s.last_run);
   const sc = s.scrape;
   $("#scrape-bar").style.width =
     sc.running && sc.total ? `${(sc.done / sc.total) * 100}%` : "0";

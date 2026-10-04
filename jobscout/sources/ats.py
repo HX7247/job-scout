@@ -308,13 +308,20 @@ class WorkdaySource(BaseATS):
     name = "workday"
 
     def fetch(self, slug: str, company: str = "") -> list[Job]:
-        # slug format: "tenant:wd3:site", e.g. "rollsroyce:wd3:RRCareers"
+        # slug format: "tenant:wd3:site", e.g. "rollsroyce:wd3:RRCareers", or
+        # "tenant:wd3:site:myworkdaysite" for boards on Workday's second domain,
+        # wd3.myworkdaysite.com/recruiting/{tenant}/{site} (Mondelez, TJX) - same API.
         parts = slug.split(":")
-        if len(parts) != 3:
+        if len(parts) == 4 and parts[3] == "myworkdaysite":
+            tenant, wd, site = parts[:3]
+            api = f"https://{wd}.myworkdaysite.com"
+            base = f"{api}/recruiting/{tenant}"
+        elif len(parts) == 3:
+            tenant, wd, site = parts
+            api = base = f"https://{tenant}.{wd}.myworkdayjobs.com"
+        else:
             return []
-        tenant, wd, site = parts
-        base = f"https://{tenant}.{wd}.myworkdayjobs.com"
-        endpoint = f"{base}/wday/cxs/{tenant}/{site}/jobs"
+        endpoint = f"{api}/wday/cxs/{tenant}/{site}/jobs"
         jobs, offset = [], 0
         reached_end = False
         while offset < MAX_PER_COMPANY:
@@ -350,10 +357,72 @@ class WorkdaySource(BaseATS):
         return jobs
 
 
+class OracleHCMSource(BaseATS):
+    """Oracle Recruiting Cloud - Goldman Sachs, J.P. Morgan, Schroders, Arcadis, Lazard.
+
+    The candidate-experience site (``{host}/hcmUI/CandidateExperience/en/sites/{site}``)
+    renders itself from the public REST resource used here; no robots.txt is served.
+    Slug: "host/site", e.g. "jpmc.fa.oraclecloud.com/CX_1001". Newest first, so the
+    per-company cap keeps the freshest postings on the banks' very large boards.
+    """
+
+    name = "oracle"
+    PAGE = 25
+
+    def fetch(self, slug: str, company: str = "") -> list[Job]:
+        host, _, site = slug.partition("/")
+        if not (host.endswith(".oraclecloud.com") and site):
+            return []
+        jobs, offset, reached_end = [], 0, False
+        while offset < MAX_PER_COMPANY:
+            data = SESSION.get_json(
+                f"https://{host}/hcmRestApi/resources/latest/recruitingCEJobRequisitions",
+                params={"onlyData": "true", "expand": "requisitionList.secondaryLocations",
+                        "finder": f"findReqs;siteNumber={site},limit={self.PAGE},"
+                                  f"offset={offset},sortBy=POSTING_DATES_DESC"},
+                check_robots=False)
+            items = (data or {}).get("items") or []
+            if data is None or not items:
+                break
+            reqs = items[0].get("requisitionList") or []
+            for req in reqs:
+                places = [req.get("PrimaryLocation")] + [
+                    loc.get("Name") for loc in (req.get("secondaryLocations") or [])
+                    if isinstance(loc, dict)]
+                desc = strip_html(" ".join(filter(None, (
+                    req.get("ShortDescriptionStr"), req.get("ExternalResponsibilitiesStr"),
+                    req.get("ExternalQualificationsStr")))))
+                lo, hi, cur = _salary_from_text(desc)
+                jobs.append(Job(
+                    source=self.name, source_kind=self.kind,
+                    company=company or host.split(".")[0],
+                    title=req.get("Title", ""),
+                    url=f"https://{host}/hcmUI/CandidateExperience/en/sites/{site}"
+                        f"/job/{req.get('Id')}",
+                    external_id=str(req.get("Id", "")),
+                    location="; ".join(p for p in places if p)[:200],
+                    remote=(req.get("WorkplaceTypeCode") == "ORA_REMOTE"),
+                    description=desc,
+                    salary_min=lo, salary_max=hi, salary_currency=cur,
+                    employment_type=req.get("JobSchedule") or "",
+                    department=req.get("JobFamily") or "",
+                    posted_at=parse_date(req.get("PostedDate")),
+                    closes_at=parse_date(req.get("PostingEndDate")),
+                ))
+            total = int(items[0].get("TotalJobsCount") or 0)
+            offset += self.PAGE
+            if len(reqs) < self.PAGE or offset >= total:
+                reached_end = True
+                break
+        _record_completeness(self.name, slug, reached_end)
+        return jobs
+
+
 ATS_ADAPTERS = {
     a.name: a() for a in [
         GreenhouseSource, LeverSource, AshbySource, SmartRecruitersSource,
         WorkableSource, RecruiteeSource, PersonioSource, WorkdaySource,
+        OracleHCMSource,
     ]
 }
 

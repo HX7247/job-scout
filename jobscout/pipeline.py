@@ -10,7 +10,7 @@ from typing import Callable
 
 import yaml
 
-from . import sponsorship, stability
+from . import harvest, sponsorship, stability
 from .http import SESSION
 from .config import Config
 from .cv import CVProfile, build_profile
@@ -67,7 +67,7 @@ def _annotate_sponsors(cfg: Config, store: Store, progress: Progress = _noop) ->
     return tagged
 
 
-def load_companies(cfg: Config) -> list[dict]:
+def load_companies(cfg: Config, harvested: bool = True) -> list[dict]:
     path = ROOT / cfg.sources.companies_file
     if not path.exists():
         log.warning("no company registry at %s - run tools/discover_slugs.py", path)
@@ -90,6 +90,15 @@ def load_companies(cfg: Config) -> list[dict]:
                 continue
             key = (entry.get("ats"), str(entry.get("slug", "")).lower())
             if key not in seen:
+                companies.append(entry)
+                seen.add(key)
+    # Boards found behind job-board apply links (jobscout/harvest.py), last so a
+    # hand-kept entry for the same board always wins.
+    if harvested and getattr(cfg.sources, "harvest_boards", True):
+        seen = {(c.get("ats"), str(c.get("slug", "")).lower()) for c in companies}
+        for entry in harvest.load_harvested():
+            key = (entry.get("ats"), str(entry.get("slug", "")).lower())
+            if entry.get("company") and entry.get("ats") in ATS_ADAPTERS and key not in seen:
                 companies.append(entry)
                 seen.add(key)
     if cfg.sources.company_limit:
@@ -186,7 +195,9 @@ def gather_ats(cfg: Config, progress: Progress = _noop) -> tuple[list[Job], dict
             ats._record_completeness(entry.get("ats", ""), entry.get("slug", ""), False)
             return entry, []
 
-    with cf.ThreadPoolExecutor(max_workers=8) as pool:
+    # The throttle is per host, so workers on different employers' boards no longer
+    # queue behind one another; 16 keeps every host at its 1 request/second.
+    with cf.ThreadPoolExecutor(max_workers=16) as pool:
         futures = [pool.submit(one, c) for c in companies]
         for i, fut in enumerate(cf.as_completed(futures), 1):
             entry, found = fut.result()
@@ -258,6 +269,50 @@ def gather_aggregators(cfg: Config, progress: Progress = _noop) -> tuple[list[Jo
     return jobs, per_source
 
 
+def _harvest_boards(cfg: Config, agg_jobs: list[Job]) -> dict:
+    """Save the ATS boards behind home-market boards' apply links for the next scan.
+
+    Only boards that serve the user's own market are mined: the GitHub trackers link
+    to hundreds of US-only employers, which would slow every scan for nothing.
+    """
+    if not getattr(cfg.sources, "harvest_boards", True) or not cfg.sources.use_ats:
+        return {"added": 0, "dropped": 0, "total": 0}
+    home = cfg.home_country()
+    local = [j for j in agg_jobs
+             if home and home.code in getattr(ALL_ADAPTERS.get(j.source), "markets", ())]
+    known = {(c.get("ats"), str(c.get("slug", "")).lower())
+             for c in load_companies(cfg, harvested=False)}
+    try:
+        return harvest.update(local, known, dict(LAST_BOARD_COUNTS))
+    except Exception as exc:              # growing the list must never fail a scan
+        log.warning("board harvest failed: %s", exc)
+        return {"added": 0, "dropped": 0, "total": 0}
+
+
+def source_health(per_source: dict, per_company: dict, previous: dict | None) -> dict:
+    """What broke this scan, judged against the last one.
+
+    A source that returned postings last time and none now has almost always changed
+    its page or API rather than run out of jobs, and fails silently otherwise - the
+    scan just looks a bit smaller. Same for an employer board that went from many
+    postings to none. Also carries the HTTP layer's failing hosts and counters.
+    """
+    previous = previous or {}
+    before_src = previous.get("per_source") or {}
+    before_co = previous.get("per_company") or {}
+    silent = sorted(name for name, n in per_source.items()
+                    if n == 0 and (before_src.get(name) or 0) >= 5)
+    boards = sorted(name for name, n in before_co.items()
+                    if n >= 5 and not per_company.get(name))
+    http = SESSION.health()
+    return {
+        "sources_gone_quiet": [{"source": n, "was": before_src[n]} for n in silent],
+        "boards_gone_quiet": [{"company": n, "was": before_co[n]} for n in boards][:25],
+        "failing_hosts": http["failing_hosts"],
+        "http": http["stats"],
+    }
+
+
 def refresh_registry_if_stale(cfg: Config, progress: Progress = _noop,
                               runner=None, path: Path | None = None) -> str:
     """Rebuild data/companies_extra.yaml when it is older than registry_refresh_days.
@@ -298,6 +353,8 @@ def run(cfg: Config | None = None, store: Store | None = None,
     cfg = cfg or Config.load()
     store = store or Store()
     started = now()
+    previous = store.last_run_detail()
+    SESSION.reset_health()
 
     progress("start", {"message": "reading your profile"})
     profile = load_profile(cfg, derived_profile)
@@ -308,6 +365,8 @@ def run(cfg: Config | None = None, store: Store | None = None,
 
     progress("start", {"message": "querying job boards"})
     agg_jobs, per_source = gather_aggregators(cfg, progress)
+
+    harvested = _harvest_boards(cfg, agg_jobs)
 
     raw = ats_jobs + agg_jobs
     progress("scoring", {"total": len(raw)})
@@ -336,6 +395,7 @@ def run(cfg: Config | None = None, store: Store | None = None,
         "ats_raw": len(ats_jobs),
         "aggregator_raw": len(agg_jobs),
         "profile": profile.to_dict() if profile else None,
+        "health": source_health(per_source, per_company, previous),
     }
     store.record_run(started, len(raw), len(kept), new_count, detail)
     SESSION.prune_cache()          # keep the on-disk HTTP cache from growing forever
@@ -349,6 +409,8 @@ def run(cfg: Config | None = None, store: Store | None = None,
         "delisted": delisted,
         "rescored": refreshed.get("kept", 0),
         "registry_refresh": registry,
+        "health": detail["health"],
+        "boards_harvested": harvested,
         "profile_skills": profile.skills if profile else [],
     }
     progress("done", summary)
