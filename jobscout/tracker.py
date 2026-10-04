@@ -130,35 +130,50 @@ def safe_url(url: str) -> str:
                        urlencode(kept), parts.fragment))
 
 
+DATE_COLUMNS = (3, 8, 9, 14, 18)
+
+
 def job_to_row(job: dict, date_format: str = "dd/mm/yyyy") -> list:
-    """Map one stored job to the 19 typed columns (T and U are formulas)."""
+    """Map one stored job to the 19 typed columns (T and U are formulas).
+
+    A job on the in-app tracker carries its stage, date applied and notes across, and
+    anything kept from the user's own spreadsheet on import goes back to its column.
+    """
+    extra = job.get("tracker_extra") or {}
+    if isinstance(extra, str):
+        import json
+        try:
+            extra = json.loads(extra or "{}")
+        except ValueError:
+            extra = {}
+    manual = job.get("source_kind") == "manual"
     source = ("Company website" if job.get("source_kind") == "ats_direct"
               else {"linkedin": "LinkedIn"}.get(job.get("source", ""), "Other"))
     salary = job.get("salary_display") or ""
+    stage = job.get("app_status") or "Not applied yet"
     return [
         job.get("company", ""),                    # A Company
-        job.get("title", ""),                      # B Role Name
+        "" if job.get("title") == "(no role name)" else job.get("title", ""),  # B Role
         _iso_to_date(job.get("closes_at")),        # C Deadline
         safe_url(job.get("url", "")),              # D Application Link
         job.get("location", ""),                   # E Location
         salary,                                    # F Salary
-        "1 Year",                                  # G Duration (placement default)
-        None,                                      # H Start Date - you fill
-        _iso_to_date(job.get("posted_at")),        # I Open Date
-        source,                                    # J Source
-        "Not started",                             # K CV
-        False,                                     # L Cover Letter
-        False,                                     # M Applied?
-        None,                                      # N Date Applied
-        "Not applied yet",                         # O Status
-        None,                                      # P Got as far as
-        None,                                      # Q Next Action
-        None,                                      # R Next Action Date
-        None,                                      # S Notes
+        extra.get("Duration") or (None if manual else "1 Year"),  # G Duration
+        _iso_to_date(extra.get("Start Date")),     # H Start Date
+        _iso_to_date(extra.get("Open Date") or job.get("posted_at")),  # I Open Date
+        extra.get("Source") or (None if manual else source),       # J Source
+        extra.get("CV") or "Not started",          # K CV
+        extra.get("Cover Letter", False),          # L Cover Letter
+        stage != "Not applied yet",                # M Applied?
+        _iso_to_date(job.get("applied_at")),       # N Date Applied
+        stage,                                     # O Status
+        extra.get("Got as far as") or None,        # P Got as far as
+        extra.get("Next Action") or None,          # Q Next Action
+        _iso_to_date(extra.get("Next Action Date")),  # R Next Action Date
+        job.get("notes") or None,                  # S Notes
     ]
 
 
-# ------------------------------------------------------------- append into real
 def append_into(jobs: list[dict], source_workbook: str | Path,
                 out_path: str | Path, dedupe: bool = True, home=None) -> dict:
     """Copy the user's workbook and append job rows to the Tracker sheet.
@@ -199,7 +214,7 @@ def append_into(jobs: list[dict], source_workbook: str | Path,
             continue
         for col, value in enumerate(job_to_row(job), start=1):
             cell = ws.cell(row, col, value)
-            if col == 3 or col == 9:                       # date columns
+            if col in DATE_COLUMNS:
                 cell.number_format = date_format
             if col == 4 and value:                          # hyperlink the apply link
                 cell.hyperlink = value
@@ -316,7 +331,7 @@ def _build_tracker(wb, jobs: list[dict], rows: int = 300, home=None):
         for col, value in enumerate(job_to_row(job), start=1):
             cell = ws.cell(row, col, value)
             cell.border = BORDER
-            if col in (3, 9):
+            if col in DATE_COLUMNS:
                 cell.number_format = date_format
             if col == 4 and value:
                 cell.hyperlink = value

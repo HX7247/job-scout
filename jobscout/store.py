@@ -14,6 +14,22 @@ DB_PATH = ROOT / "data" / "jobscout.db"
 
 STATUSES = ["new", "shortlisted", "applied", "interviewing", "offer", "rejected", "dismissed"]
 
+# The application tracker speaks the spreadsheet's language (the Status dropdown in the
+# exported workbook), which is finer-grained than the app's own statuses. Each tracker
+# stage maps onto one app status, so the jobs list, the follow-up nudges and the
+# tracker never disagree about where an application is.
+APP_STATUSES = ["Not applied yet", "Applied", "Online test", "1st interview", "2nd / AC",
+                "Final round", "Offer", "Accepted", "Rejected", "Ghosted", "Withdrawn"]
+APP_TO_STATUS = {"Not applied yet": "shortlisted", "Applied": "applied",
+                 "Online test": "applied", "1st interview": "interviewing",
+                 "2nd / AC": "interviewing", "Final round": "interviewing",
+                 "Offer": "offer", "Accepted": "offer", "Rejected": "rejected",
+                 "Ghosted": "rejected", "Withdrawn": "rejected"}
+STATUS_TO_APP = {"shortlisted": "Not applied yet", "applied": "Applied",
+                 "interviewing": "1st interview", "offer": "Offer", "rejected": "Rejected"}
+# A job is on the tracker exactly when its app status is one of these.
+TRACKED_STATUSES = tuple(STATUS_TO_APP)
+
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS jobs (
     id              TEXT PRIMARY KEY,
@@ -130,7 +146,10 @@ class Store:
                             ("status_changed_at", "TEXT DEFAULT ''"),
                             ("viewed_at", "TEXT DEFAULT ''"),
                             ("startup", "INTEGER DEFAULT NULL"),
-                            ("delisted_at", "TEXT DEFAULT ''")):
+                            ("delisted_at", "TEXT DEFAULT ''"),
+                            ("app_status", "TEXT DEFAULT ''"),
+                            ("applied_at", "TEXT DEFAULT ''"),
+                            ("tracker_extra", "TEXT DEFAULT ''")):
             if column not in have:
                 self.conn.execute(f"ALTER TABLE jobs ADD COLUMN {column} {ddl}")
         self.conn.execute(
@@ -186,8 +205,10 @@ class Store:
                 "LIMIT 1",
                 (job.id, job.dedupe_key),
             ).fetchone()
-            if existing and existing["source_kind"] == "ats_direct" \
-                    and job.source_kind != "ats_direct":
+            # A row the user typed in or imported is treated the same way: an
+            # aggregator's copy must not replace the link they saved.
+            if existing and existing["source_kind"] in ("ats_direct", "manual") \
+                    and job.source_kind not in ("ats_direct", "manual"):
                 # The employer's own board is the authority on its posting: its link
                 # goes straight to the real Apply button and its description is the
                 # full one. A copy from an aggregator or a job list only confirms the
@@ -264,14 +285,76 @@ class Store:
     def set_status(self, job_id: str, status: str) -> bool:
         if status not in STATUSES:
             return False
+        row = self.conn.execute("SELECT status, app_status FROM jobs WHERE id = ?",
+                                (job_id,)).fetchone()
+        if row is None:
+            return False
+        # Keep the tracker's finer stage when it already agrees ("2nd / AC" is still
+        # "interviewing"); otherwise move it to the stage this status stands for.
+        # Moving off the tracker statuses takes the job off the tracker.
+        app = row["app_status"] if APP_TO_STATUS.get(row["app_status"]) == status             else STATUS_TO_APP.get(status, "")
+        # Always restamped, even to the same status: "Mark as chased" sets 'applied'
+        # again precisely to restart the 21-day clock.
+        self._write_status(job_id, status, app, changed=True)
+        self.conn.commit()
+        return True
+
+    def set_app_status(self, job_id: str, app_status: str) -> bool:
+        """Set a tracker stage ("Applied", "1st interview", ...); puts the job on the
+        tracker if it was not already."""
+        if app_status not in APP_TO_STATUS:
+            return False
+        row = self.conn.execute("SELECT status, app_status FROM jobs WHERE id = ?",
+                                (job_id,)).fetchone()
+        if row is None:
+            return False
+        self._write_status(job_id, APP_TO_STATUS[app_status], app_status,
+                           changed=row["app_status"] != app_status)
+        self.conn.commit()
+        return True
+
+    def _write_status(self, job_id: str, status: str, app_status: str,
+                      changed: bool) -> None:
         # Stamped so "applied 23 days ago, nothing back" can be surfaced in the app
         # itself, not only in the exported spreadsheet's chase-reminder formula, which
         # only fires on a Date Applied the user typed in by hand.
+        stamp = now()
+        applied = app_status not in ("", "Not applied yet")
         self.conn.execute(
-            "UPDATE jobs SET status = ?, status_changed_at = ? WHERE id = ?",
-            (status, now(), job_id))
+            "UPDATE jobs SET status = ?, app_status = ?, "
+            "status_changed_at = CASE WHEN ? THEN ? ELSE status_changed_at END, "
+            # the first time it moves past "not applied", unless a date is already set
+            "applied_at = CASE WHEN ? THEN CASE WHEN COALESCE(applied_at, '') = '' "
+            "THEN ? ELSE applied_at END ELSE '' END WHERE id = ?",
+            (status, app_status, 1 if changed else 0, stamp,
+             1 if applied else 0, stamp[:10], job_id))
+
+    def set_applied_at(self, job_id: str, date: str) -> None:
+        self.conn.execute("UPDATE jobs SET applied_at = ? WHERE id = ?", (date, job_id))
         self.conn.commit()
-        return True
+
+    def set_tracker_extra(self, job_id: str, extra: dict) -> None:
+        self.conn.execute("UPDATE jobs SET tracker_extra = ? WHERE id = ?",
+                          (json.dumps(extra) if extra else "", job_id))
+        self.conn.commit()
+
+    def tracked(self) -> list[dict]:
+        """Every job on the application tracker, whatever the job filters say: the
+        tracker is the user's own list, so a score or town filter never hides a row."""
+        marks = ",".join("?" * len(TRACKED_STATUSES))
+        rows = self.conn.execute(
+            f"SELECT * FROM jobs WHERE status IN ({marks}) "
+            "ORDER BY COALESCE(NULLIF(closes_at, ''), '9999'), company COLLATE NOCASE, id",
+            TRACKED_STATUSES).fetchall()
+        return [self._row_to_dict(r) for r in rows]
+
+    def delete_manual(self, job_id: str) -> bool:
+        """Remove a row the user added by hand or imported. Scraped postings are never
+        deleted - only taken off the tracker - because a scan would bring them back."""
+        cur = self.conn.execute(
+            "DELETE FROM jobs WHERE id = ? AND source_kind = 'manual'", (job_id,))
+        self.conn.commit()
+        return cur.rowcount > 0
 
     def mark_viewed(self, job_id: str) -> None:
         """Stamp the first time a posting's detail panel was opened. Kept as the first
@@ -653,6 +736,14 @@ class Store:
         data["viewed"] = bool(data.get("viewed_at"))
         data["startup"] = None if data.get("startup") is None else bool(data["startup"])
         data["delisted"] = bool(data.get("delisted_at"))
+        data["tracked"] = data.get("status") in TRACKED_STATUSES
+        if data["tracked"] and not data.get("app_status"):
+            # shortlisted/applied before the tracker existed
+            data["app_status"] = STATUS_TO_APP[data["status"]]
+        try:
+            data["tracker_extra"] = json.loads(data.get("tracker_extra") or "{}")
+        except (json.JSONDecodeError, TypeError):
+            data["tracker_extra"] = {}
 
         # Computed at read time, not stored: it uses the same text every rescore would
         # anyway, so recomputing it on the way out means the 1,919 postings already in

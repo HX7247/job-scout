@@ -214,6 +214,58 @@
     <!-- ------------------------------------------------------------ tracker -->
     <section class="view" id="view-tracker">
       <div class="pad">
+        <div class="panel" id="panel-mytracker">
+          <div class="trk-head">
+            <h3>My applications</h3>
+            <span class="where" id="trk-count"></span>
+          </div>
+          <p class="sub">
+            Your own list of roles. Import the spreadsheet you already keep, add a job
+            from the Positions tab with <b>Add to tracker</b> in its detail panel, or type
+            one in. Change a status from its dropdown. Notes save as you type.
+          </p>
+          <div class="trk-tools">
+            <select id="trk-filter" aria-label="Show applications">
+              <option value="all">All</option>
+              <option value="todo">Not applied yet</option>
+              <option value="applied">Applied (any stage)</option>
+              <option value="progress">In progress</option>
+              <option value="offers">Offers</option>
+              <option value="closed">Closed</option>
+            </select>
+            <input type="search" id="trk-q" placeholder="Search company or role"
+                   aria-label="Search your applications">
+            <span class="trk-spacer"></span>
+            <label class="btn" for="trk-file" id="trk-import-btn" tabindex="0"
+                   role="button">Import spreadsheet&hellip;</label>
+            <input type="file" id="trk-file" accept=".xlsx,.xlsm,.csv" hidden>
+            <button class="btn" id="trk-add-toggle" aria-expanded="false">Add a job</button>
+            <button class="btn" id="trk-export">Download as Excel</button>
+          </div>
+          <div id="trk-import-result"></div>
+          <form id="trk-add" class="trk-add" hidden>
+            <input type="text" name="company" placeholder="Company *" required
+                   aria-label="Company">
+            <input type="text" name="title" placeholder="Role" aria-label="Role">
+            <input type="text" name="url" placeholder="Application link"
+                   aria-label="Application link">
+            <input type="text" name="location" placeholder="Location" aria-label="Location">
+            <label class="where">Deadline <input type="date" name="deadline"></label>
+            <select name="app_status" id="trk-add-status" aria-label="Status"></select>
+            <button class="btn primary" type="submit">Add to tracker</button>
+          </form>
+          <div class="trk-wrap">
+            <table class="inv trk">
+              <thead><tr>
+                <th>Company</th><th>Role</th><th>Deadline</th><th>Status</th>
+                <th>Applied on</th><th>Notes</th><th></th>
+              </tr></thead>
+              <tbody id="trk-body"></tbody>
+            </table>
+          </div>
+          <div id="trk-empty" class="where" hidden></div>
+        </div>
+
         <div class="panel" id="panel-followups" style="display:none">
           <h3>Gone quiet</h3>
           <p class="sub">

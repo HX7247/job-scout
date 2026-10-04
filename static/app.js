@@ -618,6 +618,7 @@ async function openDrawer(id) {
       <dt>Source</dt><dd>${esc(job.source)} ${job.source_kind === "ats_direct"
         ? '<span class="pill direct">company board</span>' : ""}</dd>
       <dt>Status</dt><dd><select id="d-status">${statusOptions}</select></dd>
+      <dt>Tracker</dt><dd id="d-track">${trackCell(job)}</dd>
       ${job.sponsor_name ? `<dt>Visa sponsor</dt><dd>
         <b>${esc(job.sponsor_rating)} rating</b> &mdash; listed as
         &ldquo;${esc(job.sponsor_name)}&rdquo;
@@ -666,8 +667,10 @@ async function openDrawer(id) {
   $("#d-status").addEventListener("change", async (e) => {
     await api(`/api/job/${id}/status`, { method: "POST", body: { status: e.target.value } });
     toast(`Marked ${e.target.value}`);
-    loadJobs(); loadStats();
+    loadJobs(); loadStats(); refreshTrackerIfShown();
+    wireTrackCell(id, (await api(`/api/job/${id}`)).job);
   });
+  wireTrackCell(id, job);
 
   const drafts = outreach.drafts || {};
   $("#pane-contacts").innerHTML = `
@@ -862,6 +865,262 @@ async function loadFollowups() {
   }));
 }
 
+/* ---------------------------------------------------------- my applications */
+// The user's own tracker: every job they have shortlisted, applied to or imported from
+// their spreadsheet. Small (tens to hundreds of rows), so it is fetched whole and
+// filtered here rather than paged through the server like the jobs list.
+const TRK_GROUPS = {
+  all: () => true,
+  todo: (s) => s === "Not applied yet",
+  applied: (s) => s !== "Not applied yet",
+  progress: (s) => ["Applied", "Online test", "1st interview", "2nd / AC", "Final round"].includes(s),
+  offers: (s) => s === "Offer" || s === "Accepted",
+  closed: (s) => ["Rejected", "Ghosted", "Withdrawn"].includes(s),
+};
+const TRK_STAGE_CLASS = { "Not applied yet": "todo", Offer: "offer", Accepted: "offer",
+  Rejected: "closed", Ghosted: "closed", Withdrawn: "closed" };
+const trk = { jobs: [], statuses: [], noteTimers: {} };
+
+// A drawer opened over the Tracker tab must not leave the list behind it stale.
+function refreshTrackerIfShown() {
+  if ($("#view-tracker")?.classList.contains("on")) loadTracker();
+}
+
+function trackCell(job) {
+  if (!job.tracked) {
+    return '<button class="btn sm" id="d-track-add">Add to tracker</button>';
+  }
+  const opts = (trk.statuses.length ? trk.statuses : [job.app_status])
+    .map((s) => `<option ${s === job.app_status ? "selected" : ""}>${esc(s)}</option>`).join("");
+  return `<select id="d-track-stage" aria-label="Tracker status">${opts}</select>`;
+}
+
+function wireTrackCell(id, job) {
+  const cell = $("#d-track");
+  if (!cell) return;
+  cell.innerHTML = trackCell(job);
+  const sync = async (body, message) => {
+    const res = await api(`/api/job/${id}/track`, { method: "POST", body });
+    toast(message(res));
+    const status = $("#d-status");
+    if (status) status.value = res.status;
+    loadJobs(); loadStats(); refreshTrackerIfShown();
+    wireTrackCell(id, { ...job, ...res, tracked: true });
+  };
+  $("#d-track-add")?.addEventListener("click", () =>
+    sync({}, () => "Added to My applications on the Tracker tab"));
+  $("#d-track-stage")?.addEventListener("change", (e) =>
+    sync({ app_status: e.target.value }, (r) => `Tracker: ${r.app_status}`));
+}
+
+async function loadTracker() {
+  try {
+    const data = await api("/api/tracker");
+    trk.jobs = data.jobs;
+    trk.statuses = data.statuses;
+  } catch (err) {
+    $("#trk-empty").hidden = false;
+    $("#trk-empty").textContent = `Could not load your applications: ${err.message}`;
+    return;
+  }
+  $("#trk-add-status").innerHTML = trk.statuses.map((s) => `<option>${esc(s)}</option>`).join("");
+  renderTracker();
+}
+
+function trkDeadline(iso) {
+  if (!iso) return '<span class="where">&mdash;</span>';
+  const day = new Date(iso.slice(0, 10) + "T00:00:00");
+  if (isNaN(day)) return esc(iso);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const left = Math.round((day - today) / 86400000);
+  const label = day.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+  const hint = left < 0 ? "passed" : left === 0 ? "today" : `${left} day${left === 1 ? "" : "s"}`;
+  const cls = left < 0 ? "trk-late" : left <= 7 ? "trk-soon" : "where";
+  return `${label}<div class="${cls}">${hint}</div>`;
+}
+
+function renderTracker() {
+  const group = $("#trk-filter").value;
+  const q = $("#trk-q").value.trim().toLowerCase();
+  // counts follow the search box, so each option says what picking it would show
+  const searched = trk.jobs.filter((j) => !q
+    || `${j.company} ${j.title} ${j.location || ""}`.toLowerCase().includes(q));
+  $$("#trk-filter option").forEach((o) => {
+    const n = searched.filter((j) => TRK_GROUPS[o.value](j.app_status)).length;
+    o.textContent = `${o.textContent.replace(/ \(\d+\)$/, "")} (${n})`;
+  });
+  const shown = searched.filter((j) => TRK_GROUPS[group](j.app_status));
+  const applied = trk.jobs.filter((j) => j.app_status !== "Not applied yet").length;
+  $("#trk-count").textContent = trk.jobs.length
+    ? `${trk.jobs.length} tracked · ${applied} applied · ${trk.jobs.length - applied} not yet` : "";
+
+  const empty = $("#trk-empty");
+  empty.hidden = shown.length > 0;
+  empty.textContent = !trk.jobs.length
+    ? "Nothing here yet. Import your spreadsheet, or add a job from the Positions tab."
+    : "No applications match this filter.";
+  $(".trk-wrap").hidden = !shown.length;
+
+  const opts = (cur) => trk.statuses.map((s) =>
+    `<option ${s === cur ? "selected" : ""}>${esc(s)}</option>`).join("");
+  $("#trk-body").innerHTML = shown.map((j) => `
+    <tr data-id="${esc(j.id)}" class="trk-${TRK_STAGE_CLASS[j.app_status] || "live"}">
+      <td><b>${esc(j.company)}</b>
+        ${j.location ? `<div class="where">${esc(j.location)}</div>` : ""}</td>
+      <td>${j.url ? `<a href="${esc(j.url)}" target="_blank" rel="noopener">${esc(j.title)}</a>`
+                  : esc(j.title)}
+        ${j.source_kind === "manual" ? '<div class="where">added by you</div>' : ""}
+        ${j.delisted ? '<div class="trk-late">no longer listed</div>' : ""}</td>
+      <td class="trk-nowrap">${trkDeadline(j.closes_at)}</td>
+      <td><select data-stage aria-label="Status for ${esc(j.company)}">${opts(j.app_status)}</select></td>
+      <td><input type="date" data-applied value="${esc((j.applied_at || "").slice(0, 10))}"
+             aria-label="Date applied"></td>
+      <td><textarea data-note rows="2" aria-label="Notes for ${esc(j.company)}"
+             placeholder="Notes">${esc(j.notes || "")}</textarea>
+          <div class="where trk-saved"></div></td>
+      <td class="trk-nowrap">
+        ${j.source_kind === "manual" ? "" : '<button class="btn sm" data-open>Details</button>'}
+        <button class="btn sm danger" data-remove title="Take off the tracker">Remove</button></td>
+    </tr>`).join("");
+}
+
+function trkRow(el) {
+  const tr = el.closest("tr[data-id]");
+  return tr && { tr, id: tr.dataset.id, job: trk.jobs.find((j) => j.id === tr.dataset.id) };
+}
+
+async function saveTrackerNote(id, text, tr) {
+  clearTimeout(trk.noteTimers[id]);
+  delete trk.noteTimers[id];
+  const job = trk.jobs.find((j) => j.id === id);
+  if (!job || job.notes === text) return;
+  try {
+    await api(`/api/job/${id}/note`, { method: "POST", body: { note: text } });
+    job.notes = text;
+    const mark = tr && tr.querySelector(".trk-saved");
+    if (mark) { mark.textContent = "Saved"; setTimeout(() => { mark.textContent = ""; }, 1500); }
+  } catch (err) {
+    toast(`Could not save the note: ${err.message}`);
+  }
+}
+
+async function importTracker(file) {
+  const out = $("#trk-import-result");
+  out.innerHTML = `<div class="notice">Reading ${esc(file.name)}&hellip;</div>`;
+  const form = new FormData();
+  form.append("file", file);
+  let res;
+  try {
+    const r = await fetch("/api/tracker/import",
+      { method: "POST", body: form, headers: { "X-Job-Scout": "1" } });
+    res = await r.json();
+  } catch (err) {
+    res = { error: err.message };
+  }
+  if (res.error) {
+    out.innerHTML = `<div class="caveat">${esc(res.error)}</div>`;
+    return;
+  }
+  const unknown = Object.keys(res.unknown_statuses || {});
+  out.innerHTML = `<div class="notice">
+    Imported <b>${esc(file.name)}</b> (sheet &ldquo;${esc(res.sheet)}&rdquo;):
+    <b>${res.added}</b> added, <b>${res.updated}</b> already here and updated${
+    res.skipped ? `, ${res.skipped} skipped for having no company (rows ${res.skipped_rows.join(", ")})` : ""}.
+    <div class="where" style="margin-top:4px">Read columns: ${
+      Object.keys(res.columns).map(esc).join(", ")}${
+      res.kept_extra_columns.length ? `. Also kept: ${res.kept_extra_columns.map(esc).join(", ")}` : ""}.
+    ${unknown.length ? `Statuses it did not recognise (${unknown.map(esc).join(", ")}) were
+      set from the Applied column and copied into the notes.` : ""}</div></div>`;
+  await loadTracker();
+  loadJobs(); loadStats();
+}
+
+function wireTracker() {
+  $("#trk-filter").addEventListener("change", renderTracker);
+  $("#trk-q").addEventListener("input", debounce(renderTracker, 150));
+  const body = $("#trk-body");
+
+  body.addEventListener("change", async (e) => {
+    const row = trkRow(e.target);
+    if (!row) return;
+    try {
+      if (e.target.matches("[data-stage]")) {
+        const res = await api(`/api/job/${row.id}/track`,
+          { method: "POST", body: { app_status: e.target.value } });
+        Object.assign(row.job, res);
+        toast(`${row.job.company}: ${res.app_status}`);
+        renderTracker();
+        loadJobs(); loadStats();
+      } else if (e.target.matches("[data-applied]")) {
+        const res = await api(`/api/job/${row.id}/track`,
+          { method: "POST", body: { applied_at: e.target.value } });
+        Object.assign(row.job, res);
+      }
+    } catch (err) {
+      toast(`Could not save: ${err.message}`);
+    }
+  });
+  body.addEventListener("input", (e) => {
+    if (!e.target.matches("[data-note]")) return;
+    const row = trkRow(e.target);
+    clearTimeout(trk.noteTimers[row.id]);
+    trk.noteTimers[row.id] = setTimeout(
+      () => saveTrackerNote(row.id, e.target.value, row.tr), 700);
+  });
+  body.addEventListener("focusout", (e) => {
+    if (!e.target.matches("[data-note]")) return;
+    const row = trkRow(e.target);
+    if (row) saveTrackerNote(row.id, e.target.value, row.tr);
+  });
+  body.addEventListener("click", async (e) => {
+    const row = trkRow(e.target);
+    if (!row) return;
+    if (e.target.matches("[data-open]")) {
+      openDrawer(row.id);
+    } else if (e.target.matches("[data-remove]")) {
+      const manual = row.job.source_kind === "manual";
+      if (!confirm(manual
+        ? `Delete ${row.job.company} - ${row.job.title} and its notes? You added it, so it is removed for good.`
+        : `Take ${row.job.company} - ${row.job.title} off your tracker? It goes back to the jobs list and your notes are kept.`)) return;
+      await api(`/api/job/${row.id}/untrack`, { method: "POST" });
+      trk.jobs = trk.jobs.filter((j) => j.id !== row.id);
+      renderTracker();
+      loadJobs(); loadStats();
+    }
+  });
+
+  $("#trk-import-btn").addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("#trk-file").click(); }
+  });
+  $("#trk-file").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    e.target.value = "";
+    if (file) importTracker(file);
+  });
+
+  $("#trk-add-toggle").addEventListener("click", () => {
+    const form = $("#trk-add");
+    form.hidden = !form.hidden;
+    $("#trk-add-toggle").setAttribute("aria-expanded", String(!form.hidden));
+    if (!form.hidden) form.company.focus();
+  });
+  $("#trk-add").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const body = Object.fromEntries(new FormData(form).entries());
+    try {
+      const res = await api("/api/tracker/add", { method: "POST", body });
+      toast(res.created ? `Added ${body.company}` : `${body.company} was already on your list`);
+      form.reset();
+      await loadTracker();
+      loadJobs(); loadStats();
+    } catch (err) {
+      toast(`Could not add it: ${err.message}`);
+    }
+  });
+  $("#trk-export").addEventListener("click", () => doExport("tracker"));
+}
+
 /* -------------------------------------------------------------------- export */
 function registerExport(result) {
   if (result.error) { toast(result.error, 6000); return; }
@@ -920,7 +1179,7 @@ function init() {
     $$(".tab").forEach((t) => t.classList.toggle("on", t === tab));
     $$(".view").forEach((v) => v.classList.toggle("on", v.id === `view-${tab.dataset.view}`));
     closeRail();
-    if (tab.dataset.view === "tracker") loadFollowups();
+    if (tab.dataset.view === "tracker") { loadFollowups(); loadTracker(); }
   }));
   $$(".dtab").forEach((tab) => tab.addEventListener("click", () => {
     $$(".dtab").forEach((t) => t.classList.toggle("on", t === tab));
@@ -990,6 +1249,8 @@ function init() {
   $("#btn-export-new").addEventListener("click", () => doExport("new"));
   $("#btn-export-append").addEventListener("click", () => doExport("append"));
   $("#btn-t-new").addEventListener("click", () => doExport("new"));
+  wireTracker();
+  api("/api/tracker").then((d) => { trk.statuses = d.statuses; }).catch(() => {});
   $("#btn-t-append").addEventListener("click", () => doExport("append"));
 
   addTagInput("#c-title-add", "titles");

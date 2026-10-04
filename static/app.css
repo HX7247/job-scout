@@ -740,3 +740,43 @@ ul.links a { font-weight: 560; }
 
 .skel-chip { display: inline-block; width: 64px; height: 20px; margin: 0 5px 5px 0;
   border-radius: var(--radius-sm); vertical-align: middle; }
+
+/* ==========================================================================
+   My applications (Tracker tab)
+   ========================================================================== */
+#view-tracker .pad { max-width: 1240px; }
+.trk-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.trk-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+.trk-tools select, .trk-tools input[type=search], .trk-add input, .trk-add select,
+table.trk select, table.trk input[type=date], table.trk textarea {
+  padding: 5px 7px; border: 1px solid var(--line); border-radius: var(--radius-md);
+  background: #fff; font-size: 12px;
+}
+.trk-tools input[type=search] { flex: 0 1 220px; min-width: 140px; }
+.trk-spacer { flex: 1 1 auto; }
+.trk-add { display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  padding: 12px; margin-bottom: 12px; background: var(--panel-alt);
+  border: 1px solid var(--line-soft); border-radius: var(--radius-md); }
+.trk-add[hidden] { display: none; }
+.trk-add input[type=text] { flex: 1 1 150px; min-width: 0; }
+.trk-add label { display: flex; align-items: center; gap: 6px; }
+#trk-import-result .notice, #trk-import-result .caveat { margin-bottom: 12px; }
+.trk-wrap { overflow-x: auto; }
+table.trk { min-width: 860px; }
+table.trk td { vertical-align: top; }
+table.trk textarea { width: 100%; min-width: 180px; resize: vertical; line-height: 1.4; }
+table.trk select:focus, table.trk input:focus, table.trk textarea:focus,
+.trk-tools select:focus, .trk-tools input:focus, .trk-add input:focus, .trk-add select:focus {
+  outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(44,74,114,.12);
+}
+table.trk tr.trk-offer td:first-child { box-shadow: inset 2px 0 0 var(--green); padding-left: 8px; }
+table.trk tr.trk-live td:first-child { box-shadow: inset 2px 0 0 var(--accent); padding-left: 8px; }
+table.trk tr.trk-todo td:first-child { box-shadow: inset 2px 0 0 var(--line); padding-left: 8px; }
+table.trk tr.trk-closed td { color: var(--muted); }
+table.trk tr.trk-closed td:first-child { box-shadow: inset 2px 0 0 var(--line-soft); padding-left: 8px; }
+.trk-nowrap { white-space: nowrap; }
+.trk-late { color: var(--red); font-size: 11px; }
+.trk-soon { color: var(--amber); font-size: 11px; font-weight: 600; }
+.trk-saved { font-size: 10.5px; min-height: 14px; color: var(--green); }
+#trk-empty { padding: 14px 0 4px; }
+label.btn { display: inline-block; cursor: pointer; }

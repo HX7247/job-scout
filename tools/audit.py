@@ -921,8 +921,8 @@ def main() -> None:
     _fstring_sql = _sec_re.findall(r'f"[^"]*(?:SELECT|INSERT|UPDATE|DELETE)[^"]*"', _store_source, _sec_re.I)
     check("security: no client value is ever concatenated into SQL text",
           lambda: all(("{" not in s) or all(
-              # "where" is Store._where()'s output: fixed text and "?" placeholders only.
-              tok in ("column", "slots", "blank", "kind_slots", "clause", "visible", "where")
+              # "where" is Store._where()'s output and "marks" a run of "?" - placeholders only.
+              tok in ("column", "slots", "blank", "kind_slots", "clause", "visible", "where", "marks")
               for tok in _sec_re.findall(r"\{(\w+)\}", s)) for s in _fstring_sql)
           or f"an f-string SQL fragment interpolates something unexpected: {_fstring_sql}")
 
@@ -1302,6 +1302,96 @@ def main() -> None:
           lambda: len(_pages) == 12 == len(set(_pages)) or f"{len(set(_pages))} of 12 distinct")
     check("filters: '%' and '_' in a search are literal text, not wildcards",
           lambda: (_pct == ["Role 1"] and _under == ["Data_Intern"]) or f"{_pct} {_under}")
+
+    # ---- application tracker: import the user's own spreadsheet, status sync, export
+    import io as _io
+    import openpyxl as _oxl
+    from jobscout import tracker as _trk, tracker_import as _ti
+
+    def _book(rows):
+        _wb = _oxl.Workbook()
+        for _r in rows:
+            _wb.active.append(_r)
+        _buf = _io.BytesIO()
+        _wb.save(_buf)
+        return _buf.getvalue()
+
+    _tr_db = ROOT / "out" / "_audit_tracker.db"
+    if _tr_db.exists():
+        _tr_db.unlink()
+    _ts = Store(_tr_db)
+    _ts.upsert([Job(source="greenhouse", source_kind="ats_direct", company="Acme Ltd",
+                    title="Software Placement", url="https://boards.example/acme/1",
+                    location="London", external_id="1")])
+    _sheet = _book([
+        ["Comapny", "Role Name", "Deadline", "Application Link", "Applied?",
+         "Date Applied", "Status", "Notes", "Recruiter"],
+        ["Acme", "Software Placement", "30/11/2026", "https://boards.example/acme/1", True,
+         "20/09/2026", "Assessment centre", "went well", "Sam"],
+        ["Globex", "Data Intern", "15/12/2026", "globex.example/jobs/9", False, None, None,
+         None, None],
+        ["Initech", "Quant Intern", None, None, "yes", None, "OA sent", None, None],
+        ["Hooli", "SWE Intern", None, None, None, None, "Lunch with Gavin", None, None],
+        [None, "Role with no company", None, None, None, None, None, None, None],
+        [None, None, None, None, False, None, None, None, None],   # template filler
+    ])
+    _first = _ti.import_tracker(_ts, _sheet, "mine.xlsx")
+    _again = _ti.import_tracker(_ts, _sheet, "mine.xlsx")
+    _by = {j["company"]: j for j in _ts.tracked()}
+    _rows_now = _ts.conn.execute("SELECT COUNT(*) FROM jobs").fetchone()[0]
+    _exported = ROOT / "out" / "_audit_tracker.xlsx"
+    _trk.export_new(_ts.tracked(), _exported)
+    _round = _ti.import_tracker(_ts, _exported.read_bytes(), "export.xlsx")
+    _exported.unlink()
+    _acme_row = _trk.job_to_row(_by["Acme Ltd"])
+    _gid = _by["Globex"]["id"]
+    _ts.set_status(_gid, "interviewing")
+    _s1 = _ts.get(_gid)["app_status"]
+    _ts.set_app_status(_gid, "Final round")
+    _ts.set_status(_gid, "interviewing")
+    _s2 = _ts.get(_gid)["app_status"]
+    _ts.set_status(_gid, "new")
+    _off = _ts.get(_gid)
+    _kept_scraped = not _ts.delete_manual(_by["Acme Ltd"]["id"])
+    _gone_manual = _ts.delete_manual(_by["Hooli"]["id"])
+    _ts.close()
+    _tr_db.unlink()
+    check("tracker import: a misspelt 'Comapny' header and a spreadsheet's own columns are read",
+          lambda: _first["columns"].get("Comapny") == "company"
+          and _first["kept_extra_columns"] == ["Recruiter"] or _first)
+    check("tracker import: a row matching a scanned posting tracks that posting, no duplicate",
+          lambda: (_first["added"], _first["updated"]) == (3, 1)
+          and _by["Acme Ltd"]["source_kind"] == "ats_direct" or _first)
+    check("tracker import: rows with no company are skipped, template filler silently",
+          lambda: _first["skipped"] == 1 or _first)
+    check("tracker import: importing the same file again changes nothing",
+          lambda: (_again["added"], _rows_now) == (0, 4) or (_again, _rows_now))
+    check("tracker import: statuses written loosely map to the workbook's stages",
+          lambda: [_by[c]["app_status"] for c in ("Acme Ltd", "Globex", "Initech")]
+          == ["2nd / AC", "Not applied yet", "Online test"]
+          or [_by[c]["app_status"] for c in _by])
+    check("tracker import: an unrecognised status is kept in the notes, not lost",
+          lambda: "Lunch with Gavin" in _by["Hooli"]["notes"] or _by["Hooli"]["notes"])
+    check("tracker import: the sheet's date applied is kept and none is invented",
+          lambda: (_by["Acme Ltd"]["applied_at"], _by["Initech"]["applied_at"])
+          == ("2026-09-20", "") or (_by["Acme Ltd"]["applied_at"], _by["Initech"]["applied_at"]))
+    check("tracker import: dd/mm/yyyy deadlines and a bare domain link are understood",
+          lambda: (_by["Globex"]["closes_at"], _by["Globex"]["url"])
+          == ("2026-12-15", "https://globex.example/jobs/9") or _by["Globex"])
+    check("tracker import: the app's own exported workbook imports back with no new rows",
+          lambda: (_round["added"], _round["header_row"]) == (0, 2) or _round)
+    check("tracker export: stage, applied flag, date applied and notes reach the workbook",
+          lambda: (_acme_row[14], _acme_row[12], str(_acme_row[13]), _acme_row[18])
+          == ("2nd / AC", True, "2026-09-20", "went well") or _acme_row)
+    check("tracker: the jobs-list status and the tracker stage stay in step both ways",
+          lambda: (_s1, _s2) == ("1st interview", "Final round") or (_s1, _s2))
+    check("tracker: setting a job back to 'new' takes it off the tracker",
+          lambda: not _off["tracked"] and _off["app_status"] == "" or _off)
+    check("tracker: only rows the user added are deleted; scanned postings never are",
+          lambda: _kept_scraped and _gone_manual or (_kept_scraped, _gone_manual))
+    check("tracker: the in-app stages are exactly the workbook's Status dropdown",
+          lambda: _trk.LISTS["lst_Status"] == __import__("jobscout.store", fromlist=["x"])
+          .APP_STATUSES or "lists differ")
 
     from jobscout.pipeline import load_companies as _load_companies
     _registry = _load_companies(Config())

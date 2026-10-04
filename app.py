@@ -17,12 +17,12 @@ from flask import (Flask, jsonify, render_template, request, send_from_directory
 from jobscout import apply as apply_pack_builder
 from jobscout import (accounts, assistant, classify, enrich, geo, interview,
                       linkedin_import, privacy, review, rules as rules_mod, scoring,
-                      sponsorship, stability, tracker, why as why_mod)
+                      sponsorship, stability, tracker, tracker_import, why as why_mod)
 from jobscout.config import Config
 from jobscout.linkedin import company_slug, outreach_pack
 from jobscout.models import Job
 from jobscout.pipeline import load_profile, rescore, run as run_pipeline
-from jobscout.store import STATUSES, Store
+from jobscout.store import APP_STATUSES, STATUSES, Store
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("jobscout.app")
@@ -468,6 +468,89 @@ def api_note(job_id: str):
     return jsonify({"ok": True})
 
 
+# ------------------------------------------------------------------ tracker
+_TRACKER_FIELDS = ("id", "company", "title", "url", "location", "closes_at", "status",
+                   "app_status", "applied_at", "notes", "source", "source_kind",
+                   "salary_display", "delisted", "tracker_extra", "status_changed_at")
+
+
+@app.route("/api/tracker")
+def api_tracker():
+    rows = [{k: job.get(k) for k in _TRACKER_FIELDS} for job in store.tracked()]
+    return jsonify({"jobs": rows, "statuses": APP_STATUSES})
+
+
+@app.route("/api/tracker/import", methods=["POST"])
+def api_tracker_import():
+    # A file upload is a "simple" request any web page could send to localhost
+    # without a CORS preflight; a custom header can only come from this page.
+    if request.headers.get("X-Job-Scout") != "1":
+        return jsonify({"error": "Upload from the Job Scout page."}), 403
+    upload = request.files.get("file")
+    if upload is None or not upload.filename:
+        return jsonify({"error": "Choose a spreadsheet to upload."}), 400
+    data = upload.read(tracker_import.MAX_BYTES + 1)
+    try:
+        result = tracker_import.import_tracker(store, data, upload.filename)
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
+    except Exception as exc:
+        log.warning("tracker import failed: %s", exc)
+        return jsonify({"error": f"Could not read that file: {exc}"}), 400
+    return jsonify(result)
+
+
+@app.route("/api/tracker/add", methods=["POST"])
+def api_tracker_add():
+    """A job found somewhere else - a careers fair, a friend, a site we do not scan."""
+    payload = request.json or {}
+    company = (payload.get("company") or "").strip()
+    if not company:
+        return jsonify({"error": "Company is needed."}), 400
+    stage = payload.get("app_status") or "Not applied yet"
+    if stage not in APP_STATUSES:
+        return jsonify({"error": f"status must be one of {APP_STATUSES}"}), 400
+    url = (payload.get("url") or "").strip()
+    if url and not url.lower().startswith(("http://", "https://")):
+        url = "https://" + url
+    job_id, created = tracker_import.add_manual(
+        store, company=company, title=payload.get("title") or "", url=url,
+        location=payload.get("location") or "",
+        deadline=tracker_import.parse_day(payload.get("deadline")))
+    store.set_app_status(job_id, stage)
+    note = (payload.get("notes") or "").strip()
+    if note:
+        store.set_note(job_id, note)
+    return jsonify({"ok": True, "id": job_id, "created": created})
+
+
+@app.route("/api/job/<job_id>/track", methods=["POST"])
+def api_track(job_id: str):
+    """Put a job on the tracker, or change its stage / date applied."""
+    payload = request.json or {}
+    if store.get(job_id) is None:
+        return jsonify({"error": "not found"}), 404
+    if "app_status" in payload or not (store.get(job_id) or {}).get("tracked"):
+        stage = payload.get("app_status") or "Not applied yet"
+        if not store.set_app_status(job_id, stage):
+            return jsonify({"error": f"status must be one of {APP_STATUSES}"}), 400
+    if "applied_at" in payload:
+        store.set_applied_at(job_id, tracker_import.parse_day(payload["applied_at"]))
+    job = store.get(job_id)
+    return jsonify({"ok": True, **{k: job.get(k) for k in _TRACKER_FIELDS}})
+
+
+@app.route("/api/job/<job_id>/untrack", methods=["POST"])
+def api_untrack(job_id: str):
+    """Take a job off the tracker. One that only exists because it was typed in or
+    imported is removed; a scanned posting goes back to the jobs list as 'new'."""
+    if store.delete_manual(job_id):
+        return jsonify({"ok": True, "deleted": True})
+    if not store.set_status(job_id, "new"):
+        return jsonify({"error": "not found"}), 404
+    return jsonify({"ok": True, "deleted": False})
+
+
 @app.route("/api/stats")
 def api_stats():
     stats = store.stats()
@@ -714,7 +797,9 @@ def api_rescore():
 def _export(mode: str, job_ids: list[str] | None = None,
             view: dict | None = None) -> dict:
     """Export the current view by default - not the whole database."""
-    if job_ids:
+    if mode == "tracker":                   # everything on the in-app tracker
+        jobs, mode = store.tracked(), "new"
+    elif job_ids:
         jobs = [j for j in (store.get(i) for i in job_ids) if j]
     else:
         view = view or {}
