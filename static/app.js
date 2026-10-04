@@ -969,6 +969,7 @@ function renderTracker() {
         ${j.location ? `<div class="where">${esc(j.location)}</div>` : ""}</td>
       <td>${j.url ? `<a href="${esc(j.url)}" target="_blank" rel="noopener">${esc(j.title)}</a>`
                   : esc(j.title)}
+        ${trkFacts(j)}
         ${j.source_kind === "manual" ? '<div class="where">added by you</div>' : ""}
         ${j.delisted ? '<div class="trk-late">no longer listed</div>' : ""}</td>
       <td class="trk-nowrap">${trkDeadline(j.closes_at)}</td>
@@ -979,9 +980,84 @@ function renderTracker() {
              placeholder="Notes">${esc(j.notes || "")}</textarea>
           <div class="where trk-saved"></div></td>
       <td class="trk-nowrap">
+        ${j.url ? '<button class="btn sm" data-fill title="Fill in the blanks from the posting">Auto-fill</button>' : ""}
         ${j.source_kind === "manual" ? "" : '<button class="btn sm" data-open>Details</button>'}
         <button class="btn sm danger" data-remove title="Take off the tracker">Remove</button></td>
     </tr>`).join("");
+}
+
+// Salary, duration and start date - the details auto-fill adds that have no column here.
+function trkFacts(j) {
+  const extra = j.tracker_extra || {};
+  const start = extra["Start Date"];
+  const startText = /^\d{4}-\d{2}-\d{2}/.test(start || "")
+    ? new Date(start.slice(0, 10) + "T00:00:00").toLocaleDateString("en-GB", { month: "short", year: "numeric" })
+    : start;
+  const facts = [j.salary_display, extra.Duration, startText && `starts ${startText}`].filter(Boolean);
+  return facts.length ? `<div class="where">${facts.map(esc).join(" · ")}</div>` : "";
+}
+
+async function autofillOne(id) {
+  const res = await api(`/api/job/${id}/autofill`, { method: "POST" });
+  const job = trk.jobs.find((j) => j.id === id);
+  if (job && res.job) Object.assign(job, res.job);
+  return res;
+}
+
+// Fills every row in view, a few at a time, so one slow careers site does not hold
+// up the rest.
+async function autofillAll() {
+  const button = $("#trk-autofill");
+  const out = $("#trk-import-result");
+  const group = $("#trk-filter").value;
+  const q = $("#trk-q").value.trim().toLowerCase();
+  const rows = trk.jobs.filter((j) => j.url && TRK_GROUPS[group](j.app_status) && (!q
+    || `${j.company} ${j.title} ${j.location || ""}`.toLowerCase().includes(q)));
+  if (!rows.length) {
+    out.innerHTML = '<div class="caveat">No jobs in view have a link to read.</div>';
+    return;
+  }
+  button.disabled = true;
+  const results = [];
+  let done = 0;
+  const progress = () => {
+    out.innerHTML = `<div class="notice">Reading postings&hellip; ${done} of ${rows.length}</div>`;
+  };
+  progress();
+  const queue = [...rows];
+  const worker = async () => {
+    while (queue.length) {
+      const job = queue.shift();
+      try {
+        results.push({ job, ...(await autofillOne(job.id)) });
+      } catch (err) {
+        results.push({ job, filled: {}, message: err.message, failed: true });
+      }
+      done += 1;
+      progress();
+    }
+  };
+  await Promise.all([worker(), worker(), worker()]);
+  button.disabled = false;
+
+  const filled = results.filter((r) => Object.keys(r.filled || {}).length);
+  const fields = filled.reduce((n, r) => n + Object.keys(r.filled).length, 0);
+  const unread = results.filter((r) => !Object.keys(r.filled || {}).length
+    && !/^Already complete/.test(r.message || ""));
+  out.innerHTML = `<div class="notice">
+    Filled <b>${fields}</b> detail${fields === 1 ? "" : "s"} on <b>${filled.length}</b> of
+    ${rows.length} job${rows.length === 1 ? "" : "s"}${
+    results.length - filled.length - unread.length
+      ? `; ${results.length - filled.length - unread.length} already complete` : ""}.
+    Blanks only - nothing you typed was changed.
+    <button class="btn sm primary" data-trk-download>Download as Excel</button>
+    ${unread.length ? `<div class="where" style="margin-top:4px">Could not fill ${unread.length}:
+      ${unread.map((r) => `${esc(r.job.company)} (${esc(r.message)})`).join("; ")}</div>` : ""}
+  </div>`;
+  if (document.activeElement && document.activeElement.matches("[data-note]")) {
+    document.activeElement.blur();        // save a note being typed before redrawing
+  }
+  renderTracker();
 }
 
 function trkRow(el) {
@@ -1077,6 +1153,16 @@ function wireTracker() {
     if (!row) return;
     if (e.target.matches("[data-open]")) {
       openDrawer(row.id);
+    } else if (e.target.matches("[data-fill]")) {
+      e.target.disabled = true;
+      e.target.textContent = "Reading…";
+      try {
+        const res = await autofillOne(row.id);
+        toast(`${row.job.company}: ${res.message}`);
+      } catch (err) {
+        toast(`Could not auto-fill: ${err.message}`);
+      }
+      renderTracker();
     } else if (e.target.matches("[data-remove]")) {
       const manual = row.job.source_kind === "manual";
       if (!confirm(manual
@@ -1089,6 +1175,10 @@ function wireTracker() {
     }
   });
 
+  $("#trk-autofill").addEventListener("click", autofillAll);
+  $("#trk-import-result").addEventListener("click", (e) => {
+    if (e.target.matches("[data-trk-download]")) doExport("tracker");
+  });
   $("#trk-import-btn").addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("#trk-file").click(); }
   });

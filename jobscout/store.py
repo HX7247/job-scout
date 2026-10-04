@@ -227,14 +227,17 @@ class Store:
             if existing:
                 # Refresh everything the source owns - employers edit postings, and a
                 # parser fix should reach rows we have already seen. User-owned fields
-                # (status, notes, starred, filtered) are deliberately untouched.
+                # (status, notes, starred, filtered) are deliberately untouched. A
+                # listing that omits a description, salary or deadline (Workday's never
+                # carries one) keeps the value auto-fill read from the posting itself.
                 cur.execute(
                     "UPDATE jobs SET last_seen = ?, score = ?, score_reasons = ?, "
                     "matched_skills = ?, missing_skills = ?, title = ?, company = ?, "
                     "url = ?, location = ?, remote = ?, department = ?, "
-                    "employment_type = ?, description = ?, salary_min = ?, "
-                    "salary_max = ?, salary_currency = ?, salary_display = ?, "
-                    "posted_at = ?, closes_at = ?, employment_kind = ?, "
+                    "employment_type = ?, description = COALESCE(NULLIF(?, ''), description), "
+                    "salary_min = ?, salary_max = ?, salary_currency = ?, "
+                    "salary_display = COALESCE(NULLIF(?, ''), salary_display), "
+                    "posted_at = ?, closes_at = COALESCE(NULLIF(?, ''), closes_at), employment_kind = ?, "
                     "job_family = ?, delisted_at = '' WHERE id = ?",
                     (stamp, job.score, json.dumps(job.score_reasons),
                      json.dumps(job.matched_skills), json.dumps(job.missing_skills),

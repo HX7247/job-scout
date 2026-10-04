@@ -15,7 +15,7 @@ from flask import (Flask, jsonify, render_template, request, send_from_directory
                    session)
 
 from jobscout import apply as apply_pack_builder
-from jobscout import (accounts, assistant, classify, enrich, geo, interview,
+from jobscout import (accounts, assistant, autofill, classify, enrich, geo, interview,
                       linkedin_import, privacy, review, rules as rules_mod, scoring,
                       sponsorship, stability, tracker, tracker_import, why as why_mod)
 from jobscout.config import Config
@@ -538,6 +538,17 @@ def api_track(job_id: str):
         store.set_applied_at(job_id, tracker_import.parse_day(payload["applied_at"]))
     job = store.get(job_id)
     return jsonify({"ok": True, **{k: job.get(k) for k in _TRACKER_FIELDS}})
+
+
+@app.route("/api/job/<job_id>/autofill", methods=["POST"])
+def api_autofill(job_id: str):
+    """Read the job's own posting and fill whatever is still blank on it."""
+    try:
+        result = autofill.autofill(store, job_id)
+    except KeyError:
+        return jsonify({"error": "not found"}), 404
+    job = store.get(job_id)
+    return jsonify({"ok": True, **result, "job": {k: job.get(k) for k in _TRACKER_FIELDS}})
 
 
 @app.route("/api/job/<job_id>/untrack", methods=["POST"])

@@ -159,7 +159,7 @@ def job_to_row(job: dict, date_format: str = "dd/mm/yyyy") -> list:
         job.get("location", ""),                   # E Location
         salary,                                    # F Salary
         extra.get("Duration") or (None if manual else "1 Year"),  # G Duration
-        _iso_to_date(extra.get("Start Date")),     # H Start Date
+        _iso_to_date(extra.get("Start Date")) or extra.get("Start Date") or None,  # H Start ("August 2027" stays text)
         _iso_to_date(extra.get("Open Date") or job.get("posted_at")),  # I Open Date
         extra.get("Source") or (None if manual else source),       # J Source
         extra.get("CV") or "Not started",          # K CV
