@@ -110,6 +110,9 @@ class Job:
     # never said, which is different from saying "full time".
     employment_kind: str = ""
     job_family: str = ""
+    # ISO code of the country the job is in ("GB", "US", "AU"); "" = not stated. The
+    # location decides it where it can; otherwise the market the source was searched in.
+    country: str = ""
     contacts: list[Contact] = field(default_factory=list)
     raw: dict = field(default_factory=dict)
 
@@ -121,7 +124,8 @@ class Job:
 
     _TEXT_FIELDS = ("source", "source_kind", "company", "title", "url", "external_id",
                     "location", "description", "salary_raw", "salary_currency",
-                    "employment_type", "department", "employment_kind", "job_family")
+                    "employment_type", "department", "employment_kind", "job_family",
+                    "country")
 
     def __post_init__(self) -> None:
         # Sources are inconsistent about null vs missing vs "" - normalise once, here,

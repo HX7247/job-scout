@@ -330,6 +330,31 @@ search:
 Early-career vocabulary is matched in several languages, so `Praktikum`, `alternance`,
 `estágio` and `becario` register as internships alongside `placement` and `co-op`.
 
+### Listing jobs in several countries
+
+Where you are based and where jobs are listed are separate settings:
+
+```yaml
+search:
+  country: GB              # where you are based
+  markets: [GB, US, AU]    # countries whose jobs are listed (the default)
+```
+
+On the Criteria tab these are **Where you are based** and the **List jobs in** checkboxes.
+Your own country is always listed. Each scan then:
+
+- searches country-bound boards (Adzuna, Google Jobs, Reed, USAJobs, GradConnection...)
+  once for each listed country they cover, and tags every job with that country;
+- keeps a job when its location is in *any* listed country, so a Berlin posting is still
+  dropped while New York and Sydney now pass;
+- works out each job's country from its location, including postal forms such as
+  "McLean, VA" or "Parramatta NSW 2150", and falls back to the country it was searched in.
+
+The **Country** filter in the Positions sidebar narrows the list to one or more countries,
+with counts that update alongside the other filters. "Not stated" collects postings that
+name no place, such as Workday's "3 Locations". "Placement" is a UK term, so pick
+**Internship** as the job type when browsing US or Australian roles.
+
 **Known gap:** the company registry in `data/companies_verified.yaml` was seeded from a
 UK/US list. For another market, add local employers to `tools/discover_slugs.py` and
 re-run it - the ATS adapters themselves are country-neutral.

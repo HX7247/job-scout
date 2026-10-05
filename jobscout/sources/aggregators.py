@@ -43,6 +43,7 @@ class AdzunaSource(BaseAggregator):
 
     name = "adzuna"
     needs_key = True
+    per_market = True                  # one search per country you list jobs for
 
     def available(self) -> bool:
         return bool(os.environ.get("ADZUNA_APP_ID") and os.environ.get("ADZUNA_APP_KEY"))

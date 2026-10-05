@@ -1924,6 +1924,88 @@ def main() -> None:
     check("quick add: screenshot + typed details save, serve back and delete with the job",
           _capture_flow)
 
+    # ---- several countries: list UK, US and Australian jobs, filter by country
+    from jobscout import geo as _geo, pipeline as _mpl
+    from jobscout.scoring import hard_filter as _mhf
+
+    def _mcfg(markets):
+        c = Config()
+        c.search.country, c.search.locations, c.search.markets = "GB", ["London"], markets
+        return c
+
+    check("markets: where you are based comes first and nothing is listed twice",
+          lambda: [m.code for m in _mcfg(["US", "GB", "au", "zz"]).markets()]
+                  == ["GB", "US", "AU"] or f"{[m.code for m in _mcfg(['US','GB','au']).markets()]}")
+
+    def _mjob(location, title="Software Engineering Intern", source="greenhouse"):
+        return Job(source=source, source_kind="ats_direct", company="Co", title=title,
+                   url="https://x.com/" + location.replace(" ", ""), location=location)
+
+    def _market_filter():
+        three, uk = _mcfg(["GB", "US", "AU"]), _mcfg([])
+        out = {loc: (_mhf(_mjob(loc), three) is None, _mhf(_mjob(loc), uk) is None)
+               for loc in ("Manchester", "New York, NY", "Sydney, Australia", "Berlin, Germany")}
+        want = {"Manchester": (True, True), "New York, NY": (True, False),
+                "Sydney, Australia": (True, False), "Berlin, Germany": (False, False)}
+        return out == want or f"kept (three markets, UK only): {out}"
+
+    check("markets: US and Australian jobs are kept only when those countries are listed",
+          _market_filter)
+    check("markets: a job's country comes from its location, then where it was searched",
+          lambda: [_mpl.job_country(_mjob("New York, NY")),
+                   _mpl.job_country(_mjob("Head Office"), "AU"),
+                   _mpl.job_country(_mjob("Head Office", source="reed")),
+                   _mpl.job_country(_mjob("Head Office"))] == ["US", "AU", "GB", ""]
+                  or "wrong country")
+
+    _mcalls: list = []
+
+    class _Routed:
+        name, kind, needs_key, uses_query, markets = "routed", "board", False, True, ("GB", "US")
+        def serves(self, home): return home is None or home.code in self.markets
+        def available(self): return True
+        def fetch(self, query="", location="", max_results=0, home=None, **kw):
+            _mcalls.append((home.code if home else None, location))
+            return [_mjob("Head Office", source="routed")]
+
+    _mpl.ALL_ADAPTERS["routed"] = _Routed()
+    try:
+        _rc3 = _mcfg(["GB", "US", "AU"])
+        _rc3.sources.aggregators, _rc3.sources.aggregator_queries = ["routed"], ["intern"]
+        _mjobs, _mper = _mpl.gather_aggregators(_rc3)
+    finally:
+        _mpl.ALL_ADAPTERS.pop("routed", None)
+    check("markets: a country-bound source is searched once per listed country it covers",
+          lambda: (_mcalls == [("GB", "London"), ("US", "")]
+                   and [j.country for j in _mjobs] == ["GB", "US"] and _mper["routed"] == 2)
+                  or f"calls {_mcalls}, countries {[j.country for j in _mjobs]}, {_mper}")
+
+    def _country_facet():
+        import tempfile as _tf
+        tmp = Path(_tf.mkdtemp()) / "c.db"
+        st = Store(tmp)
+        try:
+            st.upsert([_mjob(loc) for loc in ("Leeds", "Austin, TX", "Boston, MA", "Somewhere")])
+            for row in st.query(limit=10, include_filtered=True):
+                st.conn.execute("UPDATE jobs SET country = ? WHERE id = ?",
+                                (_mpl.job_country(_mjob(row["location"])), row["id"]))
+            st.conn.commit()
+            us = [j["location"] for j in st.query(limit=10, countries=["US"])]
+            blank = [j["location"] for j in st.query(limit=10, countries=["unstated"])]
+            facets = st.facet_counts(countries=["US"])["countries"]
+            if sorted(us) != ["Austin, TX", "Boston, MA"]:
+                return f"US filter gave {us}"
+            if blank != ["Somewhere"]:
+                return f"Not stated gave {blank}"
+            if facets != {"US": 2, "GB": 1, "unstated": 1}:
+                return f"country counts ignore their own tick wrongly: {facets}"
+            return st.count(countries=["GB", "US"]) == 3 or "GB+US count wrong"
+        finally:
+            st.close()
+
+    check("markets: the Country filter lists one country, and its counts add up",
+          _country_facet)
+
     # ---- the page itself
     _page = (ROOT / "templates" / "index.html").read_text("utf-8")
     _ids = _sec_re.findall(r'\sid="([^"]+)"', _page)

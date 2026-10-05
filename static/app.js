@@ -9,13 +9,14 @@ const state = {
   jobs: null, selected: null, config: null, exports: [],
   view: { q: "", min_score: 0, status: "all", source: "all", order: "score",
           starred: false, remote: false, sponsored: false, unviewed: false, startups: "any",
-          employment: [], families: [], unclassified: false, salaryDisclosed: false,
+          employment: [], families: [], countries: [], unclassified: false,
+          salaryDisclosed: false,
           // keys of the user's own facet rules that are ticked
           rules: [] },
   // False until the saved sidebar has been restored - saving before that would
   // write the defaults above over the filters the person actually left set.
   viewReady: false,
-  vocabulary: { employment: [], families: [] },
+  vocabulary: { employment: [], families: [], countries: [] },
 };
 
 function viewPayload() {
@@ -25,7 +26,8 @@ function viewPayload() {
     starred: v.starred, remote: v.remote, sponsored: v.sponsored, unviewed: v.unviewed,
     startups: v.startups,
     salary_disclosed: v.salaryDisclosed, unclassified: v.unclassified,
-    employment: v.employment, families: v.families, rules: v.rules || [],
+    employment: v.employment, families: v.families, countries: v.countries,
+    rules: v.rules || [],
   };
 }
 
@@ -58,6 +60,7 @@ function applyView(saved) {
   v.salaryDisclosed = !!s.salary_disclosed;
   v.employment = [...(s.employment || [])];
   v.families = [...(s.families || [])];
+  v.countries = [...(s.countries || [])];
   v.rules = [...(s.rules || [])];
 
   $("#f-q").value = v.q;
@@ -198,8 +201,7 @@ function renderFacet(hostId, group, counts, selected) {
 
   host.querySelectorAll("input").forEach((box) => {
     box.addEventListener("change", () => {
-      const key = group === "employment" ? "employment" : "families";
-      state.view[key] = Array.from(host.querySelectorAll("input:checked"))
+      state.view[group] = Array.from(host.querySelectorAll("input:checked"))
         .map((b) => b.value);
       loadJobs();
     });
@@ -342,6 +344,7 @@ async function loadJobs(append = false) {
   });
   v.employment.forEach((k) => qs.append("employment", k));
   v.families.forEach((k) => qs.append("family", k));
+  v.countries.forEach((k) => qs.append("country", k));
   (v.rules || []).forEach((k) => qs.append("rule", k));
   if (state.viewReady && !append) persistView();
   // Ticking several boxes quickly fires several requests; one for an older set of
@@ -372,6 +375,7 @@ async function loadJobs(append = false) {
 function renderFacetCounts() {
   const f = state.facets;
   if (!f) return;
+  renderFacet("#f-country", "countries", f.countries || {}, state.view.countries);
   renderFacet("#f-employment", "employment", f.employment || {}, state.view.employment);
   renderFacet("#f-family", "families", f.families || {}, state.view.families);
   $("#source-tally").innerHTML = Object.entries(f.sources || {})
@@ -764,6 +768,21 @@ function renderCountry() {
     ? `Resolved to ${home.name}. Salaries read as ${home.currency}. ` +
       `Adzuna ${home.adzuna ? "covers" : "does not cover"} this market.`
     : "No market resolved - add a location or pick a country.";
+  renderMarkets();
+}
+
+// The countries jobs are listed for. Where you are based is always one of them.
+const MARKET_CODES = ["GB", "US", "AU"];
+function renderMarkets() {
+  const listed = (state.config.markets || []).map((m) => m.code);
+  const home = state.config.home ? state.config.home.code : "";
+  const codes = [...new Set([...MARKET_CODES, ...listed])];
+  const names = Object.fromEntries((state.config.countries || []).map((c) => [c.code, c.name]));
+  $("#c-markets").innerHTML = codes.map((code) => `<label class="inline">
+      <input type="checkbox" class="c-market" value="${esc(code)}"
+        ${listed.includes(code) || code === home ? "checked" : ""}
+        ${code === home ? 'disabled title="Where you are based is always listed"' : ""}>
+      ${esc(names[code] || code)}</label>`).join("");
 }
 
 function renderCriteria() {
@@ -1500,7 +1519,7 @@ function init() {
     $("#f-unviewed").checked = false; $("#f-startups").value = "any";
     $("#f-sponsored").checked = false; state.view.sponsored = false;
     $("#f-salary").checked = false; state.view.salaryDisclosed = false;
-    state.view.employment = []; state.view.families = [];
+    state.view.employment = []; state.view.families = []; state.view.countries = [];
     state.view.unclassified = false; $("#f-unclassified").checked = false;
     // The built-in facets above get redrawn from scratch by the next loadStats() call,
     // which clears their checkboxes automatically. The user's own facet rules live in
@@ -1570,6 +1589,7 @@ function init() {
         body: {
           search: {
             country: $("#c-country").value,
+            markets: $$(".c-market").filter((c) => c.checked).map((c) => c.value),
             career_stage: $("#c-stage").value,
             visa_sponsorship: $("#c-visa").value,
             work_modes: $$(".c-mode").filter((c) => c.checked).map((c) => c.value),

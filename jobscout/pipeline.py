@@ -10,7 +10,7 @@ from typing import Callable
 
 import yaml
 
-from . import harvest, sponsorship, stability
+from . import geo, harvest, sponsorship, stability
 from .http import SESSION
 from .config import Config
 from .cv import CVProfile, build_profile
@@ -213,19 +213,44 @@ def gather_ats(cfg: Config, progress: Progress = _noop) -> tuple[list[Job], dict
     return jobs, per_company
 
 
+def _location_in(cfg: Config, market) -> str:
+    """The first of your locations inside that country - "" searches all of it.
+
+    "London" is no use to a search of Australia, and Google Jobs would read
+    "London, Australia" literally.
+    """
+    for loc in cfg.search.locations or []:
+        if market is not None and geo.country_of(loc) == market.code:
+            return loc
+    home = cfg.home_country()
+    if market is None or (home is not None and market.code == home.code):
+        return cfg.search.locations[0] if cfg.search.locations else ""
+    return ""
+
+
 def gather_aggregators(cfg: Config, progress: Progress = _noop) -> tuple[list[Job], dict]:
     jobs: list[Job] = []
     per_source: dict[str, int] = {}
     queries = cfg.sources.aggregator_queries or [""]
     wanted = [n for n in cfg.sources.aggregators if n in ALL_ADAPTERS]
     home = cfg.home_country()
+    markets = cfg.markets()
 
     for name in wanted:
         adapter = ALL_ADAPTERS[name]
-        if not adapter.serves(home):
-            per_source[name] = -2          # -2 == does not cover this market
+        # A source tied to countries (Reed, USAJobs, Adzuna, Careerjet...) is searched
+        # once per country you list jobs for; a worldwide one (the GitHub trackers,
+        # remote boards) once, and the location filter sorts its postings by country.
+        routed = getattr(adapter, "per_market", bool(getattr(adapter, "markets", ())))
+        if routed:
+            targets = [m for m in markets if adapter.serves(m)] if markets else [None]
+        else:
+            targets = [home]
+        if not targets:
+            per_source[name] = -2          # -2 == covers none of your countries
+            where = ", ".join(m.name for m in markets) or "your market"
             progress("aggregator", {"source": name, "found": 0,
-                                    "skipped": f"no coverage in {home.name}"})
+                                    "skipped": f"no coverage in {where}"})
             continue
         if getattr(adapter, "needs_key", False) and not adapter.available():
             per_source[name] = -1          # -1 == configured but no API key
@@ -251,17 +276,19 @@ def gather_aggregators(cfg: Config, progress: Progress = _noop) -> tuple[list[Jo
             budget = int(override)
 
         found_here: list[Job] = []
-        for query in runs:
-            try:
-                found_here += adapter.fetch(
-                    query=query,
-                    location=(cfg.search.locations[0] if cfg.search.locations else ""),
-                    max_results=budget,
-                    home=home,
-                    **extra,
-                )
-            except Exception as exc:
-                log.debug("aggregator %s failed on %r: %s", name, query, exc)
+        for market in targets:
+            for query in runs:
+                try:
+                    got = adapter.fetch(query=query, location=_location_in(cfg, market),
+                                        max_results=budget, home=market, **extra)
+                except Exception as exc:
+                    log.debug("aggregator %s failed on %r in %s: %s", name, query,
+                              market.code if market else "-", exc)
+                    continue
+                if routed and market is not None:
+                    for job in got:          # searched in that country, so it is there
+                        job.country = job.country or market.code
+                found_here += got
         jobs.extend(found_here)
         per_source[name] = len(found_here)
         progress("aggregator", {"source": name, "found": len(found_here),
@@ -417,6 +444,21 @@ def run(cfg: Config | None = None, store: Store | None = None,
     return summary
 
 
+def job_country(job: Job, searched_in: str = "") -> str:
+    """The country a posting is in, as an ISO code, or "" when nothing says.
+
+    The location wins ("New York, NY" is the US whatever board listed it); then the
+    country the source was searched in; then a source that only covers one country.
+    """
+    found = geo.country_of(job.location, job.title)
+    if found:
+        return found
+    if searched_in or job.country:
+        return searched_in or job.country
+    markets = getattr(ALL_ADAPTERS.get(job.source), "markets", ()) or ()
+    return markets[0] if len(markets) == 1 else ""
+
+
 def rescore(cfg: Config | None = None, store: Store | None = None,
             derived_profile: dict | None = None,
             prune: bool = True) -> dict:
@@ -464,16 +506,18 @@ def rescore(cfg: Config | None = None, store: Store | None = None,
             restored += 1
 
         score_job(job, cfg, profile)
+        country = job_country(job, row.get("country") or "")
         if getattr(cfg.search, "visa_sponsorship", "any") != "any":
             store.set_sponsor(row["id"], sponsor_info(job, cfg))  # row id, not job id
         # Rebuilding the Job re-runs classification, so a fix to the classifier
         # reaches stored rows on the next rescore rather than only on new ones.
         store.conn.execute(
             "UPDATE jobs SET score = ?, score_reasons = ?, matched_skills = ?, "
-            "missing_skills = ?, employment_kind = ?, job_family = ? WHERE id = ?",
+            "missing_skills = ?, employment_kind = ?, job_family = ?, country = ? "
+            "WHERE id = ?",
             (job.score, json.dumps(job.score_reasons), json.dumps(job.matched_skills),
              json.dumps(job.missing_skills), job.employment_kind, job.job_family,
-             row["id"]),
+             country, row["id"]),
         )
         kept += 1
 

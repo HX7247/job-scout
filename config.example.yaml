@@ -11,7 +11,9 @@ profile:
   extra_skills: []
 
 search:
-  country: GB                 # GB, US, AU, CA, IE, ... - drives currency and sources
+  country: GB                 # where you are based: GB, US, AU, CA, IE, ... - drives
+                              # currency, visa sponsorship and outreach
+  markets: [GB, US, AU]       # countries whose jobs are listed; filter by Country in the app
   titles:
   - summer internship
   - industrial placement

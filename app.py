@@ -244,6 +244,7 @@ def api_jobs():
                   else "any"),
         employment=[v for v in args.getlist("employment") if v],
         families=[v for v in args.getlist("family") if v],
+        countries=[v for v in args.getlist("country") if v],
         include_unclassified=args.get("unclassified", "1") == "1",
         own_rules=active_rules([v for v in args.getlist("rule") if v]),
     )
@@ -343,6 +344,7 @@ def api_deck():
         order="score", limit=limit,
         employment=[v for v in request.args.getlist("employment") if v],
         families=[v for v in request.args.getlist("family") if v],
+        countries=[v for v in request.args.getlist("country") if v],
         include_unclassified=request.args.get("unclassified", "1") == "1",
         own_rules=active_rules([v for v in request.args.getlist("rule") if v]))
     for job in jobs:
@@ -632,7 +634,11 @@ def api_stats():
     stats = store.stats()
     stats["scrape"] = SCRAPE
     stats["statuses"] = STATUSES
-    stats["vocabulary"] = classify.choices()
+    stats["vocabulary"] = {
+        **classify.choices(),
+        "countries": [{"key": c["code"], "label": c["name"]} for c in geo.choices()]
+                     + [{"key": "unstated", "label": "Not stated"}],
+    }
     configuration = cfg()
     own = configuration.rules()
     stats["own_rules"] = [r.to_dict() for r in own]
@@ -676,6 +682,7 @@ def api_config():
         data["home"] = ({"code": home.code, "name": home.name, "currency": home.currency,
                          "adzuna": bool(home.adzuna), "region": home.region}
                         if home else None)
+        data["markets"] = [{"code": m.code, "name": m.name} for m in configuration.markets()]
         return jsonify(data)
 
     payload = request.json or {}
@@ -687,6 +694,9 @@ def api_config():
                     [s.strip() for s in search[key] if str(s).strip()])
     if "country" in search:
         configuration.search.country = str(search["country"] or "").strip().upper()
+    if "markets" in search and isinstance(search["markets"], list):
+        configuration.search.markets = list(dict.fromkeys(
+            c.code for c in (geo.get(str(m)) for m in search["markets"][:30]) if c))
     if "visa_sponsorship" in search:
         mode = str(search["visa_sponsorship"] or "any").strip().lower()
         if mode in ("any", "prefer", "require"):
@@ -738,7 +748,7 @@ def api_config():
 
 _VIEW_ORDERS = ("score", "date", "new", "closing", "company", "salary",
                 "employment", "family")
-_VIEW_LISTS = ("employment", "families", "rules")
+_VIEW_LISTS = ("employment", "families", "countries", "rules")
 _VIEW_FLAGS = ("starred", "remote", "sponsored", "salary_disclosed", "unclassified",
                "unviewed")
 
@@ -889,6 +899,7 @@ def _export(mode: str, job_ids: list[str] | None = None,
             sponsored_only=bool(view.get("sponsored")),
             employment=view.get("employment") or [],
             families=view.get("families") or [],
+            countries=view.get("countries") or [],
             include_unclassified=view.get("unclassified", True),
             own_rules=active_rules(view.get("rules") or []),
             order=view.get("order", "score"),

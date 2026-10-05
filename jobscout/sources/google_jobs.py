@@ -45,6 +45,7 @@ def posted_date(text: str | None, today: datetime | None = None) -> str | None:
 
 class GoogleJobsSource(BaseAggregator):
     name = "google_jobs"
+    per_market = True                  # one search per country (gl=...)
     kind = "aggregator"
     needs_key = True
     PAGES_PER_QUERY = 1

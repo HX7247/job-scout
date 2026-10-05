@@ -149,7 +149,8 @@ class Store:
                             ("delisted_at", "TEXT DEFAULT ''"),
                             ("app_status", "TEXT DEFAULT ''"),
                             ("applied_at", "TEXT DEFAULT ''"),
-                            ("tracker_extra", "TEXT DEFAULT ''")):
+                            ("tracker_extra", "TEXT DEFAULT ''"),
+                            ("country", "TEXT DEFAULT ''")):
             if column not in have:
                 self.conn.execute(f"ALTER TABLE jobs ADD COLUMN {column} {ddl}")
         self.conn.execute(
@@ -238,14 +239,15 @@ class Store:
                     "salary_min = ?, salary_max = ?, salary_currency = ?, "
                     "salary_display = COALESCE(NULLIF(?, ''), salary_display), "
                     "posted_at = ?, closes_at = COALESCE(NULLIF(?, ''), closes_at), employment_kind = ?, "
-                    "job_family = ?, delisted_at = '' WHERE id = ?",
+                    "job_family = ?, country = COALESCE(NULLIF(?, ''), country), "
+                    "delisted_at = '' WHERE id = ?",
                     (stamp, job.score, json.dumps(job.score_reasons),
                      json.dumps(job.matched_skills), json.dumps(job.missing_skills),
                      job.title, job.company, job.url, job.location, int(job.remote),
                      job.department, job.employment_type, job.description[:20000],
                      job.salary_min, job.salary_max, job.salary_currency,
                      job.salary_display, job.posted_at, job.closes_at,
-                     job.employment_kind, job.job_family, existing["id"]),
+                     job.employment_kind, job.job_family, job.country, existing["id"]),
                 )
                 updated += 1
                 continue
@@ -254,15 +256,15 @@ class Store:
                    location, remote, department, employment_type, description, salary_min,
                    salary_max, salary_currency, salary_display, posted_at, closes_at, score,
                    score_reasons, matched_skills, missing_skills, first_seen, last_seen,
-                   employment_kind, job_family)
-                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                   employment_kind, job_family, country)
+                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                 (job.id, job.dedupe_key, job.source, job.source_kind, job.company, job.title,
                  job.url, job.location, int(job.remote), job.department, job.employment_type,
                  job.description[:20000], job.salary_min, job.salary_max, job.salary_currency,
                  job.salary_display, job.posted_at, job.closes_at, job.score,
                  json.dumps(job.score_reasons), json.dumps(job.matched_skills),
                  json.dumps(job.missing_skills), stamp, stamp,
-                 job.employment_kind, job.job_family),
+                 job.employment_kind, job.job_family, job.country),
             )
             new_count += 1
         self.conn.commit()
@@ -409,7 +411,8 @@ class Store:
               own_rules: list | None = None,
               salary_disclosed_only: bool = False,
               unviewed_only: bool = False,
-              startups: str = "any") -> list[dict]:
+              startups: str = "any",
+              countries: list[str] | None = None) -> list[dict]:
         where, params = self._where(
             status=status, source=source, company=company, min_score=min_score,
             search=search, starred_only=starred_only, remote_only=remote_only,
@@ -417,7 +420,7 @@ class Store:
             employment=employment, families=families,
             include_unclassified=include_unclassified, own_rules=own_rules,
             salary_disclosed_only=salary_disclosed_only, unviewed_only=unviewed_only,
-            startups=startups)
+            startups=startups, countries=countries)
         orders = {
             "score": "score DESC, first_seen DESC",
             "date": "COALESCE(posted_at, first_seen) DESC",
@@ -451,7 +454,8 @@ class Store:
         """
         out: dict = {}
         for group, column, key in (("employment", "employment_kind", "employment"),
-                                   ("families", "job_family", "families")):
+                                   ("families", "job_family", "families"),
+                                   ("countries", "country", "countries")):
             where, params = self._where(**{**filters, key: None})
             out[group] = {(r["k"] or "unstated"): r["c"] for r in self.conn.execute(
                 f"SELECT {column} k, COUNT(*) c FROM jobs WHERE {where} GROUP BY {column}",
@@ -487,7 +491,8 @@ class Store:
                own_rules: list | None = None,
                salary_disclosed_only: bool = False,
                unviewed_only: bool = False,
-               startups: str = "any", all_rules: list | None = None) -> tuple[str, list]:
+               startups: str = "any", all_rules: list | None = None,
+               countries: list[str] | None = None) -> tuple[str, list]:
         """The WHERE clause every listing, total and sidebar count shares, so the
         numbers beside the filters can never disagree with the list they produce."""
         sql = "score >= ?"
@@ -520,6 +525,14 @@ class Store:
             blank = f" OR COALESCE({column}, '') = ''" if include_unclassified else ""
             sql += f" AND ({column} IN ({slots}){blank})"
             params += list(wanted)
+        if countries:
+            # "unstated" is the sidebar's "Not stated" - a posting no location placed.
+            codes = [c for c in countries if c != "unstated"]
+            parts = [f"country IN ({','.join('?' * len(codes))})"] if codes else []
+            if "unstated" in countries:
+                parts.append("COALESCE(country, '') = ''")
+            sql += f" AND ({' OR '.join(parts)})"
+            params += codes
         # The user's own facet rules, already narrowed to the ticked ones by the caller.
         for rule in (own_rules or []):
             from . import rules as rules_mod

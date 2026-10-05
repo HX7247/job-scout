@@ -119,6 +119,13 @@ def _wants_early_career(search) -> bool:
     return _stage(search) in EARLY_STAGES
 
 
+def _markets(cfg) -> list:
+    """The countries jobs are listed for - [None] when nothing is set, which means
+    "no country preference" to _location_eligible."""
+    markets = cfg.markets() if hasattr(cfg, "markets") else [cfg.home_country()]
+    return markets or [None]
+
+
 def _location_eligible(job: Job, search, home=None) -> bool:
     """True if someone based in the target market could actually take this job.
 
@@ -141,7 +148,7 @@ def _location_eligible(job: Job, search, home=None) -> bool:
     # string rather than testing membership: "Lancaster, Pennsylvania" mentions a
     # UK town but is plainly a US job, and the more specific name settles it.
     if home:
-        resolved = geo.primary_country(text)
+        resolved = geo.country_of(job.location, job.title)
         if resolved == home.code:
             return True
         if resolved and resolved != home.code:
@@ -259,7 +266,7 @@ def hard_filter(job: Job, cfg: Config) -> str | None:
             return f"older than {search.max_age_days}d ({age:.0f}d)"
 
     if search.locations or search.country:
-        if not _location_eligible(job, search, cfg.home_country()):
+        if not any(_location_eligible(job, search, m) for m in _markets(cfg)):
             return f"location mismatch: {job.location or 'unspecified'}"
 
     title = job.title.lower()
@@ -390,10 +397,14 @@ def _location_score(job: Job, cfg: Config) -> tuple[float, list[str]]:
         if re.search(rf"(?<![a-z]){re.escape(loc.lower())}(?![a-z])", text):
             # earlier entries in the list are preferred locations
             return max(0.55, 1.0 - i * 0.12), [f"location: {job.location or loc}"]
-    home = cfg.home_country()
-    if geo.primary_country(text) is None and job.location and not job.remote:
+    markets = _markets(cfg)
+    resolved = geo.country_of(job.location, job.title)
+    if resolved is None and job.location and not job.remote:
         return 0.35, [f"location not resolved: {job.location}"]
-    if _location_eligible(job, cfg.search, home):
+    if any(_location_eligible(job, cfg.search, m) for m in markets):
+        place = geo.get(resolved) if resolved else None
+        if place and any(m and m.code == place.code for m in markets):
+            return 0.7, [f"in {place.name}"]
         return 0.7, ["remote - eligible from where you are"]
     return 0.25, []
 

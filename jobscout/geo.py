@@ -99,7 +99,7 @@ COUNTRIES: dict[str, Country] = {c.code: c for c in [
     _C("US", "United States", "north_america", "USD", "$",
        # State names matter as much as city names: a bare "Durham" or "Lancaster"
        # collides with a UK town, and only the state says which country it is in.
-       ("usa", "u.s.", "u.s.a", "us-remote", "us remote", "remote - us", "us only",
+       ("usa", "u.s.", "u.s.a", "us-remote", "us remote", "remote - us", "remote us", "us only",
         "us-based", "united states of america",
         "alabama", "alaska", "arizona", "arkansas", "california", "colorado",
         "connecticut", "delaware", "florida", "georgia", "hawaii", "idaho",
@@ -112,7 +112,14 @@ COUNTRIES: dict[str, Country] = {c.code: c for c in [
         "west virginia", "wisconsin", "wyoming"),
        ("san francisco", "new york", "seattle", "austin", "boston", "chicago",
         "los angeles", "denver", "atlanta", "san diego", "portland", "miami",
-        "washington dc", "philadelphia", "dallas", "houston", "phoenix"),
+        "washington dc", "philadelphia", "dallas", "houston", "phoenix",
+        # Tech and engineering hubs that student-job trackers list bare.
+        "nyc", "new york city", "san jose", "santa clara", "sunnyvale", "mountain view",
+        "palo alto", "menlo park", "cupertino", "redmond", "pittsburgh", "indianapolis",
+        "detroit", "minneapolis", "nashville", "salt lake city",
+        "baltimore", "san antonio", "columbus", "st. louis", "kansas city",
+        "tampa", "sacramento", "ann arbor", "cambridge, ma", "silicon valley",
+        "bay area", "sf bay area"),
        adzuna="us", date_format="mm/dd/yyyy",
        boards=("Handshake", "Indeed", "ZipRecruiter", "Glassdoor", "Idealist")),
 
@@ -128,7 +135,10 @@ COUNTRIES: dict[str, Country] = {c.code: c for c in [
        boards=("IrishJobs", "GradIreland", "Jobs.ie")),
 
     _C("AU", "Australia", "apac", "AUD", "$", ("australian", "aus"),
-       ("sydney", "melbourne", "brisbane", "perth", "adelaide", "canberra"),
+       ("sydney", "melbourne", "brisbane", "perth", "adelaide", "canberra", "hobart",
+        "gold coast", "parramatta", "north sydney", "new south wales",
+        "victoria, australia", "queensland", "western australia", "south australia",
+        "tasmania"),
        adzuna="au", boards=("SEEK", "GradConnection", "Indeed Australia")),
 
     _C("NZ", "New Zealand", "apac", "NZD", "$", ("kiwi",),
@@ -363,6 +373,38 @@ def primary_country(text: str) -> str | None:
         if code and len(term) > best_len:
             best_code, best_len = code, len(term)
     return best_code
+
+
+# Postal abbreviations, read only as a whole part of a comma-separated location and
+# only in capitals: "Austin, TX" or "US, CA, Santa Clara", never the word "or" or "in".
+_US_STATES = frozenset(
+    "AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV "
+    "NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY DC".split())
+_AU_STATES = frozenset("NSW VIC QLD ACT TAS NT".split())
+_CA_PROVINCES = frozenset("ON QC BC AB MB SK NS NB NL PE".split())
+_PART_SPLIT = re.compile(r"\s*[,;|/()]\s*|\s+-\s+")
+_ZIP = re.compile(r"\s+\d{4,5}(?:-\d{4})?$")
+
+
+def _from_abbreviations(location: str) -> str | None:
+    parts = {_ZIP.sub("", p.strip()) for p in _PART_SPLIT.split(location or "") if p.strip()}
+    if parts & _CA_PROVINCES:          # "Toronto, ON, CA": CA is Canada there
+        return "CA"
+    if parts & {"US", "USA", "SF"} or parts & _US_STATES:
+        return "US"
+    if parts & _AU_STATES or "AU" in parts:
+        return "AU"
+    return None
+
+
+def country_of(location: str, title: str = "") -> str | None:
+    """The country a posting is in, from its location (and title), or None.
+
+    Names first ("Lancaster, Pennsylvania" is the US); then the postal forms US
+    and Australian boards use ("McLean, VA", "Parramatta NSW 2150").
+    """
+    return (primary_country(f"{location or ''} {title or ''}".lower())
+            or _from_abbreviations(location or ""))
 
 
 def mentions_any(text: str, terms: list[str]) -> bool:

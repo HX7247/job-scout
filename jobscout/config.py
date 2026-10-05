@@ -47,9 +47,12 @@ class Profile:
 
 @dataclass
 class SearchCriteria:
-    country: str = ""            # ISO code, e.g. "GB", "US", "DE". Drives remote
-                                 # eligibility, currency and aggregator routing.
+    country: str = ""            # ISO code, e.g. "GB", "US", "DE": where you are
+                                 # based. Drives currency, sponsorship and outreach.
                                  # Blank = inferred from the first location.
+    # Countries whose jobs are listed (ISO codes). Where you are based is always one
+    # of them. The Positions sidebar's Country filter narrows the list to one or two.
+    markets: list[str] = field(default_factory=lambda: ["GB", "US", "AU"])
     titles: list[str] = field(default_factory=list)          # role names we want
     keywords_any: list[str] = field(default_factory=list)     # any one of these is a plus
     keywords_required: list[str] = field(default_factory=list)  # all must appear
@@ -176,6 +179,7 @@ class ViewPrefs:
     startups: str = "any"           # any | hide | only
     employment: list[str] = field(default_factory=list)
     families: list[str] = field(default_factory=list)
+    countries: list[str] = field(default_factory=list)
     rules: list[str] = field(default_factory=list)
 
 
@@ -243,3 +247,12 @@ class Config:
         from . import geo
         return geo.get(self.search.country) or geo.resolve_from_locations(
             self.search.locations)
+
+    def markets(self) -> list:
+        """Every country jobs are listed for: where you are based first, then the rest."""
+        from . import geo
+        out: list = []
+        for country in [self.home_country()] + [geo.get(m) for m in self.search.markets or []]:
+            if country and country not in out:
+                out.append(country)
+        return out

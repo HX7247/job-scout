@@ -763,6 +763,7 @@ table.trk select, table.trk input[type=date], table.trk textarea {
 .trk-add { flex-direction: column; align-items: stretch; }
 .trk-quick, .trk-fields { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .trk-add .trk-quick input[type=text] { flex: 1 1 260px; }
+.c-markets { display: flex; flex-wrap: wrap; gap: 4px 16px; }
 .trk-add textarea { width: 100%; box-sizing: border-box; font: inherit; }
 .trk-add.drop { outline: 2px dashed var(--accent, #4a7); outline-offset: 2px; }
 .trk-shot { display: flex; gap: 8px; align-items: flex-start; }
