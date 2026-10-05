@@ -10,6 +10,7 @@ data/cache/
 data/company_cache.json
 data/stability_cache.json
 data/companies_harvested.yaml
+data/shots/
 data/sponsors_*.csv
 data/*.log
 

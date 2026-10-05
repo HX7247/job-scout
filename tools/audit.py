@@ -1841,6 +1841,89 @@ def main() -> None:
     check("source health: no previous scan flags nothing",
           lambda: _sh({"a": 0}, {"b": 0}, None)["sources_gone_quiet"] == [] or "flagged")
 
+    # ---- quick add: a link or a screenshot fills the tracker's Add-a-job form
+    from jobscout import capture as _cap, autofill as _af
+    _png = b"\x89PNG\r\n\x1a\n" + b"0" * 32
+    check("quick add: images are told apart by their bytes, not their name",
+          lambda: ([(_cap.image_type(b) or ("", ""))[1] for b in (
+              _png, b"\xff\xd8\xff\xe0xx", b"GIF89a..", b"RIFF\0\0\0\0WEBPVP8 ", b"<svg>")]
+                   == ["png", "jpg", "gif", "webp", ""]) or "wrong type")
+    _cfu = {
+        "https://boards.greenhouse.io/monzo/jobs/123": "Monzo",
+        "https://careers.rolls-royce.com/united-kingdom/job/123": "Rolls Royce",
+        "https://jobs.bae-systems.com/role/1": "BAE Systems",
+        "https://www.reed.co.uk/jobs/placement/123": "",
+        "https://www.adzuna.co.uk/jobs/details/1": "",
+    }
+    check("quick add: the employer comes from the link, never a job board's name",
+          lambda: {u: _cap.company_from_url(u) for u in _cfu} == _cfu
+                  or f"got {({u: _cap.company_from_url(u) for u in _cfu})}")
+    check("quick add: the employer is read from a posting's JobPosting data",
+          lambda: _af._from_job_posting({"title": "Intern",
+                                         "hiringOrganization": {"name": "Arup"}})["company"]
+                  == "Arup" or "no company")
+
+    def _capture_flow() -> object:
+        import os as _os
+        import shutil as _shutil
+        import tempfile as _tempfile
+        import app as _app
+        _tmp = Path(_tempfile.mkdtemp())
+        saved_store, saved_dir = _app.store, _cap.SHOTS_DIR
+        saved_key = _os.environ.pop("ANTHROPIC_API_KEY", None)
+        _app.store, _cap.SHOTS_DIR = Store(_tmp / "jobs.db"), _tmp / "shots"
+        try:
+            c = _app.app.test_client()
+            hdr = {"X-Job-Scout": "1"}
+            form = lambda: {"company": "Quickco", "title": "Placement", "start": "September 2027",
+                            "duration": "12 months", "salary": "£24,000",
+                            "screenshot": (__import__("io").BytesIO(_png), "s.png")}
+            if c.post("/api/tracker/add", data=form()).status_code != 403:
+                return "a screenshot upload without the page's header was accepted"
+            r = c.post("/api/tracker/add", data=form(), headers=hdr)
+            if r.status_code != 200 or not r.json.get("created"):
+                return f"add with a screenshot failed: {r.status_code} {r.json}"
+            jid = r.json["id"]
+            row = next(j for j in c.get("/api/tracker").json["jobs"] if j["id"] == jid)
+            if not row["screenshot"]:
+                return "the tracker does not report the screenshot"
+            if row["tracker_extra"].get("Start Date") != "September 2027" or \
+                    row["tracker_extra"].get("Duration") != "12 months":
+                return f"start/duration not kept: {row['tracker_extra']}"
+            if row["salary_display"] != "£24,000":
+                return f"salary not kept: {row['salary_display']}"
+            g = c.get(f"/api/job/{jid}/screenshot")
+            if g.status_code != 200 or g.mimetype != "image/png" or g.data != _png:
+                return f"screenshot not served back: {g.status_code} {g.mimetype}"
+            g.close()                     # Windows will not delete an open file
+            if c.get("/api/job/..%2F..%2Fapp/screenshot").status_code != 404:
+                return "a path in the job id was not refused"
+            bad = c.post("/api/tracker/add", headers=hdr, data={
+                "company": "X", "screenshot": (__import__("io").BytesIO(b"<svg/>"), "x.png")})
+            if bad.status_code != 400:
+                return "a non-image screenshot was accepted"
+            if c.post("/api/tracker/add", json={"company": "Plainco"}).status_code != 200:
+                return "typing a job in by hand (JSON) stopped working"
+            rd = c.post("/api/tracker/read", headers=hdr,
+                        data={"image": (__import__("io").BytesIO(_png), "s.png")}).json
+            if rd["fields"] or "ANTHROPIC_API_KEY" not in rd["message"]:
+                return f"no-key screenshot read should explain itself: {rd}"
+            if c.post("/api/tracker/read", json={"url": "not a link"}).json["fields"]:
+                return "a non-link produced fields"
+            u = c.post(f"/api/job/{jid}/untrack")
+            if _cap.shot_path(jid) is not None:
+                return f"removing a job you added left its screenshot behind ({u.status_code})"
+            return True
+        finally:
+            _app.store.close()
+            _app.store, _cap.SHOTS_DIR = saved_store, saved_dir
+            if saved_key is not None:
+                _os.environ["ANTHROPIC_API_KEY"] = saved_key
+            _shutil.rmtree(_tmp, ignore_errors=True)
+
+    check("quick add: screenshot + typed details save, serve back and delete with the job",
+          _capture_flow)
+
     # ---- the page itself
     _page = (ROOT / "templates" / "index.html").read_text("utf-8")
     _ids = _sec_re.findall(r'\sid="([^"]+)"', _page)

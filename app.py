@@ -15,7 +15,7 @@ from flask import (Flask, jsonify, render_template, request, send_from_directory
                    session)
 
 from jobscout import apply as apply_pack_builder
-from jobscout import (accounts, assistant, autofill, classify, enrich, geo, interview,
+from jobscout import (accounts, assistant, autofill, capture, classify, enrich, geo, interview,
                       linkedin_import, privacy, review, rules as rules_mod, scoring,
                       sponsorship, stability, tracker, tracker_import, why as why_mod)
 from jobscout.config import Config
@@ -476,15 +476,15 @@ _TRACKER_FIELDS = ("id", "company", "title", "url", "location", "closes_at", "st
 
 @app.route("/api/tracker")
 def api_tracker():
-    rows = [{k: job.get(k) for k in _TRACKER_FIELDS} for job in store.tracked()]
+    rows = [{**{k: job.get(k) for k in _TRACKER_FIELDS},
+             "screenshot": capture.shot_path(job["id"]) is not None}
+            for job in store.tracked()]
     return jsonify({"jobs": rows, "statuses": APP_STATUSES})
 
 
 @app.route("/api/tracker/import", methods=["POST"])
 def api_tracker_import():
-    # A file upload is a "simple" request any web page could send to localhost
-    # without a CORS preflight; a custom header can only come from this page.
-    if request.headers.get("X-Job-Scout") != "1":
+    if not _upload_allowed():
         return jsonify({"error": "Upload from the Job Scout page."}), 403
     upload = request.files.get("file")
     if upload is None or not upload.filename:
@@ -500,10 +500,43 @@ def api_tracker_import():
     return jsonify(result)
 
 
+def _upload_allowed() -> bool:
+    # A file upload is a "simple" request any web page could send to localhost
+    # without a CORS preflight; a custom header can only come from this page.
+    return request.headers.get("X-Job-Scout") == "1"
+
+
+@app.route("/api/tracker/read", methods=["POST"])
+def api_tracker_read():
+    """Fill the Add-a-job form from a link or a screenshot. Saves nothing."""
+    image = request.files.get("image")
+    if image is not None:
+        if not _upload_allowed():
+            return jsonify({"error": "Upload from the Job Scout page."}), 403
+        data = image.read(capture.MAX_SHOT_BYTES + 1)
+        if len(data) > capture.MAX_SHOT_BYTES:
+            return jsonify({"error": "That image is over 8 MB."}), 400
+        fields, message = capture.read_screenshot(data)
+    else:
+        fields, message = capture.read_link((request.json or {}).get("url", ""))
+    return jsonify({"fields": fields, "message": message})
+
+
 @app.route("/api/tracker/add", methods=["POST"])
 def api_tracker_add():
-    """A job found somewhere else - a careers fair, a friend, a site we do not scan."""
-    payload = request.json or {}
+    """A job found somewhere else - a careers fair, a friend, a site we do not scan.
+    JSON, or a form with a screenshot of the posting to keep with it."""
+    shot = request.files.get("screenshot")
+    if request.files and not _upload_allowed():
+        return jsonify({"error": "Upload from the Job Scout page."}), 403
+    payload = request.form if request.files or request.form else (request.json or {})
+    shot_data = b""
+    if shot is not None and shot.filename:
+        shot_data = shot.read(capture.MAX_SHOT_BYTES + 1)
+        if len(shot_data) > capture.MAX_SHOT_BYTES:
+            return jsonify({"error": "That image is over 8 MB."}), 400
+        if capture.image_type(shot_data) is None:
+            return jsonify({"error": "That is not a PNG, JPEG, GIF or WebP image."}), 400
     company = (payload.get("company") or "").strip()
     if not company:
         return jsonify({"error": "Company is needed."}), 400
@@ -516,12 +549,43 @@ def api_tracker_add():
     job_id, created = tracker_import.add_manual(
         store, company=company, title=payload.get("title") or "", url=url,
         location=payload.get("location") or "",
-        deadline=tracker_import.parse_day(payload.get("deadline")))
+        deadline=tracker_import.parse_day(payload.get("deadline")),
+        salary=(payload.get("salary") or "").strip())
     store.set_app_status(job_id, stage)
     note = (payload.get("notes") or "").strip()
     if note:
         store.set_note(job_id, note)
+    extra = dict((store.get(job_id) or {}).get("tracker_extra") or {})
+    for key, column in (("start", "Start Date"), ("duration", "Duration")):
+        value = (payload.get(key) or "").strip()
+        if value:
+            extra[column] = value
+    if extra:
+        store.set_tracker_extra(job_id, extra)
+    if shot_data:
+        capture.save_shot(job_id, shot_data)
     return jsonify({"ok": True, "id": job_id, "created": created})
+
+
+@app.route("/api/job/<job_id>/screenshot", methods=["GET", "POST"])
+def api_job_screenshot(job_id: str):
+    """The screenshot kept with a tracked job: view it, or attach / replace it."""
+    if request.method == "GET":
+        path = capture.shot_path(job_id)
+        if path is None:
+            return jsonify({"error": "no screenshot"}), 404
+        return send_from_directory(path.parent, path.name, max_age=0)
+    if not _upload_allowed():
+        return jsonify({"error": "Upload from the Job Scout page."}), 403
+    if store.get(job_id) is None:
+        return jsonify({"error": "not found"}), 404
+    image = request.files.get("image")
+    if image is None:
+        return jsonify({"error": "Choose an image."}), 400
+    problem = capture.save_shot(job_id, image.read(capture.MAX_SHOT_BYTES + 1))
+    if problem:
+        return jsonify({"error": problem}), 400
+    return jsonify({"ok": True})
 
 
 @app.route("/api/job/<job_id>/track", methods=["POST"])
@@ -556,6 +620,7 @@ def api_untrack(job_id: str):
     """Take a job off the tracker. One that only exists because it was typed in or
     imported is removed; a scanned posting goes back to the jobs list as 'new'."""
     if store.delete_manual(job_id):
+        capture.delete_shot(job_id)
         return jsonify({"ok": True, "deleted": True})
     if not store.set_status(job_id, "new"):
         return jsonify({"error": "not found"}), 404

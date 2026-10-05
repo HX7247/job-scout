@@ -760,6 +760,15 @@ table.trk select, table.trk input[type=date], table.trk textarea {
   padding: 12px; margin-bottom: 12px; background: var(--panel-alt);
   border: 1px solid var(--line-soft); border-radius: var(--radius-md); }
 .trk-add[hidden] { display: none; }
+.trk-add { flex-direction: column; align-items: stretch; }
+.trk-quick, .trk-fields { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.trk-add .trk-quick input[type=text] { flex: 1 1 260px; }
+.trk-add textarea { width: 100%; box-sizing: border-box; font: inherit; }
+.trk-add.drop { outline: 2px dashed var(--accent, #4a7); outline-offset: 2px; }
+.trk-shot { display: flex; gap: 8px; align-items: flex-start; }
+.trk-shot[hidden], .trk-read-msg:empty { display: none; }
+.trk-shot img { max-width: 260px; max-height: 180px; border: 1px solid var(--line-soft);
+  border-radius: 4px; object-fit: contain; }
 .trk-add input[type=text] { flex: 1 1 150px; min-width: 0; }
 .trk-add label { display: flex; align-items: center; gap: 6px; }
 #trk-import-result .notice, #trk-import-result .caveat { margin-bottom: 12px; }

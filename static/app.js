@@ -906,7 +906,7 @@ const TRK_GROUPS = {
 };
 const TRK_STAGE_CLASS = { "Not applied yet": "todo", Offer: "offer", Accepted: "offer",
   Rejected: "closed", Ghosted: "closed", Withdrawn: "closed" };
-const trk = { jobs: [], statuses: [], noteTimers: {} };
+const trk = { jobs: [], statuses: [], noteTimers: {}, shot: null };
 
 // A drawer opened over the Tracker tab must not leave the list behind it stale.
 function refreshTrackerIfShown() {
@@ -1008,6 +1008,9 @@ function renderTracker() {
           <div class="where trk-saved"></div></td>
       <td class="trk-nowrap">
         ${j.url ? '<button class="btn sm" data-fill title="Fill in the blanks from the posting">Auto-fill</button>' : ""}
+        ${j.screenshot
+          ? `<a class="btn sm" href="/api/job/${encodeURIComponent(j.id)}/screenshot" target="_blank" rel="noopener">Screenshot</a>`
+          : '<button class="btn sm" data-shot title="Keep a screenshot of the posting with this job">+ Screenshot</button>'}
         ${j.source_kind === "manual" ? "" : '<button class="btn sm" data-open>Details</button>'}
         <button class="btn sm danger" data-remove title="Take off the tracker">Remove</button></td>
     </tr>`).join("");
@@ -1107,6 +1110,154 @@ async function saveTrackerNote(id, text, tr) {
   }
 }
 
+// A form upload, with the header that tells the server it came from this page.
+async function upload(path, data) {
+  const r = await fetch(path, { method: "POST", body: data, headers: { "X-Job-Scout": "1" } });
+  const res = await r.json().catch(() => ({ error: `${r.status} ${r.statusText}` }));
+  if (!r.ok || res.error) throw new Error(res.error || `${r.status}`);
+  return res;
+}
+
+const SHOT_TYPES = ["image/png", "image/jpeg", "image/gif", "image/webp"];
+
+function setTrackerShot(file) {
+  trk.shot = file;
+  const box = $("#trk-shot");
+  box.hidden = !file;
+  const img = box.querySelector("img");
+  img.removeAttribute("src");
+  if (!file) return;
+  const reader = new FileReader();                 // a data: URL - the CSP allows no blob:
+  reader.onload = () => { img.src = reader.result; };
+  reader.readAsDataURL(file);
+}
+
+// Put what a link or screenshot gave into the form - blanks only, never over typing.
+function fillTrackerForm(fields) {
+  const form = $("#trk-add");
+  for (const [name, value] of Object.entries(fields || {})) {
+    const input = form.elements[name];
+    if (!input || input.value.trim() || !value) continue;
+    input.value = name === "deadline" ? String(value).slice(0, 10) : value;
+  }
+}
+
+async function readTrackerSource(kind) {
+  const msg = $("#trk-read-msg");
+  const form = $("#trk-add");
+  let res;
+  try {
+    if (kind === "link") {
+      const url = form.elements.url.value.trim();
+      if (!url) { msg.textContent = "Paste a link first."; return; }
+      msg.textContent = "Reading the posting…";
+      res = await api("/api/tracker/read", { method: "POST", body: { url } });
+    } else {
+      msg.textContent = "Reading the screenshot…";
+      const data = new FormData();
+      data.append("image", trk.shot, trk.shot.name || "screenshot.png");
+      res = await upload("/api/tracker/read", data);
+    }
+  } catch (err) {
+    msg.textContent = `Could not read it: ${err.message}`;
+    return;
+  }
+  fillTrackerForm(res.fields);
+  msg.textContent = res.message || "";
+  if (!form.elements.company.value) form.elements.company.focus();
+}
+
+function takeTrackerShot(file) {
+  if (!file || !SHOT_TYPES.includes(file.type)) {
+    toast("Use a PNG, JPEG, GIF or WebP image.");
+    return;
+  }
+  if (file.size > 8 * 1024 * 1024) { toast("That image is over 8 MB."); return; }
+  openTrackerForm();
+  setTrackerShot(file);
+  readTrackerSource("shot");
+}
+
+function openTrackerForm() {
+  $("#trk-add").hidden = false;
+  $("#trk-add-toggle").setAttribute("aria-expanded", "true");
+}
+
+function initQuickAdd() {
+  const form = $("#trk-add");
+  $("#trk-read-link").addEventListener("click", () => readTrackerSource("link"));
+  form.elements.url.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); readTrackerSource("link"); }
+  });
+  $("#trk-shot-file").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    e.target.value = "";
+    if (file) takeTrackerShot(file);
+  });
+  $("#trk-shot-btn").addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("#trk-shot-file").click(); }
+  });
+  $("#trk-shot-clear").addEventListener("click", () => setTrackerShot(null));
+
+  // Ctrl+V anywhere on the Tracker tab: an image becomes the screenshot.
+  document.addEventListener("paste", (e) => {
+    if (!$("#view-tracker")?.classList.contains("on")) return;
+    const file = [...(e.clipboardData?.files || [])].find((f) => SHOT_TYPES.includes(f.type));
+    if (!file) return;
+    e.preventDefault();
+    takeTrackerShot(file);
+  });
+  form.addEventListener("dragover", (e) => { e.preventDefault(); form.classList.add("drop"); });
+  form.addEventListener("dragleave", () => form.classList.remove("drop"));
+  form.addEventListener("drop", (e) => {
+    e.preventDefault();
+    form.classList.remove("drop");
+    const file = e.dataTransfer?.files?.[0];
+    if (file) { takeTrackerShot(file); return; }
+    const url = e.dataTransfer?.getData("text/uri-list") || e.dataTransfer?.getData("text/plain");
+    if (url && /^https?:\/\//i.test(url.trim())) {
+      form.elements.url.value = url.trim().split(/\s/)[0];
+      readTrackerSource("link");
+    }
+  });
+
+  // Attach a screenshot to a job already on the list.
+  $("#trk-row-shot").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    const id = e.target.dataset.id;
+    e.target.value = "";
+    if (!file || !id) return;
+    const data = new FormData();
+    data.append("image", file, file.name);
+    try {
+      await upload(`/api/job/${encodeURIComponent(id)}/screenshot`, data);
+      const job = trk.jobs.find((j) => j.id === id);
+      if (job) job.screenshot = true;
+      toast("Screenshot saved");
+      renderTracker();
+    } catch (err) {
+      toast(`Could not save it: ${err.message}`);
+    }
+  });
+
+  // The bookmark opens this app with the posting's link; nothing is saved until Add.
+  const mark = $("#trk-bookmarklet");
+  mark.href = `javascript:void(window.open('${location.origin}/?add='+encodeURIComponent(location.href)))`;
+  mark.addEventListener("click", (e) => {
+    e.preventDefault();
+    toast("Drag this button to your bookmarks bar, then click it on a job posting.", 5000);
+  });
+
+  const added = new URLSearchParams(location.search).get("add");
+  if (added && /^https?:\/\//i.test(added)) {
+    history.replaceState(null, "", location.pathname);
+    $('.tab[data-view="tracker"]').click();
+    openTrackerForm();
+    form.elements.url.value = added;
+    readTrackerSource("link");
+  }
+}
+
 async function importTracker(file) {
   const out = $("#trk-import-result");
   out.innerHTML = `<div class="notice">Reading ${esc(file.name)}&hellip;</div>`;
@@ -1180,6 +1331,9 @@ function wireTracker() {
     if (!row) return;
     if (e.target.matches("[data-open]")) {
       openDrawer(row.id);
+    } else if (e.target.matches("[data-shot]")) {
+      $("#trk-row-shot").dataset.id = row.id;
+      $("#trk-row-shot").click();
     } else if (e.target.matches("[data-fill]")) {
       e.target.disabled = true;
       e.target.textContent = "Reading…";
@@ -1224,17 +1378,22 @@ function wireTracker() {
   $("#trk-add").addEventListener("submit", async (e) => {
     e.preventDefault();
     const form = e.target;
-    const body = Object.fromEntries(new FormData(form).entries());
+    const data = new FormData(form);
+    if (trk.shot) data.append("screenshot", trk.shot, trk.shot.name || "screenshot.png");
+    const company = data.get("company");
     try {
-      const res = await api("/api/tracker/add", { method: "POST", body });
-      toast(res.created ? `Added ${body.company}` : `${body.company} was already on your list`);
+      const res = await upload("/api/tracker/add", data);
+      toast(res.created ? `Added ${company}` : `${company} was already on your list`);
       form.reset();
+      setTrackerShot(null);
+      $("#trk-read-msg").textContent = "";
       await loadTracker();
       loadJobs(); loadStats();
     } catch (err) {
       toast(`Could not add it: ${err.message}`);
     }
   });
+  initQuickAdd();
   $("#trk-export").addEventListener("click", () => doExport("tracker"));
 }
 

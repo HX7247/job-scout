@@ -161,7 +161,9 @@ def _place(location) -> str:
 
 
 def _from_job_posting(item: dict) -> dict:
+    org = item.get("hiringOrganization")
     out = {"title": clean(item.get("title", "")),
+           "company": clean(str((org.get("name") if isinstance(org, dict) else org) or "")),
            "location": _place(item.get("jobLocation")),
            "deadline": _iso(item.get("validThrough")),
            "posted": _iso(item.get("datePosted")),
@@ -344,7 +346,7 @@ def fetch_details(url: str) -> tuple[dict, str]:
 
 
 # ------------------------------------------------------------------ apply to a job
-FIELD_LABELS = {"title": "Role", "location": "Location", "deadline": "Deadline",
+FIELD_LABELS = {"company": "Company", "title": "Role", "location": "Location", "deadline": "Deadline",
                 "salary": "Salary", "start": "Start date", "duration": "Duration",
                 "posted": "Opened", "description": "Description"}
 

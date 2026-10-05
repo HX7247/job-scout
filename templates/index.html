@@ -223,8 +223,10 @@
           </div>
           <p class="sub">
             Your own list of roles. Import the spreadsheet you already keep, add a job
-            from the Positions tab with <b>Add to tracker</b> in its detail panel, or type
-            one in. Change a status from its dropdown. Notes save as you type.
+            from the Positions tab with <b>Add to tracker</b> in its detail panel, or use
+            <b>Add a job</b> to paste a link or screenshot, or type one in. Change a status
+            from its dropdown. Notes save as you type. <b>Download as Excel</b> exports
+            everything here.
           </p>
           <div class="trk-tools">
             <select id="trk-filter" aria-label="Show applications">
@@ -248,16 +250,43 @@
           </div>
           <div id="trk-import-result"></div>
           <form id="trk-add" class="trk-add" hidden>
-            <input type="text" name="company" placeholder="Company *" required
-                   aria-label="Company">
-            <input type="text" name="title" placeholder="Role" aria-label="Role">
-            <input type="text" name="url" placeholder="Application link"
-                   aria-label="Application link">
-            <input type="text" name="location" placeholder="Location" aria-label="Location">
-            <label class="where">Deadline <input type="date" name="deadline"></label>
-            <select name="app_status" id="trk-add-status" aria-label="Status"></select>
-            <button class="btn primary" type="submit">Add to tracker</button>
+            <div class="trk-quick">
+              <b>Quick add</b>
+              <input type="text" name="url" placeholder="Paste the job's link"
+                     aria-label="Application link">
+              <button class="btn" type="button" id="trk-read-link">Fill from link</button>
+              <label class="btn" for="trk-shot-file" id="trk-shot-btn" tabindex="0"
+                     role="button">Add screenshot&hellip;</label>
+              <input type="file" id="trk-shot-file" hidden
+                     accept="image/png,image/jpeg,image/gif,image/webp">
+              <span class="where">or paste a screenshot with Ctrl+V, or drop one here</span>
+            </div>
+            <div class="trk-shot" id="trk-shot" hidden>
+              <img alt="Screenshot of the posting">
+              <button class="btn sm" type="button" id="trk-shot-clear">Remove screenshot</button>
+            </div>
+            <div class="where trk-read-msg" id="trk-read-msg" aria-live="polite"></div>
+            <div class="trk-fields">
+              <input type="text" name="company" placeholder="Company *" required
+                     aria-label="Company">
+              <input type="text" name="title" placeholder="Role" aria-label="Role">
+              <input type="text" name="location" placeholder="Location" aria-label="Location">
+              <input type="text" name="salary" placeholder="Salary" aria-label="Salary">
+              <input type="text" name="start" placeholder="Start date" aria-label="Start date">
+              <input type="text" name="duration" placeholder="Duration" aria-label="Duration">
+              <label class="where">Deadline <input type="date" name="deadline"></label>
+              <select name="app_status" id="trk-add-status" aria-label="Status"></select>
+            </div>
+            <textarea name="notes" rows="2" placeholder="Notes" aria-label="Notes"></textarea>
+            <div class="trk-quick">
+              <button class="btn primary" type="submit">Add to tracker</button>
+              <span class="where">Save jobs from any site: drag
+                <a class="btn sm" id="trk-bookmarklet" href="#">+ Job Scout</a>
+                to your bookmarks bar, then click it on a job posting.</span>
+            </div>
           </form>
+          <input type="file" id="trk-row-shot" hidden
+                 accept="image/png,image/jpeg,image/gif,image/webp">
           <div class="trk-wrap">
             <table class="inv trk">
               <thead><tr>
@@ -598,7 +627,8 @@
         <div class="panel">
           <h3>Sites to check yourself</h3>
           <p class="sub">These sites list placements that are not in the Positions table,
-            because their terms do not allow automated collection. Open them in your
+            either because their terms do not allow automated collection or because
+            reading them needs a free API key you have not set. Open them in your
             browser and add anything worth applying to on the Tracker tab.</p>
         </div>
 
@@ -625,6 +655,57 @@
             <a class="btn" href="https://app.the-trackr.com/uk-finance" target="_blank" rel="noopener noreferrer">UK finance</a>
             <a class="btn" href="https://app.the-trackr.com/uk-law" target="_blank" rel="noopener noreferrer">UK law</a>
             <a class="btn" href="https://www.the-trackr.com/" target="_blank" rel="noopener noreferrer">Home page</a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Adzuna</h3>
+          <p class="sub">UK job search engine with wide placement coverage. Scanned automatically once you set ADZUNA_APP_ID and ADZUNA_APP_KEY (README, <em>Adding coverage</em>).</p>
+          <div class="linkrow">
+            <a class="btn" href="https://www.adzuna.co.uk/jobs/search?q=placement%20student" target="_blank" rel="noopener noreferrer">Placement student</a>
+            <a class="btn" href="https://www.adzuna.co.uk/jobs/search?q=industrial%20placement" target="_blank" rel="noopener noreferrer">Industrial placement</a>
+            <a class="btn" href="https://www.adzuna.co.uk/jobs/search?q=internship" target="_blank" rel="noopener noreferrer">Internships</a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Reed</h3>
+          <p class="sub">Large UK job board. Scanned automatically once you set REED_API_KEY (README, <em>Adding coverage</em>).</p>
+          <div class="linkrow">
+            <a class="btn" href="https://www.reed.co.uk/jobs/placement-year-jobs" target="_blank" rel="noopener noreferrer">Placement year</a>
+            <a class="btn" href="https://www.reed.co.uk/jobs/industrial-placement-jobs" target="_blank" rel="noopener noreferrer">Industrial placement</a>
+            <a class="btn" href="https://www.reed.co.uk/jobs/internship-jobs" target="_blank" rel="noopener noreferrer">Internships</a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Google Jobs</h3>
+          <p class="sub">Google's job listings, pulled from many boards at once. Scanned automatically once you set SERPAPI_KEY (README, <em>Adding coverage</em>).</p>
+          <div class="linkrow">
+            <a class="btn" href="https://www.google.com/search?q=placement+year+UK&amp;ibp=htl;jobs" target="_blank" rel="noopener noreferrer">Placement year UK</a>
+            <a class="btn" href="https://www.google.com/search?q=industrial+placement+UK&amp;ibp=htl;jobs" target="_blank" rel="noopener noreferrer">Industrial placement UK</a>
+            <a class="btn" href="https://www.google.com/search?q=summer+internship+UK&amp;ibp=htl;jobs" target="_blank" rel="noopener noreferrer">Summer internship UK</a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Careerjet</h3>
+          <p class="sub">Job search engine covering many UK boards. Scanned automatically once you set CAREERJET_API_KEY (README, <em>Adding coverage</em>).</p>
+          <div class="linkrow">
+            <a class="btn" href="https://www.careerjet.co.uk/jobs?s=placement+year&amp;l=UK" target="_blank" rel="noopener noreferrer">Placement year</a>
+            <a class="btn" href="https://www.careerjet.co.uk/jobs?s=industrial+placement&amp;l=UK" target="_blank" rel="noopener noreferrer">Industrial placement</a>
+            <a class="btn" href="https://www.careerjet.co.uk/jobs?s=internship&amp;l=UK" target="_blank" rel="noopener noreferrer">Internships</a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Reddit</h3>
+          <p class="sub">Hiring posts and placement threads. Scanned automatically once you set REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET (README, <em>Adding coverage</em>).</p>
+          <div class="linkrow">
+            <a class="btn" href="https://www.reddit.com/r/internships/" target="_blank" rel="noopener noreferrer">r/internships</a>
+            <a class="btn" href="https://www.reddit.com/r/csMajors/" target="_blank" rel="noopener noreferrer">r/csMajors</a>
+            <a class="btn" href="https://www.reddit.com/r/cscareerquestions/" target="_blank" rel="noopener noreferrer">r/cscareerquestions</a>
+            <a class="btn" href="https://www.reddit.com/r/UKJobs/" target="_blank" rel="noopener noreferrer">r/UKJobs</a>
           </div>
         </div>
       </div>

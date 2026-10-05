@@ -607,6 +607,26 @@ News listing — is surfaced separately under "Named on the posting itself".
 
 ---
 
+## Adding a job quickly
+
+On the Tracker tab, **Add a job** opens a form you can fill by hand or let Job Scout
+fill for you:
+
+- **Paste a link** and press *Fill from link*. Job Scout reads the posting and fills
+  the company, role, location, deadline, salary, start date and duration where the page
+  gives them. Job boards' own pages are read the same way, but the company is left for
+  you to type.
+- **Add a screenshot**: pick a file, paste one with Ctrl+V anywhere on the tab, or drop
+  one on the form. It is kept with the job (in `data/shots/`, never committed) and opens
+  from the row's *Screenshot* button. With `ANTHROPIC_API_KEY` set, Claude reads the
+  details off the image too; without it, the screenshot is still saved and you type the
+  details in.
+- **The + Job Scout bookmark**: drag it from the form to your bookmarks bar. Clicking it
+  on any job posting opens Job Scout with that link already read into the form.
+
+Nothing is saved until you press *Add to tracker*, and anything you have typed is never
+overwritten. **Download as Excel** exports the whole tracker.
+
 ## The spreadsheet tracker
 
 Built to match a typical student internship-tracker workbook exactly: 21 columns A–U, the same five column
