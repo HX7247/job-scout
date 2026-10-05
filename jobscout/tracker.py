@@ -134,6 +134,24 @@ def safe_url(url: str) -> str:
 DATE_COLUMNS = (3, 8, 9, 14, 18)
 
 
+def _duration(job: dict) -> str:
+    """Duration dropdown value: what the title says, else what the kind of role implies
+    (a placement is a year; an internship is a summer; a graduate role is not a placement)."""
+    months = re.search(r"(\d+(?:\.\d+)?)\s*(?:-\s*)?months?\b", job.get("title") or "", re.I)
+    if months:
+        n = float(months.group(1))
+        return ("3 months" if n <= 4 else "6 months" if n <= 7 else "9 months" if n <= 10
+                else "1 Year" if n <= 12 else "13 months")
+    if re.search(r"\bweeks?\b|\bsummer\b", job.get("title") or "", re.I):
+        return "3 months"
+    kind = job.get("employment_kind") or ""
+    if kind in ("internship", "seasonal"):
+        return "3 months"
+    if kind in ("graduate_scheme", "full_time", "part_time", "contract", "apprenticeship"):
+        return "Other"
+    return "1 Year"
+
+
 def job_to_row(job: dict, date_format: str = "dd/mm/yyyy") -> list:
     """Map one stored job to the 19 typed columns (T and U are formulas).
 
@@ -159,7 +177,7 @@ def job_to_row(job: dict, date_format: str = "dd/mm/yyyy") -> list:
         safe_url(job.get("url", "")),              # D Application Link
         job.get("location", ""),                   # E Location
         salary,                                    # F Salary
-        extra.get("Duration") or (None if manual else "1 Year"),  # G Duration
+        extra.get("Duration") or (None if manual else _duration(job)),  # G Duration
         _iso_to_date(extra.get("Start Date")) or extra.get("Start Date") or None,  # H Start ("August 2027" stays text)
         _iso_to_date(extra.get("Open Date") or job.get("posted_at")),  # I Open Date
         extra.get("Source") or (None if manual else source),       # J Source
