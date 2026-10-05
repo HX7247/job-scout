@@ -454,12 +454,19 @@ class Store:
         """
         out: dict = {}
         for group, column, key in (("employment", "employment_kind", "employment"),
-                                   ("families", "job_family", "families"),
-                                   ("countries", "country", "countries")):
+                                   ("families", "job_family", "families")):
             where, params = self._where(**{**filters, key: None})
             out[group] = {(r["k"] or "unstated"): r["c"] for r in self.conn.execute(
                 f"SELECT {column} k, COUNT(*) c FROM jobs WHERE {where} GROUP BY {column}",
                 params)}
+        # A posting in London and New York counts under both, so these can add up to
+        # more than the total - each number is what ticking that country alone shows.
+        where, params = self._where(**{**filters, "countries": None})
+        out["countries"] = {}
+        for r in self.conn.execute(f"SELECT country k, COUNT(*) c FROM jobs WHERE {where} "
+                                   "GROUP BY country", params):
+            for code in (r["k"] or "unstated").split(","):
+                out["countries"][code] = out["countries"].get(code, 0) + r["c"]
         where, params = self._where(**{**filters, "source": None})
         out["sources"] = {r["source"]: r["c"] for r in self.conn.execute(
             f"SELECT source, COUNT(*) c FROM jobs WHERE {where} GROUP BY source "
@@ -527,12 +534,13 @@ class Store:
             params += list(wanted)
         if countries:
             # "unstated" is the sidebar's "Not stated" - a posting no location placed.
+            # The column lists every country a posting names ("GB,US"), so match any.
             codes = [c for c in countries if c != "unstated"]
-            parts = [f"country IN ({','.join('?' * len(codes))})"] if codes else []
+            parts = ["(',' || COALESCE(country, '') || ',') LIKE ?"] * len(codes)
             if "unstated" in countries:
                 parts.append("COALESCE(country, '') = ''")
             sql += f" AND ({' OR '.join(parts)})"
-            params += codes
+            params += [f"%,{c},%" for c in codes]
         # The user's own facet rules, already narrowed to the ticked ones by the caller.
         for rule in (own_rules or []):
             from . import rules as rules_mod

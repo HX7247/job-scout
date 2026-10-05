@@ -347,11 +347,14 @@ Your own country is always listed. Each scan then:
   once for each listed country they cover, and tags every job with that country;
 - keeps a job when its location is in *any* listed country, so a Berlin posting is still
   dropped while New York and Sydney now pass;
-- works out each job's country from its location, including postal forms such as
+- works out every country a job is in from its location, including postal forms such as
   "McLean, VA" or "Parramatta NSW 2150", and falls back to the country it was searched in.
+  "London; New York" is in both countries, while a state or country after a town
+  qualifies it rather than adding one: "Lancaster, Pennsylvania" is only the US.
 
 The **Country** filter in the Positions sidebar narrows the list to one or more countries,
-with counts that update alongside the other filters. "Not stated" collects postings that
+with counts that update alongside the other filters. A job in two countries is counted
+under each, so the country counts can add up to more than the total. "Not stated" collects postings that
 name no place, such as Workday's "3 Locations". "Placement" is a UK term, so pick
 **Internship** as the job type when browsing US or Australian roles.
 

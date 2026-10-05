@@ -1985,26 +1985,41 @@ def main() -> None:
         tmp = Path(_tf.mkdtemp()) / "c.db"
         st = Store(tmp)
         try:
-            st.upsert([_mjob(loc) for loc in ("Leeds", "Austin, TX", "Boston, MA", "Somewhere")])
+            st.upsert([_mjob(loc) for loc in ("Leeds", "Austin, TX", "Boston, MA", "Somewhere",
+                                              "London; Sydney")])
             for row in st.query(limit=10, include_filtered=True):
                 st.conn.execute("UPDATE jobs SET country = ? WHERE id = ?",
                                 (_mpl.job_country(_mjob(row["location"])), row["id"]))
             st.conn.commit()
             us = [j["location"] for j in st.query(limit=10, countries=["US"])]
             blank = [j["location"] for j in st.query(limit=10, countries=["unstated"])]
+            au = [j["location"] for j in st.query(limit=10, countries=["AU"])]
+            gb = sorted(j["location"] for j in st.query(limit=10, countries=["GB"]))
             facets = st.facet_counts(countries=["US"])["countries"]
             if sorted(us) != ["Austin, TX", "Boston, MA"]:
                 return f"US filter gave {us}"
             if blank != ["Somewhere"]:
                 return f"Not stated gave {blank}"
-            if facets != {"US": 2, "GB": 1, "unstated": 1}:
+            if au != ["London; Sydney"] or gb != ["Leeds", "London; Sydney"]:
+                return f"a two-country posting is not under both: AU {au}, GB {gb}"
+            if facets != {"US": 2, "GB": 2, "AU": 1, "unstated": 1}:
                 return f"country counts ignore their own tick wrongly: {facets}"
-            return st.count(countries=["GB", "US"]) == 3 or "GB+US count wrong"
+            return st.count(countries=["GB", "US"]) == 4 or "GB+US count wrong"
         finally:
             st.close()
 
-    check("markets: the Country filter lists one country, and its counts add up",
+    check("markets: the Country filter matches every country a posting names",
           _country_facet)
+
+    _places = {"London, UK; New York, NY": ["GB", "US"], "Lancaster, Pennsylvania": ["US"],
+               "Lancaster": ["GB"], "London, New York, Sydney": ["GB", "US", "AU"],
+               "UK/US": ["GB", "US"], "Perth, Scotland": ["GB"], "London, Ontario": ["CA"],
+               "Bangalore, IN": ["IN"], "San Jose, CA": ["US"], "Toronto, ON, CA": ["CA"],
+               "Parramatta NSW 2150": ["AU"], "3 Locations": []}
+    check("markets: a posting in several countries is in each, a town's state is not another",
+          lambda: {k: _geo.countries_of(k) for k in _places} == _places
+                  or {k: _geo.countries_of(k) for k in _places
+                      if _geo.countries_of(k) != _places[k]})
 
     # ---- the page itself
     _page = (ROOT / "templates" / "index.html").read_text("utf-8")

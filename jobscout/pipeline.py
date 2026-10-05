@@ -445,14 +445,16 @@ def run(cfg: Config | None = None, store: Store | None = None,
 
 
 def job_country(job: Job, searched_in: str = "") -> str:
-    """The country a posting is in, as an ISO code, or "" when nothing says.
+    """The countries a posting is in, as ISO codes joined by commas ("GB,US"), or ""
+    when nothing says.
 
-    The location wins ("New York, NY" is the US whatever board listed it); then the
-    country the source was searched in; then a source that only covers one country.
+    The location wins ("New York, NY" is the US whatever board listed it, and
+    "London; Sydney" is both); then the country the source was searched in; then a
+    source that only covers one country.
     """
-    found = geo.country_of(job.location, job.title)
+    found = geo.countries_of(job.location, job.title)
     if found:
-        return found
+        return ",".join(found)
     if searched_in or job.country:
         return searched_in or job.country
     markets = getattr(ALL_ADAPTERS.get(job.source), "markets", ()) or ()

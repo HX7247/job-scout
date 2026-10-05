@@ -345,6 +345,10 @@ def _build_lookup() -> tuple[re.Pattern, dict[str, str]]:
 
 
 _LOOKUP_RE, _TERM_TO_CODE = _build_lookup()
+# Terms that name a country, state or region rather than a town. In "Perth, Scotland"
+# or "London, Ontario" these qualify the town before them instead of adding a country.
+_QUALIFIERS = frozenset(t for c in COUNTRIES.values()
+                        for t in (c.name.lower(),) + c.aliases)
 
 
 def countries_mentioned(text: str) -> set[str]:
@@ -382,29 +386,84 @@ _US_STATES = frozenset(
     "NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY DC".split())
 _AU_STATES = frozenset("NSW VIC QLD ACT TAS NT".split())
 _CA_PROVINCES = frozenset("ON QC BC AB MB SK NS NB NL PE".split())
-_PART_SPLIT = re.compile(r"\s*[,;|/()]\s*|\s+-\s+")
 _ZIP = re.compile(r"\s+\d{4,5}(?:-\d{4})?$")
 
 
-def _from_abbreviations(location: str) -> str | None:
-    parts = {_ZIP.sub("", p.strip()) for p in _PART_SPLIT.split(location or "") if p.strip()}
-    if parts & _CA_PROVINCES:          # "Toronto, ON, CA": CA is Canada there
-        return "CA"
-    if parts & {"US", "USA", "SF"} or parts & _US_STATES:
-        return "US"
-    if parts & _AU_STATES or "AU" in parts:
-        return "AU"
-    return None
+# Between two places in one location field: "London; New York", "London | Sydney",
+# "UK/US", "London or New York". A comma is not one - it joins a town to its state.
+_PLACE_SPLIT = re.compile(r"\s*(?:[;|\n\u2022\u00b7/]|\s(?:or|and|&)\s)\s*", re.I)
+_COMMA = re.compile(r"\s*,\s*")
+
+
+def _abbreviation_codes(parts: list[str], towns: list[str]) -> list[str]:
+    """Countries named by postal codes among comma-separated parts: "TX", "NSW", "US".
+    A trailing capitalised word counts too, so "Austin TX" reads like "Austin, TX".
+    A code that is also the ISO code of a town already found is that country:
+    "Bangalore, IN" is India, not Indiana, and "Toronto, CA" is Canada."""
+    tokens = []
+    for part in parts:
+        part = _ZIP.sub("", part.strip())
+        tokens.append(part)
+        words = part.split()
+        if len(words) > 1 and words[-1].isupper():
+            tokens.append(words[-1])
+    canada = bool(set(tokens) & _CA_PROVINCES)    # "Toronto, ON, CA": CA is Canada there
+    out = []
+    for token in tokens:
+        code = (token if token in towns else
+                "CA" if token in _CA_PROVINCES or (canada and token == "CA") else
+                "US" if token in {"US", "USA", "SF"} or token in _US_STATES else
+                "AU" if token in _AU_STATES or token == "AU" else None)
+        if code and code not in out:
+            out.append(code)
+    return out
+
+
+def _place_countries(place: str) -> list[str]:
+    """The countries one place names. A state or country in it qualifies its towns
+    ("Lancaster, Pennsylvania" is the US alone); a list of bare towns ("London, New
+    York, Sydney") names each town's country."""
+    parts = [p for p in _COMMA.split(place) if p]
+    qualified, towns = [], []
+    for match in _LOOKUP_RE.finditer(place.lower()):
+        term = match.group(1).lower()
+        code = _TERM_TO_CODE.get(term)
+        if code:
+            bucket = qualified if term in _QUALIFIERS else towns
+            if code not in bucket:
+                bucket.append(code)
+    for code in _abbreviation_codes(parts, towns):
+        if code not in qualified:
+            qualified.append(code)
+    if qualified:
+        return qualified
+    if len(parts) > 1:
+        return towns
+    best = primary_country(place)       # one town: the longest name wins
+    return [best] if best else []
+
+
+def countries_of(location: str, title: str = "") -> list[str]:
+    """Every country a posting is in, in the order it names them - [] when none.
+
+    "London, UK; New York, NY" is both GB and US, while "Lancaster, Pennsylvania"
+    is only the US. The title is read only when the location places nothing.
+    """
+    out: list[str] = []
+    for place in _PLACE_SPLIT.split(location or ""):
+        for code in _place_countries(place):
+            if code not in out:
+                out.append(code)
+    if not out and title:
+        best = primary_country(title.lower())
+        out = [best] if best else []
+    return out
 
 
 def country_of(location: str, title: str = "") -> str | None:
-    """The country a posting is in, from its location (and title), or None.
-
-    Names first ("Lancaster, Pennsylvania" is the US); then the postal forms US
-    and Australian boards use ("McLean, VA", "Parramatta NSW 2150").
-    """
-    return (primary_country(f"{location or ''} {title or ''}".lower())
-            or _from_abbreviations(location or ""))
+    """The first country a posting is in (see countries_of), or None."""
+    found = countries_of(location, title)
+    return found[0] if found else None
 
 
 def mentions_any(text: str, terms: list[str]) -> bool:

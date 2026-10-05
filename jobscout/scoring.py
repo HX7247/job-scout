@@ -148,10 +148,10 @@ def _location_eligible(job: Job, search, home=None) -> bool:
     # string rather than testing membership: "Lancaster, Pennsylvania" mentions a
     # UK town but is plainly a US job, and the more specific name settles it.
     if home:
-        resolved = geo.country_of(job.location, job.title)
-        if resolved == home.code:
+        resolved = geo.countries_of(job.location, job.title)
+        if home.code in resolved:
             return True
-        if resolved and resolved != home.code:
+        if resolved:
             return False
 
     is_remote = job.remote or any(sig in text for sig in REMOTE_SIGNALS)
@@ -398,13 +398,13 @@ def _location_score(job: Job, cfg: Config) -> tuple[float, list[str]]:
             # earlier entries in the list are preferred locations
             return max(0.55, 1.0 - i * 0.12), [f"location: {job.location or loc}"]
     markets = _markets(cfg)
-    resolved = geo.country_of(job.location, job.title)
-    if resolved is None and job.location and not job.remote:
+    resolved = geo.countries_of(job.location, job.title)
+    if not resolved and job.location and not job.remote:
         return 0.35, [f"location not resolved: {job.location}"]
     if any(_location_eligible(job, cfg.search, m) for m in markets):
-        place = geo.get(resolved) if resolved else None
-        if place and any(m and m.code == place.code for m in markets):
-            return 0.7, [f"in {place.name}"]
+        listed = [m for m in markets if m and m.code in resolved]
+        if listed:
+            return 0.7, ["in " + " / ".join(m.name for m in listed)]
         return 0.7, ["remote - eligible from where you are"]
     return 0.25, []
 
