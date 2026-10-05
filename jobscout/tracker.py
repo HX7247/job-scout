@@ -45,6 +45,7 @@ import openpyxl
 
 from . import geo
 from openpyxl.chart import BarChart, PieChart, Reference
+from openpyxl.formatting.formatting import ConditionalFormattingList
 from openpyxl.formatting.rule import CellIsRule
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
@@ -227,6 +228,7 @@ def append_into(jobs: list[dict], source_workbook: str | Path,
 
     last_row = row - 1
     _extend_validations(ws, last_row)
+    _extend_formatting(ws, last_row)
     if ws.auto_filter.ref:
         ws.auto_filter.ref = f"A2:U{last_row}"
     for table in ws.tables.values():                        # rows past the table's end sit outside it
@@ -257,6 +259,25 @@ def _extend_validations(ws, last_row: int) -> None:
             else:
                 spans.append(cell_range)
         dv.sqref = MultiCellRange(" ".join(spans))
+
+
+def _extend_formatting(ws, last_row: int) -> None:
+    """Stretch the Tracker's conditional formats (status colours, overdue flags) over
+    appended rows; their formulas are relative to the first row, so only the range moves."""
+    pattern = re.compile(r"^([A-Z]{1,2})(\d+):([A-Z]{1,2})(\d+)$")
+    old = ws.conditional_formatting
+    rebuilt = ConditionalFormattingList()
+    for cf in old:
+        spans = []
+        for cell_range in str(cf.sqref).split():
+            match = pattern.match(cell_range)
+            if match and int(match.group(4)) < last_row:
+                spans.append(f"{match.group(1)}{match.group(2)}:{match.group(3)}{last_row}")
+            else:
+                spans.append(cell_range)
+        for rule in cf.rules:
+            rebuilt.add(" ".join(spans), rule)
+    ws.conditional_formatting = rebuilt
 
 
 # ----------------------------------------------------------------- new workbook
