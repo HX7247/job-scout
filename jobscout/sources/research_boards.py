@@ -14,8 +14,14 @@ list nothing else. Each was checked live on 2026-10-05.
     and national-lab roles, mostly in the US. Their feeds ignore the country
     parameter, so each is read once and every posting is placed by its own location.
 
+  * Engineering and Technology Jobs (the IET's board, engineering-jobs.theiet.org) -
+    the same platform and feed: UK-heavy engineering, including industrial placements
+    and year-in-industry roles at BAE, Rolls-Royce and the like. Its robots.txt URL
+    answers 403 (no file is published, so no rule disallows the feed), and the
+    /jobsrss/ feed is the one the site itself offers.
+
 Nature Careers runs the same platform, but its robots.txt disallows the feed, so it is
-not read. New Scientist Jobs, IEEE, ACM and the IET publish no usable feed.
+not read. New Scientist Jobs, IEEE and ACM publish no usable feed.
 
 These boards are searched with their own subject keywords rather than the scan's
 queries: "industrial placement" finds almost nothing on a research board, while
@@ -173,7 +179,8 @@ class MadgexFeedSource(BaseAggregator):
             employer, title = (p.strip() for p in title.split(": ", 1))
         if not employer or not title:
             return None
-        salary = lines[0].rstrip(":").strip() if lines else ""
+        # The IET feed is Latin-1 labelled as UTF-8, so its pound sign arrives as U+FFFD.
+        salary = lines[0].rstrip(":").strip().replace("�", "£") if lines else ""
         location = lines[-1] if len(lines) >= 3 else ""
         parts = urlsplit(item["url"])
         url = urlunsplit((parts.scheme, parts.netloc, parts.path, "", ""))  # drop TrackID/utm
@@ -228,6 +235,17 @@ class PhysicsTodaySource(MadgexFeedSource):
     host = "https://jobs.physicstoday.org"
 
 
+class IETJobsSource(MadgexFeedSource):
+    """Engineering and Technology Jobs (the IET) - UK engineering, incl. placements."""
+
+    name = "ietjobs"
+    label = "IET Engineering Jobs"
+    host = "https://engineering-jobs.theiet.org"
+    KEYWORDS = ("industrial placement", "placement", "year in industry", "internship",
+                "graduate", "apprentice", "student", "research", "engineer")
+
+
 RESEARCH_BOARD_ADAPTERS = {
-    a.name: a() for a in (JobsAcUkSource, ScienceCareersSource, PhysicsTodaySource)
+    a.name: a() for a in (JobsAcUkSource, ScienceCareersSource, PhysicsTodaySource,
+                          IETJobsSource)
 }

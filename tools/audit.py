@@ -2086,14 +2086,14 @@ def main() -> None:
               ("Akuna Capital", "Quantitative Researcher Intern", "https://akuna.example/1"),
               ("Akuna Capital", "Software Engineer Intern (C++)", "https://akuna.example/2")]
           and _quant[0]["location_raw"] == "Chicago, NYC" or f"got {_quant}")
-    _research = ("jobsacuk", "sciencecareers", "physicstoday")
+    _research = ("jobsacuk", "sciencecareers", "physicstoday", "ietjobs")
     check("research boards: registered, keyless, and on by default",
           lambda: all(n in _ALL and not _ALL[n].needs_key and n in _Cfg().sources.aggregators
                       for n in _research)
           or [n for n in _research if n not in _ALL or n not in _Cfg().sources.aggregators])
     check("research boards: jobs.ac.uk is UK-only, the feeds are read once worldwide",
           lambda: (_ALL["jobsacuk"].markets == ("GB",) and not _ALL["sciencecareers"].markets
-                   and not _ALL["physicstoday"].markets
+                   and not _ALL["physicstoday"].markets and not _ALL["ietjobs"].markets
                    and not any(_ALL[n].uses_query for n in _research))
           or "scoping wrong")
     from jobscout.classify import detect_family as _fam
