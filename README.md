@@ -830,8 +830,10 @@ Graduate Recruitment Bureau answers every request, robots.txt included, with a 4
 ZipRecruiter's robots.txt disallows its search pages, which serve a bot challenge.
 Handshake needs a student login and its terms forbid scraping - never attempted.
 Nature Careers publishes the same kind of RSS feed, but its robots.txt disallows it;
-New Scientist Jobs, IEEE, ACM and the IET publish no usable feed; Physics Today's
-browse pages answer plain requests with a 403 (its RSS feed is fine).
+the IEEE and ACM job sites answer automated requests with a 403; EURAXESS has no
+public job feed. All four are linked from the *Unscrapable sites* tab, straight to
+their engineering, computing and internship searches. New Scientist Jobs has closed.
+Physics Today's browse pages answer plain requests with a 403 (its RSS feed is fine).
 
 ### What every scan refreshes
 
