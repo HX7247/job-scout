@@ -179,6 +179,7 @@ class ViewPrefs:
     salary_disclosed: bool = False
     unclassified: bool = False
     unviewed: bool = False          # hide postings whose detail panel you have opened
+    hide_tracked: bool = True       # hide roles already on your tracker (find new ones)
     startups: str = "any"           # any | hide | only
     employment: list[str] = field(default_factory=list)
     families: list[str] = field(default_factory=list)

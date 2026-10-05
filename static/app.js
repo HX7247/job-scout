@@ -8,7 +8,8 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g,
 const state = {
   jobs: null, selected: null, config: null, exports: [],
   view: { q: "", min_score: 0, status: "all", source: "all", order: "score",
-          starred: false, remote: false, sponsored: false, unviewed: false, startups: "any",
+          starred: false, remote: false, sponsored: false, unviewed: false, hideTracked: true,
+          startups: "any",
           employment: [], families: [], countries: [], unclassified: false,
           salaryDisclosed: false,
           // keys of the user's own facet rules that are ticked
@@ -24,6 +25,7 @@ function viewPayload() {
   return {
     q: v.q, min_score: v.min_score, status: v.status, source: v.source, order: v.order,
     starred: v.starred, remote: v.remote, sponsored: v.sponsored, unviewed: v.unviewed,
+    hide_tracked: v.hideTracked,
     startups: v.startups,
     salary_disclosed: v.salaryDisclosed, unclassified: v.unclassified,
     employment: v.employment, families: v.families, countries: v.countries,
@@ -57,6 +59,7 @@ function applyView(saved) {
   v.startups = ["hide", "only"].includes(s.startups) ? s.startups : "any";
   v.starred = !!s.starred; v.remote = !!s.remote; v.sponsored = !!s.sponsored;
   v.unviewed = !!s.unviewed; v.unclassified = !!s.unclassified;
+  v.hideTracked = s.hide_tracked !== false;
   v.salaryDisclosed = !!s.salary_disclosed;
   v.employment = [...(s.employment || [])];
   v.families = [...(s.families || [])];
@@ -76,6 +79,7 @@ function applyView(saved) {
   $("#f-salary").checked = v.salaryDisclosed;
   $("#f-unclassified").checked = v.unclassified;
   $("#f-unviewed").checked = v.unviewed;
+  $("#f-hide-tracked").checked = v.hideTracked;
   // Force the facet checkboxes to redraw with the restored selection on next poll.
   Object.keys(facetState).forEach((k) => delete facetState[k]);
   if (typeof renderOwnFacets === "function" && typeof prof !== "undefined" && prof.rules) {
@@ -338,6 +342,7 @@ async function loadJobs(append = false) {
     sponsored: v.sponsored ? "1" : "0", unclassified: v.unclassified ? "1" : "0",
     salary_disclosed: v.salaryDisclosed ? "1" : "0",
     unviewed: v.unviewed ? "1" : "0",
+    hide_tracked: v.hideTracked ? "1" : "0",
     startups: v.startups,
     limit: PAGE_SIZE,
     offset: append && state.jobs ? state.jobs.length : 0,
@@ -1509,14 +1514,18 @@ function init() {
   $("#f-unviewed").addEventListener("change", (e) => {
     state.view.unviewed = e.target.checked; loadJobs();
   });
+  $("#f-hide-tracked").addEventListener("change", (e) => {
+    state.view.hideTracked = e.target.checked; loadJobs();
+  });
   $("#btn-reset").addEventListener("click", () => {
     Object.assign(state.view, { q: "", min_score: 0, status: "all", source: "all",
                                 order: "score", starred: false, remote: false,
-                                unviewed: false, startups: "any" });
+                                unviewed: false, hideTracked: true, startups: "any" });
     $("#f-q").value = ""; $("#f-score").value = 0; $("#f-score-v").textContent = "0";
     $("#f-status").value = "all"; $("#f-source").value = "all"; $("#f-order").value = "score";
     $("#f-star").checked = false; $("#f-remote").checked = false;
-    $("#f-unviewed").checked = false; $("#f-startups").value = "any";
+    $("#f-unviewed").checked = false; $("#f-hide-tracked").checked = true;
+    $("#f-startups").value = "any";
     $("#f-sponsored").checked = false; state.view.sponsored = false;
     $("#f-salary").checked = false; state.view.salaryDisclosed = false;
     state.view.employment = []; state.view.families = []; state.view.countries = [];

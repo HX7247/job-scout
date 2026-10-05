@@ -240,6 +240,7 @@ def api_jobs():
         sponsored_only=args.get("sponsored") == "1",
         salary_disclosed_only=args.get("salary_disclosed") == "1",
         unviewed_only=args.get("unviewed") == "1",
+        hide_tracked=args.get("hide_tracked", "1") == "1",
         startups=(args.get("startups") if args.get("startups") in ("hide", "only")
                   else "any"),
         employment=[v for v in args.getlist("employment") if v],
@@ -750,7 +751,7 @@ _VIEW_ORDERS = ("score", "date", "new", "closing", "company", "salary",
                 "employment", "family")
 _VIEW_LISTS = ("employment", "families", "countries", "rules")
 _VIEW_FLAGS = ("starred", "remote", "sponsored", "salary_disclosed", "unclassified",
-               "unviewed")
+               "unviewed", "hide_tracked")
 
 
 @app.route("/api/view", methods=["POST"])
@@ -901,6 +902,7 @@ def _export(mode: str, job_ids: list[str] | None = None,
             families=view.get("families") or [],
             countries=view.get("countries") or [],
             include_unclassified=view.get("unclassified", True),
+            hide_tracked=bool(view.get("hide_tracked", True)),
             own_rules=active_rules(view.get("rules") or []),
             order=view.get("order", "score"),
             limit=int(view.get("limit") or 400),

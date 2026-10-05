@@ -229,6 +229,12 @@ def append_into(jobs: list[dict], source_workbook: str | Path,
     _extend_validations(ws, last_row)
     if ws.auto_filter.ref:
         ws.auto_filter.ref = f"A2:U{last_row}"
+    for table in ws.tables.values():                        # rows past the table's end sit outside it
+        end = int(table.ref.split(":")[1].lstrip("ABCDEFGHIJKLMNOPQRSTUVWXYZ"))
+        if last_row > end:
+            table.ref = f"{table.ref.split(':')[0]}:{table.ref.split(':')[1].rstrip('0123456789')}{last_row}"
+            if table.autoFilter is not None:
+                table.autoFilter.ref = table.ref
 
     wb.save(out_path)
     return {"added": added, "skipped_duplicates": skipped, "first_row": first_free,

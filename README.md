@@ -53,6 +53,7 @@ Everything stays on your machine: your job list, criteria, notes and CV never le
 
 **Tracking**
 - Export to Excel, or append to your own tracker workbook; status, notes and stars.
+- **Find new roles only.** *Hide roles already on my tracker* (on by default) removes anything you have saved, applied to or heard back on, including the same posting from another source, so a search shows only roles you haven't acted on. Pick a status in the filter to see the tracked ones.
 - Nudges for applications that have gone quiet for 21+ days.
 - LinkedIn profile review, an assistant that takes plain-English requests, and optional
   local sign-in so several people can share one computer with separate criteria.

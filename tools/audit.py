@@ -1282,6 +1282,17 @@ def main() -> None:
         _fs.conn.execute("UPDATE jobs SET employment_kind = ?, job_family = ? WHERE url = ?",
                          (_kind, _fam, f"https://x.com/f{_i}"))
     _fs.conn.commit()
+    # a tracked role, and the same posting from another source, must leave the search
+    _fs.conn.execute("UPDATE jobs SET status = 'applied' WHERE url = 'https://x.com/f7'")
+    _fs.conn.execute("UPDATE jobs SET company = 'Co7', title = 'Role 7' WHERE url = 'https://x.com/f8'")
+    _fs.conn.commit()
+    _ht_on = {j["url"] for j in _fs.query(limit=50, hide_tracked=True)}
+    _ht_off = {j["url"] for j in _fs.query(limit=50)}
+    _ht_status = {j["url"] for j in _fs.query(limit=50, status="applied", hide_tracked=True)}
+    _ht_count = (_fs.count(hide_tracked=True), len(_ht_on))
+    _fs.conn.execute("UPDATE jobs SET status = 'new', company = 'Co8', title = 'Role 8' "
+                     "WHERE url IN ('https://x.com/f7', 'https://x.com/f8')")
+    _fs.conn.commit()
     _narrow = dict(employment=["placement"], families=["finance"], include_unclassified=False)
     _facets = _fs.facet_counts(**_narrow)
     _total = _fs.count(**_narrow)
@@ -1298,6 +1309,12 @@ def main() -> None:
           lambda: _facets["families"] == {"software": 3, "finance": 5}
           or f"got {_facets['families']}")
     check("filters: the total is every match, not just the page", lambda: _total == 5 or _total)
+    check("filters: hide-tracked drops a tracked role and its twin from another source",
+          lambda: not ({"https://x.com/f7", "https://x.com/f8"} & _ht_on) or f"got {_ht_on}")
+    check("filters: hide-tracked off, or an explicit status, still shows tracked roles",
+          lambda: {"https://x.com/f7", "https://x.com/f8"} <= _ht_off
+          and _ht_status == {"https://x.com/f7"} or f"{_ht_off} / {_ht_status}")
+    check("filters: hide-tracked total matches the list", lambda: _ht_count[0] == _ht_count[1] or _ht_count)
     check("filters: paging with tied sort keys never repeats or skips a posting",
           lambda: len(_pages) == 12 == len(set(_pages)) or f"{len(set(_pages))} of 12 distinct")
     check("filters: '%' and '_' in a search are literal text, not wildcards",
@@ -1399,7 +1416,7 @@ def main() -> None:
     check("registry: companies_extra.yaml is merged without duplicate boards",
           lambda: len(_keys) == len(set(_keys)) or "the same board is listed twice")
     check("registry: every Workday entry has the tenant:wdN:site slug the adapter needs",
-          lambda: all(_sec_re.fullmatch(r"[^:]+:wd\d+:[^:]+", str(c["slug"]))
+          lambda: all(_sec_re.fullmatch(r"[^:]+:wd\d+:[^:]+(?::myworkdaysite)?", str(c["slug"]))
                       for c in _registry if c.get("ats") == "workday")
           or "a Workday slug is malformed")
 

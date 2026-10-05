@@ -412,7 +412,8 @@ class Store:
               salary_disclosed_only: bool = False,
               unviewed_only: bool = False,
               startups: str = "any",
-              countries: list[str] | None = None) -> list[dict]:
+              countries: list[str] | None = None,
+              hide_tracked: bool = False) -> list[dict]:
         where, params = self._where(
             status=status, source=source, company=company, min_score=min_score,
             search=search, starred_only=starred_only, remote_only=remote_only,
@@ -420,7 +421,7 @@ class Store:
             employment=employment, families=families,
             include_unclassified=include_unclassified, own_rules=own_rules,
             salary_disclosed_only=salary_disclosed_only, unviewed_only=unviewed_only,
-            startups=startups, countries=countries)
+            startups=startups, countries=countries, hide_tracked=hide_tracked)
         orders = {
             "score": "score DESC, first_seen DESC",
             "date": "COALESCE(posted_at, first_seen) DESC",
@@ -499,7 +500,8 @@ class Store:
                salary_disclosed_only: bool = False,
                unviewed_only: bool = False,
                startups: str = "any", all_rules: list | None = None,
-               countries: list[str] | None = None) -> tuple[str, list]:
+               countries: list[str] | None = None,
+               hide_tracked: bool = False) -> tuple[str, list]:
         """The WHERE clause every listing, total and sidebar count shares, so the
         numbers beside the filters can never disagree with the list they produce."""
         sql = "score >= ?"
@@ -513,6 +515,17 @@ class Store:
         if status and status != "all":
             sql += " AND status = ?"
             params.append(status)
+        elif hide_tracked:
+            # Roles already on the tracker are not "new to you". Matched by posting
+            # (same URL or cross-source identity) and by company + title, so the same
+            # role listed on another board - or typed in by hand - is hidden too.
+            marks = ",".join("?" * len(TRACKED_STATUSES))
+            sql += (f" AND status NOT IN ({marks})"
+                    f" AND dedupe_key NOT IN (SELECT dedupe_key FROM jobs WHERE status IN ({marks}))"
+                    f" AND (url = '' OR url NOT IN (SELECT url FROM jobs WHERE status IN ({marks}) AND url <> ''))"
+                    f" AND (LOWER(company), LOWER(title)) NOT IN "
+                    f"(SELECT LOWER(company), LOWER(title) FROM jobs WHERE status IN ({marks}))")
+            params += list(TRACKED_STATUSES) * 4
         if source and source != "all":
             sql += " AND source = ?"
             params.append(source)
