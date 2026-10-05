@@ -2021,6 +2021,86 @@ def main() -> None:
                   or {k: _geo.countries_of(k) for k in _places
                       if _geo.countries_of(k) != _places[k]})
 
+    # ---- research and industry boards (jobs.ac.uk, Madgex feeds, the quant list)
+    from jobscout.sources import research_boards as _rb
+    from jobscout.sources import ALL_ADAPTERS as _ALL
+    from jobscout.config import Config as _Cfg
+    _jac_html = """<div class="j-search-result__result" data-advert-id="42">
+      <div class="j-search-result__text">
+        <a href="/job/ABC1/research-software-engineer">Research Software Engineer</a>
+        <div class="j-search-result__department">School of Computer Science</div>
+        <div class="j-search-result__employer"><b>University of Leeds</b></div>
+        <div>Location: Leeds, Hybrid</div>
+        <div class="j-search-result__info"><strong>Salary:</strong> \u00a331,000 to \u00a335,000</div>
+        <div><strong>Date Placed:</strong> 05 Oct</div>
+      </div>
+      <div class="j-search-result__date-logos"><span class="j-search-result__date--blue">26 Oct</span></div>
+    </div>"""
+    _jac = _rb.JobsAcUkSource()._parse_page(_jac_html, "computer-sciences")
+    check("jobs.ac.uk: a search card becomes a job with employer, place, salary and dates",
+          lambda: (len(_jac) == 1 and _jac[0].company == "University of Leeds"
+                   and _jac[0].url == "https://www.jobs.ac.uk/job/ABC1/research-software-engineer"
+                   and _jac[0].location == "Leeds, Hybrid" and _jac[0].external_id == "42"
+                   and _jac[0].salary_raw.startswith("\u00a331,000")
+                   and bool(_jac[0].closes_at and _jac[0].posted_at))
+          or f"got {_jac}")
+    check("jobs.ac.uk: a closing date without a year is the next one, a posting date the last",
+          lambda: (_rb._day_month("26 Jan", True, _date(2026, 10, 5))[:10] == "2027-01-26"
+                   and _rb._day_month("28 Dec", False, _date(2026, 1, 3))[:10] == "2025-12-28")
+          or "year inference wrong")
+    _mg = _rb.ScienceCareersSource()._job_from({
+        "title": "Ellison Institute of Technology: Data Engineer",
+        "url": "https://jobs.sciencecareers.org/job/680556/data-engineer/?TrackID=9&utm_source=rss",
+        "description": "\nCompetitive salary:\n\nEllison Institute of Technology:\n"
+                       "Join us at EIT...\nOxford, Oxfordshire\n",
+        "published": "Sat, 19 Sep 2026 04:00:00 -0500"})
+    check("madgex feeds: employer, title, place and a clean link from one RSS item",
+          lambda: (_mg.company == "Ellison Institute of Technology" and _mg.title == "Data Engineer"
+                   and _mg.location == "Oxford, Oxfordshire" and _mg.external_id == "680556"
+                   and _mg.url == "https://jobs.sciencecareers.org/job/680556/data-engineer/"
+                   and _mg.posted_at.startswith("2026-09-19") and not _mg.salary_raw)
+          or f"got {_mg}")
+    _quant = _gb._rows_from_firm_sections("\n".join([
+        "## Akuna Capital", "**Locations**: Chicago, NYC", "", "|Role|Links|", "|---|---|",
+        "|QR|[\u2705 ](https://akuna.example/1)|",
+        "|SWE|[\u2705 C++](https://akuna.example/2)&nbsp;[\u274c Python](https://akuna.example/3)|"]))
+    check("github parser: a per-firm quant list gives one open role per ticked link",
+          lambda: [(r["company_raw"], r["title_raw"], r["url"]) for r in _quant] == [
+              ("Akuna Capital", "Quantitative Researcher Intern", "https://akuna.example/1"),
+              ("Akuna Capital", "Software Engineer Intern (C++)", "https://akuna.example/2")]
+          and _quant[0]["location_raw"] == "Chicago, NYC" or f"got {_quant}")
+    _research = ("jobsacuk", "sciencecareers", "physicstoday")
+    check("research boards: registered, keyless, and on by default",
+          lambda: all(n in _ALL and not _ALL[n].needs_key and n in _Cfg().sources.aggregators
+                      for n in _research)
+          or [n for n in _research if n not in _ALL or n not in _Cfg().sources.aggregators])
+    check("research boards: jobs.ac.uk is UK-only, the feeds are read once worldwide",
+          lambda: (_ALL["jobsacuk"].markets == ("GB",) and not _ALL["sciencecareers"].markets
+                   and not _ALL["physicstoday"].markets
+                   and not any(_ALL[n].uses_query for n in _research))
+          or "scoping wrong")
+    from jobscout.classify import detect_family as _fam
+    _acad = {("Research Assistant in Wing Design", "Department of Aeronautics"): "engineering",
+             ("PhD Studentship: Federated Unlearning", "School of Computing"): "software",
+             ("Research Fellow in Fluid Mechanics", ""): "science",
+             ("Research Software Engineer", "Physics"): "software",
+             ("Member of Technical Staff", "Engineering"): "",
+             ("Summer Vacation Scheme", "Computing, Software, IT, Analytics, Data"): "data"}
+    from jobscout.scoring import SENIOR_SIGNALS as _SEN
+    _acad_senior = ["Tenure-Track Assistant Professor in Nuclear Theory",
+                    "Lecturer in Computer Science", "Postdoctoral Research Associate"]
+    check("scoring: faculty and postdoc posts count as above a student's level",
+          lambda: all(any(s in t.lower() for s in _SEN) for t in _acad_senior)
+          and not any(s in "research assistant (ktp associate)" for s in _SEN)
+          or "academic grades missing")
+    check("classify: an academic post takes its field from the department, not the grade",
+          lambda: {k: _fam(*k) for k in _acad} == _acad or {k: _fam(*k) for k in _acad})
+    _iso = {"Jena, Th\u00fcringen (DE)": ["DE"], "Toronto, Ontario (CA)": ["CA"],
+            "San Jose (CA)": ["US"], "Washington D.C.": ["US"]}
+    check("markets: a research board's ISO suffix places the job, '(CA)' after a US town stays US",
+          lambda: {k: _geo.countries_of(k) for k in _iso} == _iso
+                  or {k: _geo.countries_of(k) for k in _iso})
+
     # ---- the page itself
     _page = (ROOT / "templates" / "index.html").read_text("utf-8")
     _ids = _sec_re.findall(r'\sid="([^"]+)"', _page)

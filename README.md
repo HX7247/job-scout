@@ -66,7 +66,10 @@ Everything stays on your machine: your job list, criteria, notes and CV never le
 | **Gradcracker** | STEM placements, internships, graduate jobs - **off by default**: its terms prohibit scraping, so it is linked from the *Unscrapable sites* tab instead (add `gradcracker` to `sources.aggregators` to read it anyway) | UK | - |
 | **RateMyPlacement** (higherin.com) | Year-in-industry placements and internships | UK | - |
 | **GradConnection** | Graduate jobs and internships | AU, NZ, SG | - |
-| **GitHub job lists** | Community trackers: SimplifyJobs (internships + new grad), vanshb03, zapplyjobs, jobright-ai, plus European, Canadian and Singapore internship lists - ~5,000 listings | Mostly US, some EU/CA/SG | - |
+| **GitHub job lists** | Community trackers: SimplifyJobs (internships + new grad), vanshb03, zapplyjobs (incl. ML and hardware), jobright-ai (engineering, software and data internships), speedyapply (SWE and AI/ML college roles), Northwestern's quant internships, plus European, Canadian and Singapore internship lists - ~6,000 listings | Mostly US, some EU/CA/SG | - |
+| **jobs.ac.uk** | University and research-institute jobs in computer science, engineering, maths, physical sciences and university IT: research assistants, KTP associates, research software engineers, technicians, studentships | UK | - |
+| **Science Careers** (AAAS) | Labs, research institutes and science industry, searched for internships, research assistants and engineering/computing roles | Mostly US, some UK/EU | - |
+| **Physics Today Jobs** (AIP) | Physics, engineering and national-lab roles | Mostly US | - |
 | **Hacker News "Who is hiring"** | The monthly hiring thread | Global | - |
 | **Arbeitnow, Remotive, RemoteOK, Jobicy, Himalayas, The Muse** | Open job-board APIs | Global / remote | - |
 | **Google Jobs** (via SerpApi) | Pools listings from many boards, incl. LinkedIn and Indeed | All | free key |
@@ -794,9 +797,30 @@ people actually go looking for internships beyond company boards and aggregators
   setx SERPAPI_KEY  your_key              # serpapi.com
   ```
 - **More GitHub trackers** - SimplifyJobs (internships and new grad), vanshb03,
-  zapplyjobs (incl. ML internships), jobright-ai (software, data, product new grad), and
-  European, Canadian and Singapore internship lists: ~5,000 live listings, shared
-  fairly between repos. "{year}" repo names roll over by season with no code change.
+  zapplyjobs (incl. ML internships and hardware engineering), jobright-ai (engineering,
+  software and data internships; software, data, product new grad), speedyapply (SWE and
+  AI/ML college roles), northwesternfintech's quant internships, and European, Canadian
+  and Singapore internship lists: ~6,000 live listings, shared fairly between repos.
+  "{year}" repo names roll over by season with no code change.
+- **Research and industry boards** (`jobscout/sources/research_boards.py`, on by
+  default, no key) - for engineering, computing and research roles the general boards
+  bury:
+  - **jobs.ac.uk**, the UK's academic and research board, read by discipline (computer
+    sciences, engineering and technology, maths and statistics, physical sciences,
+    university IT and web roles). Its search pages are allowed by robots.txt and its
+    terms allow personal use.
+  - **Science Careers** (AAAS) and **Physics Today Jobs** (AIP), through the official
+    RSS feed each publishes for a keyword search. Their feeds ignore the country, so each
+    is read once and every posting is placed by its own location ("Jena (DE)").
+
+  These are searched with their own subject keywords (internship, research assistant,
+  software engineer, machine learning...) rather than your search terms, since
+  "industrial placement" finds almost nothing on a research board. Much of what they list
+  is postdoc or faculty level: for a student or graduate, professor, faculty, tenure,
+  lecturer and postdoc titles count as senior and are hidden like any other senior role.
+  An academic title names a grade, not a field ("Research Assistant in Wing Design"), so
+  the field of work comes from the department ("Department of Aeronautics" is
+  Engineering, "School of Computing" is Software & IT), falling back to Science & research.
 
 Checked and **not** feasible (all recorded in `jobscout/sources/grad_boards.py`):
 Prospects and TargetJobs render their listings in the browser, so the page holds no
@@ -805,6 +829,9 @@ Cloudflare browser challenge; Civil Service Jobs needs a session-keyed search;
 Graduate Recruitment Bureau answers every request, robots.txt included, with a 403;
 ZipRecruiter's robots.txt disallows its search pages, which serve a bot challenge.
 Handshake needs a student login and its terms forbid scraping - never attempted.
+Nature Careers publishes the same kind of RSS feed, but its robots.txt disallows it;
+New Scientist Jobs, IEEE, ACM and the IET publish no usable feed; Physics Today's
+browse pages answer plain requests with a 403 (its RSS feed is fine).
 
 ### What every scan refreshes
 
@@ -882,6 +909,7 @@ job-scout/
     sources/usajobs.py    the official US federal jobs API
     sources/customfeeds.py     your own RSS feed or public listing page, opt-in
     sources/grad_boards.py     GradConnection (AU/NZ/SG) and the Careerjet API
+    sources/research_boards.py jobs.ac.uk, Science Careers and Physics Today Jobs
     stability.py          company stability rating from public records, with evidence
     cv.py                 local document parsing and skill extraction
     linkedin_import.py    reads your LinkedIn export - no scraping, see the docstring

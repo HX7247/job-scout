@@ -226,7 +226,8 @@ JOB_FAMILIES: list[tuple[str, str, list[str]]] = [
     ("data", "Data & analytics", [
         "data analyst", "data scientist", "data engineer", "machine learning",
         "analytics", "business intelligence", "quantitative", "statistician",
-        "research scientist", "ai engineer",
+        "research scientist", "ai engineer", "data science", "quant", "ai research",
+        "ai researcher", "generative ai",
     ]),
     ("engineering", "Engineering (non-software)", [
         "mechanical engineer", "electrical engineer", "civil engineer",
@@ -240,9 +241,9 @@ JOB_FAMILIES: list[tuple[str, str, list[str]]] = [
         # so anything still unmatched here is engineering in the broad sense.
         "engineer",
     ]),
-    ("science", "Science & lab", [
+    ("science", "Science & research", [
         "laboratory", "lab technician", "scientist", "chemist", "biologist",
-        "research associate", "microbiolog", "formulation",
+        "microbiolog", "formulation",
     ]),
     ("construction", "Construction & trades", [
         "construction", "site manager", "quantity surveyor", "electrician",
@@ -297,6 +298,33 @@ TITLE_ONLY_SIGNALS = {
     "communications", "client services", "customer experience", "people team",
 }
 
+# Academic titles name a grade, not a field: "Research Assistant in Structural Wing
+# Design", "PhD Studentship". The department usually names the field, so these are
+# classified from it first and only fall back to science.
+_ACADEMIC_GRADES = _compile([
+    "research assistant", "research associate", "research fellow", "researcher",
+    "postdoc", "postdoctoral", "studentship", "phd", "dphil", "doctoral",
+])
+# Department names that identify a field on their own (jobs.ac.uk lists a department
+# on every post). A bare "Engineering" department is the software team at a tech firm,
+# so only qualified names are here.
+_DEPARTMENT_FAMILIES = [(key, _compile(sigs)) for key, sigs in [
+    ("software", ["computer science", "computing", "informatics", "software engineering",
+                  "electronics and computer science"]),
+    ("data", ["data science", "statistics", "mathematics", "mathematical sciences",
+              "artificial intelligence"]),
+    ("engineering", [
+        "mechanical engineering", "electrical engineering", "electronic engineering",
+        "electrical and electronic engineering", "civil engineering",
+        "chemical engineering", "aeronautics", "aeronautical", "astronautical",
+        "aerospace", "materials science", "materials engineering", "bioengineering",
+        "engineering science", "engineering and applied sciences",
+        "department of engineering", "school of engineering", "faculty of engineering",
+    ]),
+    ("science", ["physics", "chemistry", "biology", "biosciences", "life sciences",
+                 "earth sciences", "astronomy"]),
+]]
+
 _FAMILY_LABELS = {key: label for key, label, _ in JOB_FAMILIES}
 FAMILY_ORDER = [key for key, _, _ in JOB_FAMILIES]
 
@@ -331,9 +359,17 @@ def detect_family(title: str, department: str = "", description: str = "") -> st
     # than a wrong label, and the UI can show "not stated".
     context = f" {(department or '').lower()} "
     if context.strip():
+        # Gradcracker puts the accepted degrees here ("Computing, Maths, Physics"); a
+        # list of subjects names no single field, so only one unit's name is read.
+        if context.count(",") < 2:
+            for family, pattern in _DEPARTMENT_FAMILIES:
+                if pattern.search(context):
+                    return family
         for family, pattern in _FAMILY_CONTEXT_PATTERNS:
             if pattern.search(context):
                 return family
+    if _ACADEMIC_GRADES.search(title_text):
+        return "science"
     return ""
 
 

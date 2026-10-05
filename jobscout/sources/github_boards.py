@@ -13,6 +13,8 @@ Formats differ a lot between maintainers, so nothing here assumes column positio
     "Application", "link", or no link column at all with the title itself linked).
     Links may be HTML <a href>, Markdown [text](url), or a badge-image button
     [![Apply](badge.svg)](url) - image URLs are never mistaken for the posting.
+  * One section per firm (northwesternfintech's quant list) - a "## Firm" heading, a
+    "**Locations**:" line, then a Role | Links table where each open link is a role.
 
 Seasons roll over: "{year}" in a repo name is tried for this year and next, so the
 Summer 2028 lists are picked up on the first scan after they appear, with no code
@@ -46,6 +48,16 @@ _REPO_SPECS = (
     ("jobright-ai/{year}-Software-Engineer-New-Grad", "New grad", ""),
     ("jobright-ai/{year}-Data-Analysis-New-Grad", "New grad", ""),
     ("jobright-ai/{year}-Product-Management-New-Grad", "New grad", ""),
+    # Engineering, computing and research lists (added 2026-10-05, each parsed live):
+    # hardware/mechanical/electrical/civil internships, software and data internships,
+    # SWE and AI/ML college roles, hardware early-career, and quant internships.
+    ("jobright-ai/{year}-Engineer-Internship", "Internship", ""),
+    ("jobright-ai/{year}-Software-Engineer-Internship", "Internship", ""),
+    ("jobright-ai/{year}-Data-Analysis-Internship", "Internship", ""),
+    ("speedyapply/{year}-SWE-College-Jobs", "Internship", ""),
+    ("speedyapply/{year}-AI-College-Jobs", "Internship", ""),
+    ("zapplyjobs/New-Grad-Hardware-Engineering-Jobs-{year}", "New grad", ""),
+    ("northwesternfintech/{year}QuantInternships", "Internship", ""),
     ("Ouckah/Summer2026-Internships", "Internship", ""),     # gone - see docstring
 )
 _BRANCHES = ("dev", "main", "master")
@@ -186,6 +198,42 @@ def _rows_from_pipe_tables(text: str) -> list[dict]:
     return rows
 
 
+# The quant list abbreviates its roles; a title should read like one.
+_ROLE_NAMES = {"QR": "Quantitative Researcher", "QT": "Quantitative Trader",
+               "QD": "Quantitative Developer", "SWE": "Software Engineer",
+               "HW": "Hardware Engineer", "ML": "Machine Learning Engineer",
+               "FPGA": "FPGA Engineer"}
+_FIRM_LINK = re.compile(r"\[([^\]]*)\]\((https?://[^)\s]+)\)")
+
+
+def _rows_from_firm_sections(text: str) -> list[dict]:
+    """"## Firm", "**Locations**: NYC", then |Role|Links| rows whose links are
+    "[✅ C++](url)" - one open role per link, its label naming the variant."""
+    rows, company, location = [], "", ""
+    for line in text.splitlines():
+        line = line.strip()
+        if line.startswith("## "):
+            company, location = _clean(line[3:]), ""
+        elif line.startswith("**Locations**:"):
+            location = _clean(line.split(":", 1)[1])
+        elif company and line.startswith("|") and "](" in line:
+            cells = [c.strip() for c in line.strip("|").split("|")]
+            if len(cells) < 2:
+                continue
+            role = _clean(cells[0])
+            role = _ROLE_NAMES.get(role.upper(), role)
+            for label, url in _FIRM_LINK.findall(cells[1]):
+                if "\u2705" not in label:          # only the ticked (open) links
+                    continue
+                variant = _clean(label.replace("\u2705", ""))
+                rows.append({
+                    "company_raw": company, "location_raw": location, "url": url,
+                    "title_raw": f"{role} Intern" + (f" ({variant})" if variant else ""),
+                    "closed": False,
+                })
+    return rows
+
+
 class GitHubInternshipsSource(BaseAggregator):
     """Community-run internship and new-grad trackers on GitHub."""
 
@@ -212,7 +260,10 @@ class GitHubInternshipsSource(BaseAggregator):
             return []
         jobs = []
         last_company = ""
-        for row in _rows_from_html_tables(text) + _rows_from_pipe_tables(text):
+        rows = _rows_from_html_tables(text) + _rows_from_pipe_tables(text)
+        if not rows:
+            rows = _rows_from_firm_sections(text)
+        for row in rows:
             if row["closed"]:
                 continue
             raw_company = row["company_raw"]

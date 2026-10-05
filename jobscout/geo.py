@@ -112,7 +112,7 @@ COUNTRIES: dict[str, Country] = {c.code: c for c in [
         "west virginia", "wisconsin", "wyoming"),
        ("san francisco", "new york", "seattle", "austin", "boston", "chicago",
         "los angeles", "denver", "atlanta", "san diego", "portland", "miami",
-        "washington dc", "philadelphia", "dallas", "houston", "phoenix",
+        "washington dc", "washington d.c.", "washington, d.c.", "philadelphia", "dallas", "houston", "phoenix",
         # Tech and engineering hubs that student-job trackers list bare.
         "nyc", "new york city", "san jose", "santa clara", "sunnyvale", "mountain view",
         "palo alto", "menlo park", "cupertino", "redmond", "pittsburgh", "indianapolis",
@@ -393,6 +393,7 @@ _ZIP = re.compile(r"\s+\d{4,5}(?:-\d{4})?$")
 # "UK/US", "London or New York". A comma is not one - it joins a town to its state.
 _PLACE_SPLIT = re.compile(r"\s*(?:[;|\n\u2022\u00b7/]|\s(?:or|and|&)\s)\s*", re.I)
 _COMMA = re.compile(r"\s*,\s*")
+_ISO_SUFFIX = re.compile(r"\(([A-Z]{2})\)\s*$")
 
 
 def _abbreviation_codes(parts: list[str], towns: list[str]) -> list[str]:
@@ -435,6 +436,12 @@ def _place_countries(place: str) -> list[str]:
     for code in _abbreviation_codes(parts, towns):
         if code not in qualified:
             qualified.append(code)
+    # Research boards end a location with its ISO code: "Jena, Thüringen (DE)". "(CA)"
+    # after a US town is still California, though.
+    iso = _ISO_SUFFIX.search(place)
+    if iso and iso.group(1) in COUNTRIES and iso.group(1) not in qualified and not (
+            iso.group(1) in _US_STATES and "US" in towns + qualified):
+        qualified.append(iso.group(1))
     if qualified:
         return qualified
     if len(parts) > 1:

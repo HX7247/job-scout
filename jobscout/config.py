@@ -116,6 +116,9 @@ class SourceConfig:
         "gradconnection", "careerjet", "hn_hiring",
         # Google Jobs through SerpApi (SERPAPI_KEY; free plan is 250 searches/month).
         "google_jobs",
+        # Research and science boards for engineering and computing roles: jobs.ac.uk
+        # (UK universities and institutes), Science Careers and Physics Today Jobs.
+        "jobsacuk", "sciencecareers", "physicstoday",
         # Off by default: brightnetwork is a confirmed dead end (Cloudflare JS
         # challenge blocks every plain request, see student_boards.py) and
         # custom_feeds does nothing until reddit_subreddits/custom_feed_urls below

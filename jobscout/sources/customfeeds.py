@@ -64,7 +64,7 @@ def _parse_feed(text: str, page_url: str) -> list[dict]:
         tag = node.tag.split("}")[-1]      # strip any XML namespace prefix
         if tag not in ("item", "entry"):
             continue
-        title, link, description = "", "", ""
+        title, link, description, published = "", "", "", ""
         for child in node:
             ctag = child.tag.split("}")[-1]
             if ctag == "title":
@@ -74,9 +74,11 @@ def _parse_feed(text: str, page_url: str) -> list[dict]:
                 link = (child.get("href") or child.text or "").strip()
             elif ctag in ("description", "summary", "content") and not description:
                 description = (child.text or "").strip()
+            elif ctag in ("pubDate", "published", "updated") and not published:
+                published = (child.text or "").strip()
         if title and link:
             out.append({"title": title, "url": urljoin(page_url, link),
-                        "description": description})
+                        "description": description, "published": published})
     return out
 
 

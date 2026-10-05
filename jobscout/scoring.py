@@ -38,6 +38,9 @@ SENIOR_SIGNALS = [
     "senior", "staff ", "principal", "lead ", "head of", "director", "vp ",
     "vice president", "manager", "chief", "architect", "10+ years", "8+ years",
     "7+ years", "6+ years", "5+ years",
+    # Academic grades from the research boards: each needs a PhD or a career behind it.
+    "professor", "faculty", "tenure", "lecturer", "postdoc", "post-doc",
+    "postdoctoral", "post-doctoral", "post doctoral",
 ]
 REMOTE_SIGNALS = ["remote", "work from home", "wfh", "anywhere", "distributed",
                   "hybrid", "telework", "télétravail", "homeoffice"]
